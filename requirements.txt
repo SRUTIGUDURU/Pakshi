@@ -1,3 +1,7 @@
-requirements
-
-streamlit>=1.35.0openai-whisper>=20231117chromadb>=0.4.24scikit-learn>=1.4.0gTTS>=2.5.0torch>=2.1.0numpy>=1.26.0
+streamlit>=1.35.0
+openai-whisper>=20231117
+chromadb>=0.4.24
+scikit-learn>=1.4.0
+gTTS>=2.5.0
+torch>=2.1.0
+numpy>=1.26.0
