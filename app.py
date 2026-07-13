@@ -324,11 +324,11 @@ def _load_agent_class():
 @st.cache_data(show_spinner=False)
 def _load_weaver_profiles():
  try:
- p = Path(__file__).parent / "weaver_profiles.json"
- with open(p) as f:
- return json.load(f)["weaver_profiles"]
+  p = Path(__file__).parent / "weaver_profiles.json"
+  with open(p) as f:
+   return json.load(f)["weaver_profiles"]
  except Exception:
- return []
+  return []
 
 # ---------------------------------------------------------------------------
 # Session state helpers
@@ -348,14 +348,14 @@ def _init_buyer_state():
  }
  for k, v in defaults.items():
  if k not in st.session_state:
- st.session_state[k] = v
+  st.session_state[k] = v
 
 def _init_weaver_state():
  if "weaver_orders" not in st.session_state:
  # Simulate a few pending orders for demo
- st.session_state["weaver_orders"] = _make_demo_orders()
+  st.session_state["weaver_orders"] = _make_demo_orders()
  if "weaver_id" not in st.session_state:
- st.session_state["weaver_id"] = "W001"
+  st.session_state["weaver_id"] = "W001"
 
 def _make_demo_orders():
  """Generate realistic demo orders for the weaver dashboard."""
