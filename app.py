@@ -33,6 +33,7 @@ st.set_page_config(
 
 # ---------------------------------------------------------------------------
 # Brand CSS — purple / orange / dark, matching the deck
+# Fixed contrast issues: lighter backgrounds for text, white text everywhere.
 # ---------------------------------------------------------------------------
 st.markdown("""
 <style>
@@ -40,25 +41,25 @@ st.markdown("""
 
 /* Root tokens */
 :root {
- --purple-deep: #3d1a6e;
- --purple-mid: #5e2d9e;
- --purple-light: #7b3fc4;
- --orange: #f5a623;
- --orange-dark: #c47d0a;
- --white: #ffffff;
- --grey-soft: #e8e0f5;
- --grey-muted: #b0a8c8;
- --surface: #2a0f52;
- --card: #3a1870;
- --success: #22c55e;
- --danger: #ef4444;
+    --purple-deep:   #3d1a6e;
+    --purple-mid:    #5e2d9e;
+    --purple-light:  #7b3fc4;
+    --orange:        #f5a623;
+    --orange-dark:   #c47d0a;
+    --white:         #ffffff;
+    --grey-soft:     #e8e0f5;
+    --grey-muted:    #b0a8c8;
+    --surface:       #2a0f52;
+    --card:          #3a1870;
+    --success:       #22c55e;
+    --danger:        #ef4444;
 }
 
 /* Global */
 html, body, [class*="css"] {
- font-family: 'Inter', sans-serif;
- background-color: var(--purple-deep);
- color: var(--white);
+    font-family: 'Inter', sans-serif;
+    background-color: var(--purple-deep);
+    color: var(--white);
 }
 .main { background-color: var(--purple-deep); }
 .block-container { padding: 1.5rem 2rem 3rem; max-width: 1100px; }
@@ -68,126 +69,106 @@ html, body, [class*="css"] {
 
 /* Wordmark */
 .pakshi-wordmark {
- font-size: 2rem;
- font-weight: 800;
- color: var(--white);
- letter-spacing: -0.5px;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -0.5px;
 }
 .pakshi-wordmark span { color: var(--orange); }
 
 .tagline {
- font-size: 0.85rem;
- color: var(--grey-muted);
- margin-top: -4px;
- margin-bottom: 1.5rem;
-}
-
-/* Tab pills */
-.tab-row {
- display: flex;
- gap: 0.5rem;
- margin-bottom: 1.5rem;
-}
-.tab-pill {
- padding: 0.45rem 1.2rem;
- border-radius: 999px;
- border: 1.5px solid var(--purple-light);
- background: transparent;
- color: var(--grey-muted);
- font-size: 0.85rem;
- font-weight: 600;
- cursor: pointer;
-}
-.tab-pill.active {
- background: var(--orange);
- border-color: var(--orange);
- color: var(--purple-deep);
+    font-size: 0.85rem;
+    color: var(--grey-soft);
+    margin-top: -4px;
+    margin-bottom: 1.5rem;
 }
 
 /* Cards */
 .card {
- background: var(--card);
- border: 1px solid rgba(255,255,255,0.08);
- border-radius: 12px;
- padding: 1.2rem 1.4rem;
- margin-bottom: 1rem;
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1rem;
 }
 .card-highlight {
- background: var(--card);
- border: 1.5px solid var(--orange);
- border-radius: 12px;
- padding: 1.2rem 1.4rem;
- margin-bottom: 1rem;
+    background: var(--card);
+    border: 1.5px solid var(--orange);
+    border-radius: 12px;
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1rem;
 }
 
 /* Swatch card */
 .swatch-card {
- background: var(--surface);
- border: 1px solid rgba(255,255,255,0.1);
- border-radius: 10px;
- padding: 1rem;
- height: 100%;
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 1rem;
+    height: 100%;
 }
 .swatch-price {
- font-size: 1.4rem;
- font-weight: 800;
- color: var(--orange);
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--orange);
 }
 .swatch-label {
- font-size: 0.75rem;
- color: var(--grey-muted);
- text-transform: uppercase;
- letter-spacing: 0.05em;
+    font-size: 0.75rem;
+    color: var(--grey-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 .swatch-value {
- font-size: 0.9rem;
- font-weight: 500;
- color: var(--white);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--white);
 }
 .tag {
- display: inline-block;
- padding: 2px 8px;
- border-radius: 999px;
- background: rgba(245,166,35,0.15);
- color: var(--orange);
- font-size: 0.72rem;
- font-weight: 500;
- margin: 2px 2px 0 0;
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(245,166,35,0.15);
+    color: var(--orange);
+    font-size: 0.72rem;
+    font-weight: 500;
+    margin: 2px 2px 0 0;
 }
 
-/* Chat bubbles */
+/* Chat bubbles — fixed contrast */
 .bubble-agent {
- background: var(--card);
- border: 1px solid rgba(255,255,255,0.08);
- border-radius: 12px 12px 12px 2px;
- padding: 0.75rem 1rem;
- margin: 0.4rem 0;
- max-width: 82%;
- font-size: 0.88rem;
- line-height: 1.55;
- white-space: pre-wrap;
+    background: #4a2a7a;  /* lighter purple */
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px 12px 12px 2px;
+    padding: 0.75rem 1rem;
+    margin: 0.4rem 0;
+    max-width: 82%;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    color: #ffffff !important;
 }
 .bubble-user {
- background: var(--purple-light);
- border-radius: 12px 12px 2px 12px;
- padding: 0.75rem 1rem;
- margin: 0.4rem 0 0.4rem auto;
- max-width: 70%;
- font-size: 0.88rem;
- line-height: 1.55;
- text-align: right;
+    background: #7b3fc4;  /* brighter purple */
+    border-radius: 12px 12px 2px 12px;
+    padding: 0.75rem 1rem;
+    margin: 0.4rem 0 0.4rem auto;
+    max-width: 70%;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    text-align: right;
+    color: #ffffff !important;
 }
 
 /* State badge */
 .state-badge {
- display: inline-block;
- padding: 2px 10px;
- border-radius: 999px;
- font-size: 0.72rem;
- font-weight: 700;
- letter-spacing: 0.08em;
- text-transform: uppercase;
- margin-bottom: 0.6rem;
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
 }
 .state-active { background: rgba(34,197,94,0.2); color: #22c55e; }
 .state-pending { background: rgba(245,166,35,0.2); color: var(--orange); }
@@ -195,117 +176,158 @@ html, body, [class*="css"] {
 
 /* Section label */
 .section-label {
- font-size: 0.72rem;
- font-weight: 700;
- text-transform: uppercase;
- letter-spacing: 0.12em;
- color: var(--orange);
- margin-bottom: 0.4rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--orange);
+    margin-bottom: 0.4rem;
 }
 
 /* Order confirmed banner */
 .confirmed-banner {
- background: linear-gradient(135deg, #22c55e22, #22c55e0a);
- border: 1.5px solid #22c55e;
- border-radius: 12px;
- padding: 1.4rem;
- text-align: center;
- margin-top: 1rem;
+    background: linear-gradient(135deg, #22c55e22, #22c55e0a);
+    border: 1.5px solid #22c55e;
+    border-radius: 12px;
+    padding: 1.4rem;
+    text-align: center;
+    margin-top: 1rem;
 }
 .confirmed-banner h2 { color: #22c55e; margin: 0; font-size: 1.5rem; }
 
 /* Weaver order card */
 .order-card {
- background: var(--surface);
- border: 1px solid rgba(255,255,255,0.1);
- border-radius: 10px;
- padding: 1rem 1.2rem;
- margin-bottom: 0.8rem;
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 0.8rem;
 }
 .order-card.accepted { border-color: #22c55e44; }
 .order-card.declined { border-color: #ef444444; opacity: 0.6; }
 
-/* Inputs */
+/* Inputs — fixed visibility */
 .stTextInput > div > div > input,
 .stTextArea > div > div > textarea {
- background-color: var(--surface) !important;
- color: var(--white) !important;
- border: 1.5px solid var(--purple-light) !important;
- border-radius: 8px !important;
- font-family: 'Inter', sans-serif !important;
+    background-color: #4a2a7a !important;
+    color: #ffffff !important;
+    border: 1.5px solid var(--purple-light) !important;
+    border-radius: 8px !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 1rem !important;
 }
 .stTextInput > div > div > input:focus,
 .stTextArea > div > div > textarea:focus {
- border-color: var(--orange) !important;
- box-shadow: 0 0 0 2px rgba(245,166,35,0.25) !important;
+    border-color: var(--orange) !important;
+    box-shadow: 0 0 0 2px rgba(245,166,35,0.25) !important;
 }
 
 /* Buttons */
 .stButton > button {
- background: var(--orange) !important;
- color: var(--purple-deep) !important;
- font-weight: 700 !important;
- border: none !important;
- border-radius: 8px !important;
- padding: 0.5rem 1.4rem !important;
- font-family: 'Inter', sans-serif !important;
- transition: opacity 0.15s;
+    background: var(--orange) !important;
+    color: var(--purple-deep) !important;
+    font-weight: 700 !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0.5rem 1.4rem !important;
+    font-family: 'Inter', sans-serif !important;
+    transition: opacity 0.15s;
 }
 .stButton > button:hover { opacity: 0.88 !important; }
 
 .stButton > button[kind="secondary"] {
- background: transparent !important;
- color: var(--grey-muted) !important;
- border: 1.5px solid var(--purple-light) !important;
+    background: transparent !important;
+    color: var(--grey-soft) !important;
+    border: 1.5px solid var(--purple-light) !important;
 }
 
 /* Divider */
 .pakshi-divider {
- height: 1px;
- background: rgba(255,255,255,0.08);
- margin: 1.2rem 0;
+    height: 1px;
+    background: rgba(255,255,255,0.08);
+    margin: 1.2rem 0;
 }
 
 /* Agent reasoning box */
 .reasoning-box {
- background: rgba(245,166,35,0.08);
- border-left: 3px solid var(--orange);
- border-radius: 0 8px 8px 0;
- padding: 0.75rem 1rem;
- font-size: 0.82rem;
- color: var(--grey-soft);
- font-style: italic;
- line-height: 1.6;
- margin: 0.6rem 0;
+    background: rgba(245,166,35,0.08);
+    border-left: 3px solid var(--orange);
+    border-radius: 0 8px 8px 0;
+    padding: 0.75rem 1rem;
+    font-size: 0.82rem;
+    color: var(--grey-soft);
+    font-style: italic;
+    line-height: 1.6;
+    margin: 0.6rem 0;
 }
 
-/* Progress step */
+/* Progress step — fixed contrast */
 .step-row {
- display: flex;
- align-items: center;
- gap: 0.6rem;
- margin: 0.3rem 0;
- font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0.3rem 0;
+    font-size: 0.85rem;
 }
 .step-dot {
- width: 8px; height: 8px;
- border-radius: 50%;
- flex-shrink: 0;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
 }
-.step-dot.done { background: #22c55e; }
-.step-dot.active { background: var(--orange); }
+.step-dot.done    { background: #22c55e; }
+.step-dot.active  { background: var(--orange); }
 .step-dot.pending { background: var(--purple-light); opacity: 0.4; }
+.step-row span {
+    font-weight: 500;
+    color: #d0c8e8 !important;  /* brighter for readability */
+}
+.step-row .done-step span { color: #22c55e !important; }
+.step-row .active-step span { color: var(--orange) !important; }
 
 /* Radio overrides */
 .stRadio > div { gap: 0.4rem; }
-.stRadio label { font-size: 0.88rem !important; }
+.stRadio label { font-size: 0.88rem !important; color: var(--white) !important; }
 
 /* selectbox */
 .stSelectbox > div > div {
- background-color: var(--surface) !important;
- color: var(--white) !important;
- border: 1.5px solid var(--purple-light) !important;
- border-radius: 8px !important;
+    background-color: var(--surface) !important;
+    color: var(--white) !important;
+    border: 1.5px solid var(--purple-light) !important;
+    border-radius: 8px !important;
+}
+
+/* Expander (help) */
+.streamlit-expanderHeader {
+    color: var(--orange) !important;
+    font-weight: 600 !important;
+}
+.streamlit-expanderContent {
+    background: var(--surface) !important;
+    color: var(--white) !important;
+    border-radius: 0 0 8px 8px !important;
+}
+
+/* Caption / small text */
+caption, .caption, .stCaption, .stCaptionText {
+    color: var(--grey-soft) !important;
+}
+
+/* Info / warning / success boxes */
+.stAlert {
+    background-color: var(--surface) !important;
+    border-color: var(--purple-light) !important;
+    color: var(--white) !important;
+}
+.stAlert .stAlertIcon { color: var(--orange) !important; }
+
+/* Make sure all text is white on dark */
+* {
+    color: var(--white) !important;
+}
+.section-label, .swatch-price, .tag, .swatch-label, .state-badge,
+.pakshi-wordmark, .tagline, .step-row span, .bubble-agent, .bubble-user,
+.stButton > button, .stCaption, .stAlert {
+    /* keep specific overrides */
 }
 </style>
 """, unsafe_allow_html=True)
@@ -435,10 +457,11 @@ def _step_indicator(current: str):
         if key in ("fallback_pending", "broadcasting", "weaver_selected"):
             continue # internal states, skip visual
         cls = "done" if i < active_idx else ("active" if i == active_idx else "pending")
+        color = "#22c55e" if cls=="done" else ("var(--orange)" if cls=="active" else "#b0a8c8")
         html += (
             f'<div class="step-row">'
             f' <div class="step-dot {cls}"></div>'
-            f' <span style="font-size:0.78rem;color:{"#22c55e" if cls=="done" else ("var(--orange)" if cls=="active" else "var(--grey-muted)")};">'
+            f' <span style="font-size:0.78rem;color:{color};font-weight:500;">'
             f' {label}</span>'
             f'</div>'
         )
@@ -456,10 +479,10 @@ def _render_swatch_card(i: int, swatch: dict):
     st.markdown(f"""
     <div class="swatch-card">
         <div style="font-size:1.5rem;margin-bottom:4px">{fabric_icon}</div>
-        <div style="font-weight:700;font-size:0.95rem;margin-bottom:2px">
+        <div style="font-weight:700;font-size:0.95rem;margin-bottom:2px;color:white;">
             {swatch.get('weave_style','—')}
         </div>
-        <div style="font-size:0.82rem;color:var(--grey-muted);margin-bottom:8px">
+        <div style="font-size:0.82rem;color:var(--grey-muted);margin-bottom:8px;">
             {swatch.get('color','—')}
         </div>
         <div class="swatch-price">₹{swatch.get('price_inr','?')}</div>
@@ -467,10 +490,10 @@ def _render_swatch_card(i: int, swatch: dict):
         <div class="pakshi-divider"></div>
         <div class="swatch-label">Weaver</div>
         <div class="swatch-value">{swatch.get('weaver_name','—')}</div>
-        <div style="font-size:0.78rem;color:var(--grey-muted)">
+        <div style="font-size:0.78rem;color:var(--grey-muted);">
             {swatch.get('weaver_cluster','')}, {swatch.get('weaver_state','')}
         </div>
-        <div style="margin-top:4px;font-size:0.82rem">
+        <div style="margin-top:4px;font-size:0.82rem;color:var(--grey-soft);">
             {swatch.get('weaver_rating','?')} &nbsp;·&nbsp;
             {swatch.get('delivery_days','?')} days
         </div>
@@ -543,10 +566,10 @@ No waste, no loss.
 
     _step_indicator(st.session_state["current_state"])
 
-    # Layout: chat left | panel right 
+    # Layout: chat left | panel right
     col_chat, col_panel = st.columns([3, 2], gap="large")
 
-    # RIGHT PANEL 
+    # RIGHT PANEL
     with col_panel:
         # Swatches
         swatches = st.session_state["swatches"]
@@ -566,22 +589,22 @@ No waste, no loss.
             wv = order.get("selected_weaver") or {}
             st.markdown(f"""
             <div class="confirmed-banner">
-                <h2> Order Confirmed</h2>
-                <div style="font-size:0.82rem;color:#86efac;margin-top:4px">
+                <h2>✅ Order Confirmed</h2>
+                <div style="font-size:0.82rem;color:#86efac;margin-top:4px;">
                     #{order.get('order_id','—')}
                 </div>
-                <div style="margin-top:12px;text-align:left">
+                <div style="margin-top:12px;text-align:left;">
                     <div class="swatch-label">Fabric</div>
                     <div class="swatch-value">
                         {sw.get('weave_style','—')} · {sw.get('color','—')}
                     </div>
-                    <div class="swatch-price" style="margin:6px 0">
+                    <div class="swatch-price" style="margin:6px 0;">
                         ₹{sw.get('price_inr','?')}
                     </div>
                     <div class="pakshi-divider"></div>
                     <div class="swatch-label">Weaver (agent-selected)</div>
                     <div class="swatch-value">{wv.get('weaver_name','—')}</div>
-                    <div style="font-size:0.78rem;color:var(--grey-muted)">
+                    <div style="font-size:0.78rem;color:var(--grey-muted);">
                         {wv.get('weaver_cluster','')}, {wv.get('weaver_state','')} ·
                         {wv.get('weaver_rating','?')} ·
                         {wv.get('delivery_days','?')} days
@@ -590,7 +613,7 @@ No waste, no loss.
             </div>
             """, unsafe_allow_html=True)
 
-            # Reject / One of a Kind flow 
+            # Reject / One of a Kind flow
             st.markdown('<div class="pakshi-divider"></div>', unsafe_allow_html=True)
             st.markdown('<div class="section-label">Not satisfied? Reject this piece.</div>',
                         unsafe_allow_html=True)
@@ -636,13 +659,13 @@ No waste, no loss.
 
         # Agent reasoning log
         if st.session_state["reasoning_log"]:
-            st.markdown('<div class="section-label" style="margin-top:1rem">Agent Reasoning</div>',
+            st.markdown('<div class="section-label" style="margin-top:1rem;">Agent Reasoning</div>',
                         unsafe_allow_html=True)
             for line in st.session_state["reasoning_log"][-3:]:
                 st.markdown(f'<div class="reasoning-box">{line}</div>',
                             unsafe_allow_html=True)
 
-    # LEFT PANEL: Chat 
+    # LEFT PANEL: Chat
     with col_chat:
         # Render history
         for role, text in st.session_state["history"]:
@@ -657,11 +680,11 @@ No waste, no loss.
                     unsafe_allow_html=True
                 )
 
-        st.markdown('<div style="height:0.5rem"></div>', unsafe_allow_html=True)
+        st.markdown('<div style="height:0.5rem;"></div>', unsafe_allow_html=True)
 
         cur = st.session_state["current_state"]
 
-        # Fallback YES/NO buttons 
+        # Fallback YES/NO buttons
         if cur == "fallback_pending":
             st.markdown('<div class="section-label">Agent is proposing an alternative</div>',
                         unsafe_allow_html=True)
@@ -675,7 +698,7 @@ No waste, no loss.
                     _send_message("no")
                     st.rerun()
 
-        # Confirm button when swatch is locked 
+        # Confirm button when swatch is locked
         elif cur == "swatch_selected":
             st.markdown('<div class="section-label">Swatch locked — ready to place order?</div>',
                         unsafe_allow_html=True)
@@ -689,21 +712,21 @@ No waste, no loss.
                     _send_message("back")
                     st.rerun()
 
-        # Reset after confirmed / failed 
+        # Reset after confirmed / failed
         elif cur in ("confirmed", "failed"):
             if st.button("Start New Search"):
                 for k in list(st.session_state.keys()):
                     del st.session_state[k]
                 st.rerun()
 
-        # Normal text input 
+        # Normal text input
         else:
             # Greeting auto-send
             if cur == "greeting" and not st.session_state["history"]:
                 _send_message("hi")
                 st.rerun()
 
-            # Voice input (Whisper STT) 
+            # Voice input (Whisper STT)
             if cur not in ("confirmed", "failed"):
                 st.markdown(
                     '<div class="section-label">Speak your request</div>',
@@ -752,7 +775,7 @@ No waste, no loss.
                             st.error(f"Transcription error: {e}. Please type your request below.")
 
             st.markdown(
-                '<div class="section-label" style="margin-top:0.8rem">Or type</div>',
+                '<div class="section-label" style="margin-top:0.8rem;">Or type</div>',
                 unsafe_allow_html=True
             )
 
@@ -776,7 +799,7 @@ No waste, no loss.
 
             # Quick example chips — only show before first real message
             if cur in ("greeting", "collecting") and len(st.session_state["history"]) <= 1:
-                st.markdown('<div style="margin-top:0.6rem"></div>', unsafe_allow_html=True)
+                st.markdown('<div style="margin-top:0.6rem;"></div>', unsafe_allow_html=True)
                 st.markdown('<div class="section-label">Try saying…</div>', unsafe_allow_html=True)
                 examples = [
                     "Light saree for summer wedding, ₹1500",
@@ -840,24 +863,24 @@ arrive in real time during the demo.
     with col_stat:
         if profile:
             st.markdown(f"""
-            <div style="display:flex;gap:1.5rem;align-items:center;padding:0.5rem 0">
+            <div style="display:flex;gap:1.5rem;align-items:center;padding:0.5rem 0;">
                 <div>
                     <div class="swatch-label">Cluster</div>
-                    <div class="swatch-value" style="font-size:0.85rem">{profile.get('cluster','')}</div>
+                    <div class="swatch-value" style="font-size:0.85rem;">{profile.get('cluster','')}</div>
                 </div>
                 <div>
                     <div class="swatch-label">Speciality</div>
-                    <div class="swatch-value" style="font-size:0.85rem">
+                    <div class="swatch-value" style="font-size:0.85rem;">
                         {', '.join(profile.get('fabric_specialty',[]))}
                     </div>
                 </div>
                 <div>
                     <div class="swatch-label">Rating</div>
-                    <div class="swatch-value" style="font-size:0.85rem">{profile.get('rating','?')}</div>
+                    <div class="swatch-value" style="font-size:0.85rem;">{profile.get('rating','?')}</div>
                 </div>
                 <div>
                     <div class="swatch-label">Orders done</div>
-                    <div class="swatch-value" style="font-size:0.85rem">{profile.get('orders_completed','?')}</div>
+                    <div class="swatch-value" style="font-size:0.85rem;">{profile.get('orders_completed','?')}</div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -873,27 +896,27 @@ arrive in real time during the demo.
     c1, c2, c3 = st.columns(3)
     with c1:
         st.markdown(f"""
-        <div class="card" style="text-align:center">
-            <div style="font-size:1.8rem;font-weight:800;color:var(--orange)">{len(pending)}</div>
+        <div class="card" style="text-align:center;">
+            <div style="font-size:1.8rem;font-weight:800;color:var(--orange);">{len(pending)}</div>
             <div class="swatch-label">Pending</div>
         </div>""", unsafe_allow_html=True)
     with c2:
         st.markdown(f"""
-        <div class="card" style="text-align:center">
-            <div style="font-size:1.8rem;font-weight:800;color:#22c55e">{len(accepted)}</div>
+        <div class="card" style="text-align:center;">
+            <div style="font-size:1.8rem;font-weight:800;color:#22c55e;">{len(accepted)}</div>
             <div class="swatch-label">Accepted</div>
         </div>""", unsafe_allow_html=True)
     with c3:
         total_value = sum(o["price"] for o in accepted)
         st.markdown(f"""
-        <div class="card" style="text-align:center">
-            <div style="font-size:1.8rem;font-weight:800;color:var(--orange)">₹{total_value:,}</div>
+        <div class="card" style="text-align:center;">
+            <div style="font-size:1.8rem;font-weight:800;color:var(--orange);">₹{total_value:,}</div>
             <div class="swatch-label">Value in hand</div>
         </div>""", unsafe_allow_html=True)
 
-    st.markdown('<div style="height:0.4rem"></div>', unsafe_allow_html=True)
+    st.markdown('<div style="height:0.4rem;"></div>', unsafe_allow_html=True)
 
-    # Pending orders 
+    # Pending orders
     if pending:
         st.markdown('<div class="section-label">New Orders — Awaiting Your Response</div>',
                     unsafe_allow_html=True)
@@ -902,23 +925,23 @@ arrive in real time during the demo.
             with st.container():
                 st.markdown(f"""
                 <div class="order-card">
-                    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
                         <div>
-                            <div style="font-weight:700;font-size:0.95rem">
+                            <div style="font-weight:700;font-size:0.95rem;color:white;">
                                 {order['weave_style']} · {order['color']}
                             </div>
-                            <div style="font-size:0.78rem;color:var(--grey-muted);margin-top:2px">Order #{order['order_id']} · {order['occasion']}
+                            <div style="font-size:0.78rem;color:var(--grey-muted);margin-top:2px;">Order #{order['order_id']} · {order['occasion']}
                             </div>
                         </div>
                         <div class="swatch-price">₹{order['price']:,}</div>
                     </div>
-                    <div style="margin-top:8px;font-size:0.82rem;color:var(--grey-soft)">
+                    <div style="margin-top:8px;font-size:0.82rem;color:var(--grey-soft);">
                         <b>Buyer says:</b> "{order['buyer_note']}"
                     </div>
-                    <div style="margin-top:6px">
+                    <div style="margin-top:6px;">
                         {"".join(f'<span class="tag">{t}</span>' for t in order['buyer_feel'].split(', ')[:4])}
                     </div>
-                    <div style="margin-top:8px;font-size:0.78rem;color:var(--grey-muted)">Deliver by {order['delivery_by']}
+                    <div style="margin-top:8px;font-size:0.78rem;color:var(--grey-muted);">Deliver by {order['delivery_by']}
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
@@ -958,20 +981,20 @@ arrive in real time during the demo.
                         time.sleep(0.5)
                         st.rerun()
 
-    # Accepted orders 
+    # Accepted orders
     if accepted:
-        st.markdown('<div class="section-label" style="margin-top:1rem">In Production</div>',
+        st.markdown('<div class="section-label" style="margin-top:1rem;">In Production</div>',
                     unsafe_allow_html=True)
         for order in accepted:
             idx = next(i for i, o in enumerate(orders) if o["order_id"] == order["order_id"])
             st.markdown(f"""
             <div class="order-card accepted">
-                <div style="display:flex;justify-content:space-between">
+                <div style="display:flex;justify-content:space-between;">
                     <div>
-                        <div style="font-weight:700;font-size:0.9rem">
+                        <div style="font-weight:700;font-size:0.9rem;color:white;">
                             {order['weave_style']} · {order['color']}
                         </div>
-                        <div style="font-size:0.75rem;color:var(--grey-muted)">
+                        <div style="font-size:0.75rem;color:var(--grey-muted);">
                             #{order['order_id']} · Due {order['delivery_by']}
                         </div>
                     </div>
@@ -992,22 +1015,22 @@ arrive in real time during the demo.
                 st.success("Photo sent to buyer for preview!")
                 st.session_state["weaver_orders"][idx]["photo"] = uploaded.name
 
-            st.markdown('<div style="height:0.4rem"></div>', unsafe_allow_html=True)
+            st.markdown('<div style="height:0.4rem;"></div>', unsafe_allow_html=True)
 
-    # Declined 
+    # Declined
     if declined:
-        st.markdown('<div class="section-label" style="margin-top:1rem;color:var(--grey-muted)">Declined</div>',
+        st.markdown('<div class="section-label" style="margin-top:1rem;color:var(--grey-muted);">Declined</div>',
                     unsafe_allow_html=True)
         for order in declined:
             st.markdown(f"""
             <div class="order-card declined">
-                <span style="font-size:0.85rem">{order['weave_style']} · #{order['order_id']}</span>
-                <span style="float:right;font-size:0.75rem;color:var(--grey-muted)">Declined</span>
+                <span style="font-size:0.85rem;color:var(--grey-soft);">{order['weave_style']} · #{order['order_id']}</span>
+                <span style="float:right;font-size:0.75rem;color:var(--grey-muted);">Declined</span>
             </div>
             """, unsafe_allow_html=True)
 
     # Refresh simulation button
-    st.markdown('<div style="height:1rem"></div>', unsafe_allow_html=True)
+    st.markdown('<div style="height:1rem;"></div>', unsafe_allow_html=True)
     if st.button("Simulate New Order Broadcast"):
         new_order = {
             "order_id": f"PKS-{random.randint(2900,2999)}",
@@ -1044,10 +1067,10 @@ def _one_of_a_kind_page():
 
     if not items:
         st.markdown("""
-        <div class="card" style="text-align:center;padding:2.5rem">
-            <div style="font-size:2rem;margin-bottom:0.5rem"></div>
-            <div style="font-weight:700;margin-bottom:0.4rem">No pieces here yet</div>
-            <div style="font-size:0.85rem;color:var(--grey-muted)">When a buyer rejects a custom order, it appears here at wholesale price.<br>No waste. No loss written off entirely.
+        <div class="card" style="text-align:center;padding:2.5rem;">
+            <div style="font-size:2rem;margin-bottom:0.5rem;"></div>
+            <div style="font-weight:700;margin-bottom:0.4rem;color:white;">No pieces here yet</div>
+            <div style="font-size:0.85rem;color:var(--grey-muted);">When a buyer rejects a custom order, it appears here at wholesale price.<br>No waste. No loss written off entirely.
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1072,31 +1095,31 @@ def _one_of_a_kind_page():
         with col1:
             st.markdown(f"""
             <div class="card">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;">
                     <div>
-                        <div style="font-weight:700;font-size:1rem">
+                        <div style="font-weight:700;font-size:1rem;color:white;">
                             {item.get('weave_style','—')} &nbsp;·&nbsp; {item.get('color','—')}
                         </div>
-                        <div style="font-size:0.78rem;color:var(--grey-muted);margin-top:3px">Order #{item.get('order_id','—')} · {item.get('reason','—')}
+                        <div style="font-size:0.78rem;color:var(--grey-muted);margin-top:3px;">Order #{item.get('order_id','—')} · {item.get('reason','—')}
                         </div>
-                        <div style="margin:8px 0">
+                        <div style="margin:8px 0;">
                             {tags_html}
-                            <span class="tag" style="background:rgba(34,197,94,0.15);color:#22c55e">wholesale</span>
-                            <span class="tag" style="background:rgba(34,197,94,0.15);color:#22c55e">ready to ship</span>
-                            <span class="tag" style="background:rgba(239,68,68,0.15);color:#ef4444">rejected custom</span>
+                            <span class="tag" style="background:rgba(34,197,94,0.15);color:#22c55e;">wholesale</span>
+                            <span class="tag" style="background:rgba(34,197,94,0.15);color:#22c55e;">ready to ship</span>
+                            <span class="tag" style="background:rgba(239,68,68,0.15);color:#ef4444;">rejected custom</span>
                         </div>
-                        <div style="font-size:0.82rem;color:var(--grey-soft)">Woven by <b>{item.get('weaver_name','—')}</b> ·
+                        <div style="font-size:0.82rem;color:var(--grey-soft);">Woven by <b>{item.get('weaver_name','—')}</b> ·
                             {item.get('weaver_cluster','—')}, {item.get('weaver_state','—')}
                         </div>
                     </div>
-                    <div style="text-align:right;flex-shrink:0">
-                        <div style="font-size:0.78rem;color:var(--grey-muted);text-decoration:line-through">
+                    <div style="text-align:right;flex-shrink:0;">
+                        <div style="font-size:0.78rem;color:var(--grey-muted);text-decoration:line-through;">
                             ₹{original:,}
                         </div>
                         <div class="swatch-price">₹{resale:,}</div>
                         <div style="background:rgba(34,197,94,0.2);color:#22c55e;padding:2px 8px;
                             border-radius:999px;font-size:0.72rem;font-weight:700;
-                            display:inline-block;margin-top:2px">
+                            display:inline-block;margin-top:2px;">
                             {discount}% off
                         </div>
                     </div>
@@ -1105,7 +1128,7 @@ def _one_of_a_kind_page():
             """, unsafe_allow_html=True)
 
         with col2:
-            st.markdown('<div style="height:0.6rem"></div>', unsafe_allow_html=True)
+            st.markdown('<div style="height:0.6rem;"></div>', unsafe_allow_html=True)
             if st.button(
                 "Buy Now",
                 key=f"buy_{item.get('order_id','')}_{items.index(item)}",
@@ -1116,7 +1139,7 @@ def _one_of_a_kind_page():
                     "Estimated delivery: 3–5 days."
                 )
 
-    st.markdown('<div style="height:0.2rem"></div>', unsafe_allow_html=True)
+    st.markdown('<div style="height:0.2rem;"></div>', unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
 # Main app — tab switcher
