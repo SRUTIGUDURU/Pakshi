@@ -316,10 +316,10 @@ html, body, [class*="css"] {
 @st.cache_resource(show_spinner=False)
 def _load_agent_class():
  try:
- from agent import PakshiAgent
- return PakshiAgent, None
+  from agent import PakshiAgent
+  return PakshiAgent, None
  except Exception as e:
- return None, str(e)
+  return None, str(e)
 
 @st.cache_data(show_spinner=False)
 def _load_weaver_profiles():
