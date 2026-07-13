@@ -39,70 +39,74 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-/* Root tokens */
+/* ── Root tokens (New Palette) ── */
 :root {
-    --purple-deep:   #3d1a6e;
-    --purple-mid:    #5e2d9e;
-    --purple-light:  #7b3fc4;
-    --orange:        #f5a623;
-    --orange-dark:   #c47d0a;
-    --white:         #ffffff;
-    --grey-soft:     #e8e0f5;
-    --grey-muted:    #b0a8c8;
-    --surface:       #2a0f52;
-    --card:          #3a1870;
+    --bg-deep:       #19031c;  /* Midnight Violet */
+    --bg-surface:    #52104c;  /* Deep Purple */
+    --bg-card:       #8a1c7c;  /* Dark Magenta */
+    --bg-input:      #6a1460;  /* Lighter version of Deep Purple for inputs */
+    --accent-primary:#da4167;  /* Magenta Bloom */
+    --accent-hover:  #b22f72;  /* Hot Rose */
+    --accent-subtle: #e57f9e;  /* Petal Rouge */
+    --text-primary:  #f0bcd4;  /* Soft Blossom */
+    --text-muted:    #bdada6;  /* Silver */
+    --text-white:    #ffffff;
+    --text-dark:     #19031c;
+    --earth:         #899d78;  /* Palm Leaf */
     --success:       #22c55e;
     --danger:        #ef4444;
+    --border:        rgba(240,188,212,0.12);
 }
 
-/* Global */
+/* ── Global ── */
 html, body, [class*="css"] {
     font-family: 'Inter', sans-serif;
-    background-color: var(--purple-deep);
-    color: var(--white);
+    background-color: var(--bg-deep);
+    color: var(--text-primary);
 }
-.main { background-color: var(--purple-deep); }
+.main { background-color: var(--bg-deep); }
 .block-container { padding: 1.5rem 2rem 3rem; max-width: 1100px; }
 
 /* Hide Streamlit chrome */
 #MainMenu, footer, header { visibility: hidden; }
 
-/* Wordmark */
+/* ── Wordmark ── */
 .pakshi-wordmark {
     font-size: 2rem;
     font-weight: 800;
-    color: var(--white);
+    color: var(--text-white);
     letter-spacing: -0.5px;
 }
-.pakshi-wordmark span { color: var(--orange); }
+.pakshi-wordmark span { color: var(--accent-primary); }
 
 .tagline {
     font-size: 0.85rem;
-    color: var(--grey-soft);
+    color: var(--text-muted);
     margin-top: -4px;
     margin-bottom: 1.5rem;
 }
 
-/* Cards */
+/* ── Cards ── */
 .card {
-    background: var(--card);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1.2rem 1.4rem;
     margin-bottom: 1rem;
+    color: var(--text-primary);
 }
 .card-highlight {
-    background: var(--card);
-    border: 1.5px solid var(--orange);
+    background: var(--bg-card);
+    border: 1.5px solid var(--accent-primary);
     border-radius: 12px;
     padding: 1.2rem 1.4rem;
     margin-bottom: 1rem;
 }
 
-/* Swatch card */
+/* ── Swatch card ── */
 .swatch-card {
-    background: var(--surface);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
     border-radius: 10px;
     padding: 1rem;
     height: 100%;
@@ -110,34 +114,35 @@ html, body, [class*="css"] {
 .swatch-price {
     font-size: 1.4rem;
     font-weight: 800;
-    color: var(--orange);
+    color: var(--accent-primary);
 }
 .swatch-label {
     font-size: 0.75rem;
-    color: var(--grey-muted);
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 .swatch-value {
     font-size: 0.9rem;
     font-weight: 500;
-    color: var(--white);
+    color: var(--text-white);
 }
 .tag {
     display: inline-block;
     padding: 2px 8px;
     border-radius: 999px;
-    background: rgba(245,166,35,0.15);
-    color: var(--orange);
+    background: rgba(218,65,103,0.15);
+    color: var(--accent-primary);
     font-size: 0.72rem;
     font-weight: 500;
     margin: 2px 2px 0 0;
 }
+.tag.earth { background: rgba(137,157,120,0.15); color: var(--earth); }
 
-/* Chat bubbles — fixed contrast */
+/* ── Chat bubbles ── */
 .bubble-agent {
-    background: #4a2a7a;  /* lighter purple */
-    border: 1px solid rgba(255,255,255,0.12);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
     border-radius: 12px 12px 12px 2px;
     padding: 0.75rem 1rem;
     margin: 0.4rem 0;
@@ -145,10 +150,10 @@ html, body, [class*="css"] {
     font-size: 0.9rem;
     line-height: 1.55;
     white-space: pre-wrap;
-    color: #ffffff !important;
+    color: var(--text-primary) !important;
 }
 .bubble-user {
-    background: #7b3fc4;  /* brighter purple */
+    background: var(--bg-card);
     border-radius: 12px 12px 2px 12px;
     padding: 0.75rem 1rem;
     margin: 0.4rem 0 0.4rem auto;
@@ -156,10 +161,10 @@ html, body, [class*="css"] {
     font-size: 0.9rem;
     line-height: 1.55;
     text-align: right;
-    color: #ffffff !important;
+    color: var(--text-white) !important;
 }
 
-/* State badge */
+/* ── State badge ── */
 .state-badge {
     display: inline-block;
     padding: 2px 10px;
@@ -171,20 +176,20 @@ html, body, [class*="css"] {
     margin-bottom: 0.6rem;
 }
 .state-active { background: rgba(34,197,94,0.2); color: #22c55e; }
-.state-pending { background: rgba(245,166,35,0.2); color: var(--orange); }
-.state-done { background: rgba(94,45,158,0.4); color: var(--grey-soft); }
+.state-pending { background: rgba(218,65,103,0.2); color: var(--accent-primary); }
+.state-done { background: rgba(139,28,124,0.4); color: var(--text-muted); }
 
-/* Section label */
+/* ── Section label ── */
 .section-label {
     font-size: 0.72rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: var(--orange);
+    color: var(--accent-primary);
     margin-bottom: 0.4rem;
 }
 
-/* Order confirmed banner */
+/* ── Order confirmed banner ── */
 .confirmed-banner {
     background: linear-gradient(135deg, #22c55e22, #22c55e0a);
     border: 1.5px solid #22c55e;
@@ -195,37 +200,37 @@ html, body, [class*="css"] {
 }
 .confirmed-banner h2 { color: #22c55e; margin: 0; font-size: 1.5rem; }
 
-/* Weaver order card */
+/* ── Weaver order card ── */
 .order-card {
-    background: var(--surface);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
     border-radius: 10px;
     padding: 1rem 1.2rem;
     margin-bottom: 0.8rem;
 }
-.order-card.accepted { border-color: #22c55e44; }
-.order-card.declined { border-color: #ef444444; opacity: 0.6; }
+.order-card.accepted { border-color: rgba(34,197,94,0.3); }
+.order-card.declined { border-color: rgba(239,68,68,0.3); opacity: 0.6; }
 
-/* Inputs — fixed visibility */
+/* ── Inputs ── */
 .stTextInput > div > div > input,
 .stTextArea > div > div > textarea {
-    background-color: #4a2a7a !important;
-    color: #ffffff !important;
-    border: 1.5px solid var(--purple-light) !important;
+    background-color: var(--bg-surface) !important;
+    color: var(--text-white) !important;
+    border: 1.5px solid var(--bg-card) !important;
     border-radius: 8px !important;
     font-family: 'Inter', sans-serif !important;
     font-size: 1rem !important;
 }
 .stTextInput > div > div > input:focus,
 .stTextArea > div > div > textarea:focus {
-    border-color: var(--orange) !important;
-    box-shadow: 0 0 0 2px rgba(245,166,35,0.25) !important;
+    border-color: var(--accent-primary) !important;
+    box-shadow: 0 0 0 2px rgba(218,65,103,0.25) !important;
 }
 
-/* Buttons */
+/* ── Buttons ── */
 .stButton > button {
-    background: var(--orange) !important;
-    color: var(--purple-deep) !important;
+    background: var(--accent-primary) !important;
+    color: var(--text-white) !important;
     font-weight: 700 !important;
     border: none !important;
     border-radius: 8px !important;
@@ -237,31 +242,35 @@ html, body, [class*="css"] {
 
 .stButton > button[kind="secondary"] {
     background: transparent !important;
-    color: var(--grey-soft) !important;
-    border: 1.5px solid var(--purple-light) !important;
+    color: var(--text-muted) !important;
+    border: 1.5px solid var(--bg-card) !important;
+}
+.stButton > button[kind="secondary"]:hover {
+    border-color: var(--accent-primary) !important;
+    color: var(--text-white) !important;
 }
 
-/* Divider */
+/* ── Divider ── */
 .pakshi-divider {
     height: 1px;
-    background: rgba(255,255,255,0.08);
+    background: var(--border);
     margin: 1.2rem 0;
 }
 
-/* Agent reasoning box */
+/* ── Agent reasoning box ── */
 .reasoning-box {
-    background: rgba(245,166,35,0.08);
-    border-left: 3px solid var(--orange);
+    background: rgba(218,65,103,0.08);
+    border-left: 3px solid var(--accent-primary);
     border-radius: 0 8px 8px 0;
     padding: 0.75rem 1rem;
     font-size: 0.82rem;
-    color: var(--grey-soft);
+    color: var(--text-muted);
     font-style: italic;
     line-height: 1.6;
     margin: 0.6rem 0;
 }
 
-/* Progress step — fixed contrast */
+/* ── Progress step ── */
 .step-row {
     display: flex;
     align-items: center;
@@ -275,54 +284,82 @@ html, body, [class*="css"] {
     flex-shrink: 0;
 }
 .step-dot.done    { background: #22c55e; }
-.step-dot.active  { background: var(--orange); }
-.step-dot.pending { background: var(--purple-light); opacity: 0.4; }
+.step-dot.active  { background: var(--accent-primary); }
+.step-dot.pending { background: var(--bg-card); opacity: 0.4; }
 .step-row span {
     font-weight: 500;
-    color: #d0c8e8 !important;  /* brighter for readability */
+    color: var(--text-muted) !important;
 }
 .step-row .done-step span { color: #22c55e !important; }
-.step-row .active-step span { color: var(--orange) !important; }
+.step-row .active-step span { color: var(--accent-primary) !important; }
 
-/* Radio overrides */
+/* ── Radio overrides ── */
 .stRadio > div { gap: 0.4rem; }
-.stRadio label { font-size: 0.88rem !important; color: var(--white) !important; }
+.stRadio label { font-size: 0.88rem !important; color: var(--text-primary) !important; }
 
-/* selectbox */
+/* ── Selectbox ── */
 .stSelectbox > div > div {
-    background-color: var(--surface) !important;
-    color: var(--white) !important;
-    border: 1.5px solid var(--purple-light) !important;
+    background-color: var(--bg-surface) !important;
+    color: var(--text-white) !important;
+    border: 1.5px solid var(--bg-card) !important;
     border-radius: 8px !important;
 }
 
-/* Expander (help) */
+/* ── Expander (help) ── */
 .streamlit-expanderHeader {
-    color: var(--orange) !important;
+    color: var(--accent-primary) !important;
     font-weight: 600 !important;
 }
 .streamlit-expanderContent {
-    background: var(--surface) !important;
-    color: var(--white) !important;
+    background: var(--bg-surface) !important;
+    color: var(--text-primary) !important;
     border-radius: 0 0 8px 8px !important;
 }
 
-/* Caption / small text */
+/* ── Caption / small text ── */
 caption, .caption, .stCaption, .stCaptionText {
-    color: var(--grey-soft) !important;
+    color: var(--text-muted) !important;
 }
 
-/* Info / warning / success boxes */
+/* ── Alerts ── */
 .stAlert {
-    background-color: var(--surface) !important;
-    border-color: var(--purple-light) !important;
-    color: var(--white) !important;
+    background-color: var(--bg-surface) !important;
+    border-color: var(--bg-card) !important;
+    color: var(--text-primary) !important;
 }
-.stAlert .stAlertIcon { color: var(--orange) !important; }
+.stAlert .stAlertIcon { color: var(--accent-primary) !important; }
 
-/* Make sure all text is white on dark */
+/* ── Success messages ── */
+.stSuccess {
+    background-color: rgba(34,197,94,0.1) !important;
+    border-color: #22c55e !important;
+    color: #22c55e !important;
+}
+
+/* ── Info messages ── */
+.stInfo {
+    background-color: rgba(218,65,103,0.08) !important;
+    border-color: var(--accent-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* ── Warning messages ── */
+.stWarning {
+    background-color: rgba(218,65,103,0.08) !important;
+    border-color: var(--accent-primary) !important;
+    color: var(--accent-primary) !important;
+}
+
+/* ── Error messages ── */
+.stError {
+    background-color: rgba(239,68,68,0.1) !important;
+    border-color: #ef4444 !important;
+    color: #ef4444 !important;
+}
+
+/* ── All text overrides ── */
 * {
-    color: var(--white) !important;
+    color: var(--text-primary) !important;
 }
 .section-label, .swatch-price, .tag, .swatch-label, .state-badge,
 .pakshi-wordmark, .tagline, .step-row span, .bubble-agent, .bubble-user,
