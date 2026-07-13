@@ -1,0 +1,171 @@
+{
+  "fabrics": [
+    {
+      "id": "cotton",
+      "name": "Cotton",
+      "regional_names": {
+        "hindi": "Suti",
+        "telugu": "Patti",
+        "tamil": "Pruthi",
+        "kannada": "Hatti",
+        "bengali": "Tula"
+      },
+      "sensory_descriptors": [
+        "light", "airy", "breathable", "soft", "comfortable",
+        "casual", "everyday", "cool", "simple", "fresh"
+      ],
+      "occasions": ["casual", "daily_wear", "summer", "college", "work"],
+      "price_range_inr": {
+        "min": 300,
+        "max": 1500
+      },
+      "weave_time_days": {
+        "min": 2,
+        "max": 5
+      },
+      "characteristics": {
+        "drape": "medium",
+        "sheen": "matte",
+        "weight": "light",
+        "texture": "smooth to slightly textured",
+        "transparency": "opaque"
+      },
+      "popular_regions": ["Andhra Pradesh", "Tamil Nadu", "West Bengal", "Maharashtra"],
+      "color_profile": "takes dye well, vibrant colors possible",
+      "care": "machine washable"
+    },
+    {
+      "id": "silk",
+      "name": "Silk",
+      "regional_names": {
+        "hindi": "Resham",
+        "telugu": "Patthu",
+        "tamil": "Patthu",
+        "kannada": "Resme",
+        "bengali": "Resham"
+      },
+      "sensory_descriptors": [
+        "rich", "luxurious", "royal", "elegant", "stiff",
+        "glossy", "shiny", "formal", "grand", "heavy"
+      ],
+      "occasions": ["wedding", "festival", "formal", "ceremony", "reception"],
+      "price_range_inr": {
+        "min": 2000,
+        "max": 15000
+      },
+      "weave_time_days": {
+        "min": 7,
+        "max": 21
+      },
+      "characteristics": {
+        "drape": "structured",
+        "sheen": "high",
+        "weight": "medium to heavy",
+        "texture": "smooth and lustrous",
+        "transparency": "opaque"
+      },
+      "popular_regions": ["Karnataka (Mysore)", "Tamil Nadu (Kanchipuram)", "Andhra Pradesh (Pochampally)", "Varanasi (UP)", "West Bengal (Murshidabad)"],
+      "color_profile": "rich deep colors, zari work possible",
+      "care": "dry clean recommended"
+    },
+    {
+      "id": "cotton_silk",
+      "name": "Cotton-Silk",
+      "regional_names": {
+        "hindi": "Kota Masuria",
+        "telugu": "Patti Suti",
+        "tamil": "Kora Patthu",
+        "kannada": "Ilkal",
+        "bengali": "Tant Resham"
+      },
+      "sensory_descriptors": [
+        "flowy", "semi-formal", "light but rich", "versatile",
+        "breathable yet elegant", "soft sheen", "comfortable formal",
+        "wedding but not heavy", "summer wedding", "festive yet light"
+      ],
+      "occasions": ["wedding", "festival", "semi_formal", "summer_wedding", "casual_formal"],
+      "price_range_inr": {
+        "min": 800,
+        "max": 4000
+      },
+      "weave_time_days": {
+        "min": 4,
+        "max": 10
+      },
+      "characteristics": {
+        "drape": "fluid",
+        "sheen": "medium",
+        "weight": "light to medium",
+        "texture": "smooth with slight texture",
+        "transparency": "semi-opaque"
+      },
+      "popular_regions": ["Rajasthan (Kota)", "Karnataka (Ilkal)", "Andhra Pradesh", "Odisha"],
+      "color_profile": "pastel and medium tones work best, subtle zari possible",
+      "care": "gentle hand wash or dry clean"
+    }
+  ],
+  "sensory_to_fabric_mapping": {
+    "light": ["cotton", "cotton_silk"],
+    "airy": ["cotton", "cotton_silk"],
+    "breathable": ["cotton", "cotton_silk"],
+    "soft": ["cotton", "cotton_silk"],
+    "flowy": ["cotton_silk"],
+    "rich": ["silk", "cotton_silk"],
+    "royal": ["silk"],
+    "luxurious": ["silk"],
+    "stiff": ["silk"],
+    "glossy": ["silk"],
+    "shiny": ["silk"],
+    "elegant": ["silk", "cotton_silk"],
+    "formal": ["silk", "cotton_silk"],
+    "grand": ["silk"],
+    "casual": ["cotton"],
+    "everyday": ["cotton"],
+    "versatile": ["cotton_silk"],
+    "comfortable": ["cotton", "cotton_silk"],
+    "summer": ["cotton", "cotton_silk"],
+    "wedding": ["silk", "cotton_silk"],
+    "festival": ["silk", "cotton_silk"],
+    "cool": ["cotton"],
+    "heavy": ["silk"],
+    "semi-formal": ["cotton_silk"]
+  },
+  "occasion_to_fabric_mapping": {
+    "casual": ["cotton"],
+    "daily_wear": ["cotton"],
+    "work": ["cotton", "cotton_silk"],
+    "college": ["cotton"],
+    "summer": ["cotton", "cotton_silk"],
+    "wedding": ["silk", "cotton_silk"],
+    "festival": ["silk", "cotton_silk"],
+    "formal": ["silk", "cotton_silk"],
+    "ceremony": ["silk"],
+    "reception": ["silk", "cotton_silk"],
+    "summer_wedding": ["cotton_silk"],
+    "semi_formal": ["cotton_silk"],
+    "casual_formal": ["cotton_silk"]
+  },
+  "budget_fallback_rules": [
+    {
+      "requested_fabric": "silk",
+      "budget_too_low_below": 2000,
+      "fallback_fabric": "cotton_silk",
+      "fallback_reason": "Cotton-Silk gives similar drape and sheen at lower cost",
+      "message": "Pure silk starts at ₹2000. Cotton-Silk gives the same elegant drape at ₹800-4000."
+    },
+    {
+      "requested_fabric": "cotton_silk",
+      "budget_too_low_below": 800,
+      "fallback_fabric": "cotton",
+      "fallback_reason": "Cotton is lighter and more affordable while remaining breathable",
+      "message": "Cotton-Silk starts at ₹800. Premium Cotton gives a similar airy feel at ₹300-1500."
+    },
+    {
+      "requested_fabric": "cotton",
+      "budget_too_low_below": 300,
+      "fallback_fabric": null,
+      "fallback_reason": "No lower alternative available",
+      "message": "Cotton starts at ₹300. We'll notify you when a weaver matches your budget."
+    }
+  ]
+}
