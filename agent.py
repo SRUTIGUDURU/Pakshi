@@ -4,7 +4,7 @@ Pakshi — Agentic Orchestration Engine
 This is the brain of Pakshi. It is genuinely agentic because it:
 
   1. PARSES    — converts raw buyer text into structured intent
-  2. RETRIEVES — queries ChromaDB RAG for matching swatches
+  2. RETRIEVES — queries ChromaDB RAG for matching swatches, with optional location filtering
   3. REASONS   — decides what to do based on what it finds
   4. PROPOSES  — offers alternatives when budget/fabric don't match
   5. WAITS     — holds state and waits for buyer confirmation
@@ -22,6 +22,7 @@ The agent never skips states. Every transition is logged.
 import json
 import time
 import uuid
+import re
 from enum import Enum
 from pathlib import Path
 from dataclasses import dataclass, field, asdict
@@ -131,6 +132,59 @@ _WEAVER_PROFILES = _load_weaver_profiles()
 
 
 # ---------------------------------------------------------------------------
+# Location extraction (new)
+# Maps known weaving clusters / states to canonical names
+# ---------------------------------------------------------------------------
+_LOCATION_ALIASES: dict[str, str] = {
+    # Clusters
+    "kanchipuram": "Kanchipuram",
+    "kancheepuram": "Kanchipuram",
+    "pochampally": "Pochampally",
+    "pochampalli": "Pochampally",
+    "banarasi": "Varanasi",
+    "varanasi": "Varanasi",
+    "ilkal": "Ilkal",
+    "kota": "Kota",
+    "chanderi": "Chanderi",
+    "maheshwar": "Maheshwar",
+    "maheshwari": "Maheshwar",
+    "dharmavaram": "Dharmavaram",
+    "molakalmuru": "Molakalmuru",
+    "mysore": "Mysore",
+    "sambalpur": "Sambalpuri",
+    "sambalpuri": "Sambalpuri",
+    "nuapatna": "Nuapatna",
+    "bagru": "Bagru",
+    "sanganer": "Sanganer",
+    "kutch": "Kutch",
+    "kerala": "Kerala",
+    "tamilnadu": "Tamil Nadu",
+    "tamil nadu": "Tamil Nadu",
+    "andhra": "Andhra Pradesh",
+    "andhra pradesh": "Andhra Pradesh",
+    "telangana": "Telangana",
+    "karnataka": "Karnataka",
+    "rajasthan": "Rajasthan",
+    "west bengal": "West Bengal",
+    "bengal": "West Bengal",
+    "odisha": "Odisha",
+    "orissa": "Odisha",
+    "gujarat": "Gujarat",
+    "maharashtra": "Maharashtra",
+    "bihar": "Bihar",
+    "uttar pradesh": "Uttar Pradesh",
+}
+
+def _extract_location(text: str) -> str | None:
+    """Extract a location (cluster or state) from buyer text."""
+    text_lower = text.lower()
+    for alias, canonical in _LOCATION_ALIASES.items():
+        if re.search(r'\b' + re.escape(alias) + r'\b', text_lower):
+            return canonical
+    return None
+
+
+# ---------------------------------------------------------------------------
 # Weaver ranking logic
 # ---------------------------------------------------------------------------
 
@@ -199,10 +253,11 @@ def _rank_weavers(
 # ---------------------------------------------------------------------------
 
 def _format_swatch(i: int, s: SwatchOption) -> str:
+    location = f"{s.weaver_cluster}, {s.weaver_state}" if s.weaver_cluster else s.weaver_state
     return (
         f"  [{i}] {s.weave_style} — {s.color}\n"
         f"      ₹{s.price_inr} | {s.delivery_days} days delivery\n"
-        f"      Weaver: {s.weaver_name}, {s.weaver_cluster}, {s.weaver_state} "
+        f"      Weaver: {s.weaver_name}, {location} "
         f"⭐{s.weaver_rating}\n"
         f"      Feel: {', '.join(s.sensory_tags[:3])}"
     )
@@ -313,6 +368,11 @@ class PakshiAgent:
         If too vague, ask the most important missing question.
         """
         intent = parse_intent(user_input)
+        # Enhance intent with location
+        location = _extract_location(user_input)
+        if location:
+            # Store location in the intent for later use in retrieval
+            intent.location = location  # we'll add this field dynamically
         self.session.intent = intent
 
         # Too vague — ask follow-up
@@ -341,11 +401,16 @@ class PakshiAgent:
 
     def _do_retrieval(self) -> dict:
         """
-        Query ChromaDB RAG with current intent.
-        Handle match, fallback, or no_match.
+        Query ChromaDB RAG with current intent, passing location filter.
         """
         intent = self.session.intent
-        result = retrieve_swatches(intent.to_dict())
+        # Convert IntentResult to dict and add location if present
+        intent_dict = intent.to_dict() if hasattr(intent, 'to_dict') else intent.__dict__
+        # Add location key if we extracted one
+        if hasattr(intent, 'location') and intent.location:
+            intent_dict['location'] = intent.location
+
+        result = retrieve_swatches(intent_dict)
         self.session.retrieval_result = result
 
         if result["status"] == "match":
@@ -375,9 +440,10 @@ class PakshiAgent:
             budget_line = (
                 f"₹{intent.budget}" if intent.budget else "your budget"
             )
+            location_info = f" from {intent.location}" if hasattr(intent, 'location') and intent.location else ""
             msg = (
                 f"Here are {len(options)} swatches that match your intent "
-                f"within {budget_line}:\n\n"
+                f"within {budget_line}{location_info}:\n\n"
                 f"{swatch_lines}\n\n"
                 f"Reply with 1, 2, or 3 to select your preferred swatch. "
                 f"Your expectation will be locked before production begins."
@@ -460,7 +526,7 @@ class PakshiAgent:
         selected = options[selection]
         self.session.order = Order(
             order_id     = f"PKS-{uuid.uuid4().hex[:6].upper()}",
-            buyer_intent = self.session.intent.to_dict(),
+            buyer_intent = self.session.intent.to_dict() if hasattr(self.session.intent, 'to_dict') else self.session.intent.__dict__,
             selected_swatch = selected,
         )
         self.session.state = AgentState.SWATCH_SELECTED
@@ -704,5 +770,15 @@ if __name__ == "__main__":
         [
             "Pure Banarasi silk, ₹500, grand, heavy",
             "no",   # declines fallback
+        ]
+    )
+
+    # Scenario 6: Location filtering — "Kanchipuram silk saree"
+    _run_scenario(
+        "Location Filtering — Kanchipuram",
+        [
+            "Kanchipuram silk saree for wedding, under ₹5000",
+            "1",
+            "confirm",
         ]
     )
