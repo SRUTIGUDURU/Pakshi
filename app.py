@@ -6,7 +6,7 @@ Weaver : see incoming orders -> accept/decline -> upload progress photo
 OOAK   : rejected pieces listed at wholesale price
 
 Run:
-    pip install streamlit chromadb scikit-learn edge-tts edge-stt
+    pip install streamlit chromadb scikit-learn edge-tts SpeechRecognition
     streamlit run app.py
 
 Same-directory files required:
@@ -226,16 +226,11 @@ _EDGE_TTS_VOICES = {
 
 
 def _tts_edge(text: str, lang: str = "te") -> bytes | None:
-    """
-    Convert text to speech using Edge TTS (Microsoft Edge voices).
-    Completely free, no API key required.
-    """
+    """Convert text to speech using Edge TTS (Microsoft Edge voices)."""
     if not text:
         return None
 
     voice = _EDGE_TTS_VOICES.get(lang, "hi-IN-MadhurNeural")
-
-    # Trim text to avoid issues with very long text
     spoken = ". ".join(text.split(". ")[:2]).strip()
     if not spoken:
         return None
@@ -250,17 +245,14 @@ def _tts_edge(text: str, lang: str = "te") -> bytes | None:
             await communicate.save(tmp_path)
             return tmp_path
 
-        # Run the async function
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         tmp_path = loop.run_until_complete(generate())
         loop.close()
 
-        # Read the file
         with open(tmp_path, "rb") as f:
             data = f.read()
 
-        # Clean up
         try:
             os.unlink(tmp_path)
         except OSError:
@@ -274,7 +266,6 @@ def _tts_edge(text: str, lang: str = "te") -> bytes | None:
 
 
 def _tts_bytes(text: str, lang: str = "en") -> bytes | None:
-    """Main TTS entry point — uses Edge TTS."""
     if not text:
         return None
     return _tts_edge(text, lang)
@@ -294,34 +285,15 @@ def _autoplay_audio(audio_bytes: bytes, fmt: str = "mp3") -> None:
 # Edge STT (Speech-to-Text) — Completely Free, No API Key
 # ---------------------------------------------------------------------------
 def _stt_edge(audio_bytes: bytes) -> tuple:
-    """
-    Transcribe audio using Edge STT (Microsoft Azure Speech SDK free tier).
-    Completely free, no API key required for basic usage.
-    """
+    """Transcribe audio using Edge STT (Microsoft Azure Speech SDK free tier)."""
     if len(audio_bytes) < 8_000:
         return None, "Recording too short. Speak clearly for at least 2 seconds."
 
-    # Map of language codes for Edge STT
-    lang_map = {
-        "te": "te-IN", "ta": "ta-IN", "kn": "kn-IN",
-        "hi": "hi-IN", "bn": "bn-IN", "or": "or-IN",
-        "en": "en-IN"
-    }
-
-    # Try to detect language from the audio (simplified)
-    # For Edge STT, we need to try each language until one works
-    # We'll default to auto-detect with the built-in SpeechRecognizer
-
     try:
-        # Edge STT is available through the Edge browser's Speech Recognition API
-        # Since we're in a server environment, we use a workaround:
-        # We'll use the speech_recognition library with Azure's free tier
-        # OR we can use the built-in whisper as fallback
         import speech_recognition as sr
 
         recognizer = sr.Recognizer()
 
-        # Save audio to a temporary WAV file
         with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
             tmp.write(audio_bytes)
             tmp_path = tmp.name
@@ -329,13 +301,9 @@ def _stt_edge(audio_bytes: bytes) -> tuple:
         with sr.AudioFile(tmp_path) as source:
             audio = recognizer.record(source)
 
-        # Try to recognize with Google Web Speech API (free, no key)
-        # This works well for Indian languages
         try:
-            # Try with language hints for Indian languages
-            for lang_code in [lang_map.get("hi", "hi-IN"), lang_map.get("te", "te-IN"),
-                              lang_map.get("ta", "ta-IN"), lang_map.get("kn", "kn-IN"),
-                              lang_map.get("bn", "bn-IN"), "en-IN"]:
+            # Try with language hints
+            for lang_code in ["hi-IN", "te-IN", "ta-IN", "kn-IN", "bn-IN", "or-IN", "en-IN"]:
                 try:
                     text = recognizer.recognize_google(audio, language=lang_code)
                     if text and len(text) > 2:
@@ -343,7 +311,6 @@ def _stt_edge(audio_bytes: bytes) -> tuple:
                 except:
                     continue
 
-            # If all language-specific attempts fail, try default
             text = recognizer.recognize_google(audio)
             if text and len(text) > 2:
                 return text, None
@@ -353,9 +320,7 @@ def _stt_edge(audio_bytes: bytes) -> tuple:
         except sr.UnknownValueError:
             return None, "Could not understand audio. Please try again."
         except sr.RequestError as e:
-            # Fallback: If Google STT fails, try to return a useful error
-            print(f"Google STT error: {e}")
-            return None, "Speech recognition service unavailable. Please type your request."
+            return None, f"Speech recognition service unavailable: {e}"
         finally:
             try:
                 os.unlink(tmp_path)
@@ -363,44 +328,14 @@ def _stt_edge(audio_bytes: bytes) -> tuple:
                 pass
 
     except ImportError:
-        # If speech_recognition is not installed, use whisper as fallback
-        try:
-            import whisper
-
-            @st.cache_resource(show_spinner=False)
-            def _load_whisper():
-                return whisper.load_model("base")
-
-            model = _load_whisper()
-
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
-                tmp.write(audio_bytes)
-                tmp_path = tmp.name
-
-            result = model.transcribe(tmp_path, language="hi", fp16=False)
-
-            try:
-                os.unlink(tmp_path)
-            except OSError:
-                pass
-
-            text = result.get("text", "").strip()
-            if text and len(text) > 2:
-                return text, None
-            return None, "Could not understand. Please try again."
-
-        except Exception as e:
-            return None, f"Speech recognition unavailable: {e}"
+        return None, "SpeechRecognition library not installed. Please type your request."
 
     except Exception as e:
         return None, f"Speech recognition error: {e}"
 
 
 def _transcribe_audio(audio_file) -> tuple:
-    """
-    Transcribe a Streamlit audio_input file object.
-    Returns (transcribed_text, error_message)
-    """
+    """Transcribe a Streamlit audio_input file object."""
     buf = audio_file.getbuffer()
     return _stt_edge(buf)
 
@@ -422,7 +357,6 @@ def _init_buyer_state() -> None:
         "one_of_a_kind":    [],
         "buyer_orders":     [],
         "agent_thinking":   False,
-        "audio_processed":  False,
         "prefill_text":     "",
     }
     for k, v in defaults.items():
@@ -529,20 +463,24 @@ def _step_indicator(current: str) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Swatch card
+# Swatch card with location display
 # ---------------------------------------------------------------------------
 def _swatch_card(swatch: dict) -> None:
     tags = "".join(
         f'<span class="tag">{t}</span>'
         for t in swatch.get("sensory_tags", [])[:3]
     )
+    location = swatch.get("weaver_state", "")
+    if swatch.get("weaver_cluster"):
+        location = f"{swatch.get('weaver_cluster')}, {location}" if location else swatch.get('weaver_cluster')
+    
     st.markdown(f"""
     <div class="swatch-card">
         <div style="font-weight:700;font-size:0.95rem;color:var(--text-white);margin-bottom:2px;">
             {swatch.get("weave_style","—")}
         </div>
         <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:8px;">
-            {swatch.get("color","—")}
+            {swatch.get("color","—")} · <span style="color:var(--accent);">{location}</span>
         </div>
         <div class="swatch-price">Rs.{swatch.get("price_inr","?")}</div>
         <div style="margin:8px 0">{tags}</div>
@@ -550,7 +488,7 @@ def _swatch_card(swatch: dict) -> None:
         <div class="swatch-label">Weaver</div>
         <div class="swatch-value">{swatch.get("weaver_name","—")}</div>
         <div style="font-size:0.78rem;color:var(--text-muted);">
-            {swatch.get("weaver_cluster","")}, {swatch.get("weaver_state","")}
+            {location}
         </div>
         <div style="margin-top:4px;font-size:0.82rem;color:var(--text-primary);">
             Rating: {swatch.get("weaver_rating","?")} &nbsp;·&nbsp;
@@ -638,20 +576,20 @@ def _buyer_page() -> None:
     with st.expander("How to use (Buyer)"):
         st.markdown("""
 **Step 1 — Speak or type your request.**
-Describe what you want in your own words, in English, Hindi, Telugu, Kannada, Odia, Bengali or Tamil.
-Example: *"Light saree for summer wedding, Rs.1500, mint green."*
+Describe what you want — fabric, color, region, occasion, budget.
+Example: *"Kanchipuram silk saree for wedding, under ₹5000"*
 
 **Step 2 — Review swatches.**
-The agent shows up to 3 matching handloom swatches with fabric, weave style, colour, price and delivery estimate.
+The agent shows matching handloom swatches from weavers in your preferred region.
 
 **Step 3 — Select a swatch.**
-Type 1, 2, or 3 (or click Select) to lock your choice before production begins.
+Say "one", "two", or "three" — or click Select.
 
 **Step 4 — Confirm.**
-The agent autonomously picks the best weaver by proximity and delivery history. Order placed on Meesho.
+The agent picks the best weaver. Order placed on Meesho.
 
 **Step 5 — Reject if needed.**
-If the final piece does not meet your expectation, click Reject Piece. It moves to One of a Kind resale at wholesale price.
+If the piece doesn't meet your expectation, click Reject Piece. It moves to One of a Kind resale.
         """)
 
     if st.session_state.get("agent_thinking"):
@@ -707,7 +645,7 @@ If the final piece does not meet your expectation, click Reject Piece. It moves 
             for i, sw in enumerate(swatches[:3]):
                 _swatch_card(sw)
                 if st.session_state["current_state"] == "retrieved":
-                    if st.button(f"Select Swatch {i + 1}", key=f"sel_{i}"):
+                    if st.button(f"Select Swatch {i + 1}", key=f"sel_{i}", use_container_width=True):
                         _send(str(i + 1))
                         st.rerun()
 
@@ -715,6 +653,7 @@ If the final piece does not meet your expectation, click Reject Piece. It moves 
         if order and st.session_state["current_state"] == "confirmed":
             sw = order.get("selected_swatch") or {}
             wv = order.get("selected_weaver")  or {}
+            location = wv.get("weaver_cluster", "") or wv.get("weaver_state", "")
             st.markdown(f"""
             <div class="confirmed-banner">
                 <h2>Order Confirmed</h2>
@@ -722,12 +661,13 @@ If the final piece does not meet your expectation, click Reject Piece. It moves 
                 <div style="margin-top:12px;text-align:left;">
                     <div class="swatch-label">Fabric</div>
                     <div class="swatch-value">{sw.get("weave_style","—")} · {sw.get("color","—")}</div>
+                    <div style="font-size:0.78rem;color:var(--text-muted);">Woven in {location}</div>
                     <div class="swatch-price" style="margin:6px 0;">Rs.{sw.get("price_inr","?")}</div>
                     <div class="divider"></div>
                     <div class="swatch-label">Weaver (agent-selected)</div>
                     <div class="swatch-value">{wv.get("weaver_name","—")}</div>
                     <div style="font-size:0.78rem;color:var(--text-muted);">
-                        {wv.get("weaver_cluster","")}, {wv.get("weaver_state","")} ·
+                        {location} ·
                         Rating: {wv.get("weaver_rating","?")} · {wv.get("delivery_days","?")} days
                     </div>
                 </div>
@@ -813,7 +753,6 @@ If the final piece does not meet your expectation, click Reject Piece. It moves 
                 st.session_state["one_of_a_kind"] = ooak
                 st.session_state["buyer_orders"]  = bords
                 st.session_state["app_loaded"]    = True
-                st.session_state["audio_processed"] = False
                 st.rerun()
 
         else:
@@ -821,39 +760,46 @@ If the final piece does not meet your expectation, click Reject Piece. It moves 
             if cur == "greeting" and not st.session_state["history"]:
                 _send("hi"); st.rerun()
 
-            # ── Voice input ──
-            if not st.session_state.get("audio_processed", False):
-                st.markdown('<div class="section-label">Speak your request</div>', unsafe_allow_html=True)
-                st.caption("Supports: English, Hindi, Telugu, Tamil, Kannada, Bengali, Odia. Speak for 2-3 seconds.")
+            # ── Voice input (ALWAYS VISIBLE, NEVER DISABLED) ──
+            st.markdown('<div class="section-label">Speak your request</div>', unsafe_allow_html=True)
+            st.caption("Supports: English, Hindi, Telugu, Tamil, Kannada, Bengali, Odia. Speak for 2-3 seconds.")
 
-                audio_file = st.audio_input(
-                    "Record your fabric request",
-                    label_visibility="collapsed",
-                    key="pakshi_audio",
-                )
+            audio_file = st.audio_input(
+                "Record your fabric request (or say 'one', 'two', 'three' to select)",
+                label_visibility="collapsed",
+                key="pakshi_audio",
+            )
 
-                if audio_file is not None:
-                    st.session_state["audio_processed"] = True
+            if audio_file is not None:
+                with st.spinner("Transcribing..."):
+                    text, err = _transcribe_audio(audio_file)
 
-                    with st.spinner("Transcribing..."):
-                        text, err = _transcribe_audio(audio_file)
-
-                    if err:
-                        st.warning(err)
-                        st.session_state["audio_processed"] = False
+                if err:
+                    st.warning(err)
+                else:
+                    # Check if user said a number word (voice selection)
+                    number_map = {
+                        "one": "1", "two": "2", "three": "3",
+                        "first": "1", "second": "2", "third": "3",
+                        "ona": "1", "rendu": "2", "moodu": "3",      # Telugu
+                        "ondru": "1", "irandu": "2", "moondru": "3", # Tamil
+                        "ondu": "1", "eradu": "2", "mooru": "3",     # Kannada
+                        "ek": "1", "do": "2", "teen": "3",           # Hindi
+                    }
+                    text_lower = text.lower().strip()
+                    if text_lower in number_map:
+                        st.success(f'Heard: "{text}" → Selecting {number_map[text_lower]}')
+                        _send(number_map[text_lower])
                     else:
                         st.success(f'Heard: "{text}"')
                         _send(text)
-                        st.session_state["audio_processed"] = True
-                        st.rerun()
-            else:
-                st.info("🎤 Voice request received. Type **1**, **2**, or **3** to select a swatch, or type a new message below.")
+                    st.rerun()
 
             # ── Text input ──
             st.markdown('<div class="section-label" style="margin-top:0.8rem;">Or type</div>', unsafe_allow_html=True)
 
             placeholders = {
-                "collecting": "e.g. Light saree for summer wedding, Rs.1500, mint green...",
+                "collecting": "e.g. Kanchipuram silk saree for wedding, under ₹5000",
                 "retrieved":  "Type 1, 2, or 3 to select a swatch...",
             }
             prefill    = st.session_state.pop("prefill_text", "")
@@ -866,18 +812,17 @@ If the final piece does not meet your expectation, click Reject Piece. It moves 
             )
             if st.button("Send", key="send_btn") and user_input.strip():
                 _send(user_input.strip())
-                st.session_state["audio_processed"] = False
                 st.rerun()
 
-            # Example chips
+            # Example chips — updated to show location-based queries
             if cur in ("greeting", "collecting") and len(st.session_state["history"]) <= 1:
                 st.markdown('<div style="margin-top:0.6rem;"></div>', unsafe_allow_html=True)
                 st.markdown('<div class="section-label">Try saying...</div>', unsafe_allow_html=True)
                 examples = [
-                    "Light saree for summer wedding, Rs.1500",
-                    "Shaadi ke liye flowy cotton, around Rs.2000",
-                    "Something royal for reception, deep red silk, Rs.8000",
-                    "Breathable office saree, Rs.700, navy blue",
+                    "Kanchipuram silk saree for wedding, ₹5000",
+                    "Pochampally cotton saree, casual",
+                    "Banarasi saree for reception, under ₹10000",
+                    "Light cotton saree for office, ₹700",
                 ]
                 cols = st.columns(2)
                 for i, ex in enumerate(examples):
@@ -901,13 +846,13 @@ def _weaver_page() -> None:
 Use the dropdown to log in. Your cluster, speciality, rating and orders appear alongside.
 
 **Step 2 — Review pending orders.**
-New Pakshi agent broadcasts appear under Pending, showing fabric, colour, occasion, buyer description, price and deadline.
+New Pakshi agent broadcasts appear under Pending.
 
 **Step 3 — Accept or decline.**
-Accept to start production. Decline if you cannot fulfil it — the agent finds another weaver.
+Accept to start production. Decline if you cannot fulfil it.
 
 **Step 4 — Upload a progress photo.**
-Once weaving starts, upload a mid-production photo. It is shared with the buyer for preview.
+Once weaving starts, upload a mid-production photo. It is shared with the buyer.
 
 **Step 5 — Simulate a broadcast.**
 Click Simulate New Order Broadcast to demo incoming orders in real time.
@@ -964,6 +909,7 @@ Click Simulate New Order Broadcast to demo incoming orders in real time.
             if idx is None:
                 continue
 
+            location = order.get("weaver_location", "")
             feel_tags = "".join(
                 f'<span class="tag">{t.strip()}</span>'
                 for t in str(order.get("buyer_feel","")).split(",")[:4] if t.strip()
@@ -977,6 +923,7 @@ Click Simulate New Order Broadcast to demo incoming orders in real time.
                         </div>
                         <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px;">
                             Order #{order.get("order_id","—")} · {order.get("occasion","—")}
+                            {f' · <span style="color:var(--accent);">{location}</span>' if location else ''}
                         </div>
                     </div>
                     <div class="swatch-price">Rs.{order.get("price",0):,}</div>
@@ -999,9 +946,7 @@ Click Simulate New Order Broadcast to demo incoming orders in real time.
                         f"New order: {order.get('weave_style','')}, {order.get('color','')}, "
                         f"Rs.{order.get('price',0)}, due {order.get('delivery_by','')}"
                     )
-                    # Use Edge TTS with appropriate language
-                    # Detect language from buyer note or default to Telugu
-                    lang = "te"  # default
+                    lang = "te"
                     note = order.get("buyer_note", "")
                     if "tamil" in note.lower() or "ta" in note.lower():
                         lang = "ta"
@@ -1101,6 +1046,7 @@ Click Simulate New Order Broadcast to demo incoming orders in real time.
             "status":      "pending",
             "photo":       None,
             "buyer_note":  "New broadcast from Pakshi agent",
+            "weaver_location": profile.get("cluster", ""),
         })
         st.success("New order broadcast received!")
         st.rerun()
@@ -1136,6 +1082,7 @@ def _ooak_page() -> None:
         resale   = item.get("resale_price",   0)
         discount = int((1 - resale / orig) * 100) if orig > 0 else 0
         tags     = "".join(f'<span class="tag">{t}</span>' for t in item.get("sensory_tags",[])[:3])
+        location = item.get("weaver_cluster", "") or item.get("weaver_state", "")
 
         col1, col2 = st.columns([4, 1], gap="small")
         with col1:
@@ -1148,6 +1095,7 @@ def _ooak_page() -> None:
                         </div>
                         <div style="font-size:0.78rem;color:var(--text-muted);margin-top:3px;">
                             Order #{item.get("order_id","—")} · {item.get("reason","—")}
+                            {f' · <span style="color:var(--accent);">{location}</span>' if location else ''}
                         </div>
                         <div style="margin:8px 0;">
                             {tags}
@@ -1157,7 +1105,7 @@ def _ooak_page() -> None:
                         </div>
                         <div style="font-size:0.82rem;color:var(--text-primary);">
                             Woven by <b>{item.get("weaver_name","—")}</b> ·
-                            {item.get("weaver_cluster","—")}, {item.get("weaver_state","—")}
+                            {location}
                         </div>
                     </div>
                     <div style="text-align:right;flex-shrink:0;">
