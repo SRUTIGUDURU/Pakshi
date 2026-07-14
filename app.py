@@ -992,19 +992,11 @@ It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss
                                     tmp.write(audio_file.getbuffer())
                                     tmp_path = tmp.name
 
-                                # --- Validate audio before Whisper ---
-                                if not _audio_contains_sound(tmp_path):
-                                    if not _fix_wav_header(tmp_path):
-                                        st.warning(
-                                            "🔇 No audible sound detected. "
-                                            "Please hold the mic closer, speak clearly for 2-3 seconds, "
-                                            "or type your request below."
-                                        )
-                                        st.session_state["last_audio_hash"] = None
-                                        st.rerun()
-                                        return
+                                # --- Audio validation removed ---
+                                # Pratilekha/Whisper handles silence internally.
+                                # The custom validator caused false negatives on Streamlit Cloud.
 
-                                # --- Now safe to call Whisper ---
+                                # --- Call model ---
                                 result = whisper_model.transcribe(
                                     tmp_path,
                                     language=_WHISPER_LANGUAGE,
@@ -1083,15 +1075,23 @@ It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss
                     unsafe_allow_html=True,
                 )
                 st.markdown(
-                    '<div class="section-label">Try saying...</div>',
+                    f'<div class="section-label">{_t("Try saying...", "यह कहकर देखें...")}</div>',
                     unsafe_allow_html=True,
                 )
-                examples = [
-                    "Light saree for summer wedding, Rs.1500",
-                    "Shaadi ke liye flowy cotton, around Rs.2000",
-                    "Something royal for reception, deep red silk, Rs.8000",
-                    "Breathable office saree, Rs.700, navy blue",
-                ]
+                examples = _t(
+                    [
+                        "Light saree for summer wedding, Rs.1500",
+                        "Shaadi ke liye flowy cotton, around Rs.2000",
+                        "Something royal for reception, deep red silk, Rs.8000",
+                        "Breathable office saree, Rs.700, navy blue",
+                    ],
+                    [
+                        "गर्मियों की शादी के लिए हल्की साड़ी, Rs.1500",
+                        "शादी के लिए फ्लोई कॉटन, लगभग Rs.2000",
+                        "रिसेप्शन के लिए रॉयल साड़ी, गहरा लाल सिल्क, Rs.8000",
+                        "ऑफिस के लिए सांस लेने वाली साड़ी, Rs.700",
+                    ],
+                )
                 cols = st.columns(2)
                 for i, ex in enumerate(examples):
                     with cols[i % 2]:
