@@ -1,32 +1,31 @@
 """
 Pakshi - Full Streamlit App
 ============================
-Buyer side  : describe your saree in natural language -> agent finds swatches -> confirm order
-Weaver side : see incoming orders -> accept/decline -> upload progress photo
+Buyer  : describe your saree -> agent finds swatches -> confirm order
+Weaver : see incoming orders -> accept/decline -> upload progress photo
+OOAK   : rejected pieces listed at wholesale price
 
-Run with:
+Run:
     pip install streamlit chromadb scikit-learn openai-whisper gtts
     streamlit run app.py
 
-All backend files must live in the same directory:
-    intent_parser.py, agent.py, retrieval.py, setup_chromadb.py,
+Same-directory files required:
+    agent.py, intent_parser.py, retrieval.py, setup_chromadb.py,
     fabric_ontology.json, fabric_swatches.json, weaver_profiles.json
 """
 
+import base64
 import json
 import os
-import time
 import random
 import tempfile
-import base64
-import wave
-import struct
+import time
 from pathlib import Path
 
 import streamlit as st
 
 # ---------------------------------------------------------------------------
-# Page config -- must be the very first Streamlit call
+# Page config (must be first Streamlit call)
 # ---------------------------------------------------------------------------
 st.set_page_config(
     page_title="Pakshi",
@@ -46,15 +45,11 @@ st.markdown("""
     --bg-deep:        #19031c;
     --bg-surface:     #52104c;
     --bg-card:        #8a1c7c;
-    --bg-input:       #6a1460;
-    --accent-primary: #da4167;
+    --accent:         #da4167;
     --accent-hover:   #b22f72;
-    --accent-subtle:  #e57f9e;
     --text-primary:   #f0bcd4;
     --text-muted:     #bdada6;
     --text-white:     #ffffff;
-    --text-dark:      #19031c;
-    --earth:          #899d78;
     --success:        #22c55e;
     --danger:         #ef4444;
     --border:         rgba(240,188,212,0.12);
@@ -65,29 +60,19 @@ html, body, [class*="css"] {
     background-color: var(--bg-deep);
     color: var(--text-primary);
 }
-.main { background-color: var(--bg-deep); }
+.main  { background-color: var(--bg-deep); }
 .block-container { padding: 1.5rem 2rem 3rem; max-width: 1100px; }
 #MainMenu, footer, header { visibility: hidden; }
 
-.pakshi-wordmark {
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--text-white);
-    letter-spacing: -0.5px;
+.wordmark {
+    font-size: 2rem; font-weight: 800;
+    color: var(--text-white); letter-spacing: -0.5px;
 }
-.pakshi-wordmark span { color: var(--accent-primary); }
-
-.tagline {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    margin-top: -4px;
-    margin-bottom: 1.5rem;
-}
+.wordmark span { color: var(--accent); }
+.tagline { font-size: 0.85rem; color: var(--text-muted); margin-top: -4px; margin-bottom: 1.5rem; }
 
 .card {
     background: rgba(58,24,112,0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1.2rem 1.4rem;
@@ -95,122 +80,76 @@ html, body, [class*="css"] {
     color: var(--text-primary);
     transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
-.card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-}
-.card-highlight {
-    background: rgba(58,24,112,0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1.5px solid var(--accent-primary);
-    border-radius: 12px;
-    padding: 1.2rem 1.4rem;
-    margin-bottom: 1rem;
-    transition: transform 0.18s ease;
-}
-.card-highlight:hover { transform: translateY(-2px); }
+.card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
 
 .swatch-card {
     background: var(--bg-surface);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1rem;
-    height: 100%;
+    border-radius: 10px; padding: 1rem; height: 100%;
 }
-.swatch-price {
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: var(--accent-primary);
-}
-.swatch-label {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-.swatch-value {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--text-white);
-}
+.swatch-price { font-size: 1.4rem; font-weight: 800; color: var(--accent); }
+.swatch-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.swatch-value { font-size: 0.9rem; font-weight: 500; color: var(--text-white); }
 .tag {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 999px;
-    background: rgba(218,65,103,0.15);
-    color: var(--accent-primary);
-    font-size: 0.72rem;
-    font-weight: 500;
-    margin: 2px 2px 0 0;
+    display: inline-block; padding: 2px 8px; border-radius: 999px;
+    background: rgba(218,65,103,0.15); color: var(--accent);
+    font-size: 0.72rem; font-weight: 500; margin: 2px 2px 0 0;
 }
 
 .bubble-agent {
-    background: var(--bg-surface);
-    border: 1px solid var(--border);
-    border-radius: 12px 12px 12px 2px;
-    padding: 0.75rem 1rem;
-    margin: 0.4rem 0;
-    max-width: 82%;
-    font-size: 0.9rem;
-    line-height: 1.55;
-    white-space: pre-wrap;
-    color: var(--text-primary);
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 12px 12px 12px 2px; padding: 0.75rem 1rem;
+    margin: 0.4rem 0; max-width: 82%; font-size: 0.9rem;
+    line-height: 1.55; white-space: pre-wrap; color: var(--text-primary);
 }
 .bubble-user {
-    background: var(--bg-card);
-    border-radius: 12px 12px 2px 12px;
-    padding: 0.75rem 1rem;
-    margin: 0.4rem 0 0.4rem auto;
-    max-width: 70%;
-    font-size: 0.9rem;
-    line-height: 1.55;
-    text-align: right;
-    color: var(--text-white);
+    background: var(--bg-card); border-radius: 12px 12px 2px 12px;
+    padding: 0.75rem 1rem; margin: 0.4rem 0 0.4rem auto;
+    max-width: 70%; font-size: 0.9rem; line-height: 1.55;
+    text-align: right; color: var(--text-white);
 }
-
-.state-badge {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: 999px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 0.6rem;
-}
-.state-active  { background: rgba(34,197,94,0.2);  color: #22c55e; }
-.state-pending { background: rgba(218,65,103,0.2); color: var(--accent-primary); }
-.state-done    { background: rgba(139,28,124,0.4); color: var(--text-muted); }
 
 .section-label {
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--accent-primary);
-    margin-bottom: 0.4rem;
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.12em; color: var(--accent); margin-bottom: 0.4rem;
 }
 
 .confirmed-banner {
     background: linear-gradient(135deg,rgba(34,197,94,0.13),rgba(34,197,94,0.04));
-    border: 1.5px solid #22c55e;
-    border-radius: 12px;
-    padding: 1.4rem;
-    text-align: center;
-    margin-top: 1rem;
+    border: 1.5px solid #22c55e; border-radius: 12px;
+    padding: 1.4rem; text-align: center; margin-top: 1rem;
 }
 .confirmed-banner h2 { color: #22c55e; margin: 0; font-size: 1.5rem; }
 
 .order-card {
-    background: var(--bg-surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1rem 1.2rem;
-    margin-bottom: 0.8rem;
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1rem 1.2rem; margin-bottom: 0.8rem;
 }
 .order-card.accepted { border-color: rgba(34,197,94,0.3); }
 .order-card.declined { border-color: rgba(239,68,68,0.3); opacity: 0.6; }
+
+.state-badge {
+    display: inline-block; padding: 2px 10px; border-radius: 999px;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 0.6rem;
+}
+.state-active  { background: rgba(34,197,94,0.2);  color: #22c55e; }
+.state-pending { background: rgba(218,65,103,0.2); color: var(--accent); }
+
+.reasoning-box {
+    background: rgba(218,65,103,0.08); border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0; padding: 0.75rem 1rem;
+    font-size: 0.82rem; color: var(--text-muted);
+    font-style: italic; line-height: 1.6; margin: 0.6rem 0;
+}
+
+.step-row { display: flex; align-items: center; gap: 0.6rem; margin: 0.3rem 0; font-size: 0.85rem; }
+.step-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.step-dot.done    { background: #22c55e; }
+.step-dot.active  { background: var(--accent); }
+.step-dot.pending { background: var(--bg-card); opacity: 0.4; }
+
+.divider { height: 1px; background: var(--border); margin: 1.2rem 0; }
 
 .stTextInput > div > div > input,
 .stTextArea > div > div > textarea {
@@ -223,167 +162,34 @@ html, body, [class*="css"] {
 }
 .stTextInput > div > div > input:focus,
 .stTextArea > div > div > textarea:focus {
-    border-color: var(--accent-primary) !important;
+    border-color: var(--accent) !important;
     box-shadow: 0 0 0 2px rgba(218,65,103,0.25) !important;
 }
 
 .stButton > button {
-    background: var(--accent-primary) !important;
-    color: var(--text-white) !important;
-    font-weight: 700 !important;
-    border: none !important;
-    border-radius: 8px !important;
-    padding: 0.5rem 1.4rem !important;
-    font-family: 'Inter', sans-serif !important;
-    transition: opacity 0.15s;
+    background: var(--accent) !important; color: var(--text-white) !important;
+    font-weight: 700 !important; border: none !important;
+    border-radius: 8px !important; padding: 0.5rem 1.4rem !important;
+    font-family: 'Inter', sans-serif !important; transition: opacity 0.15s;
 }
-.stButton > button:hover {
-    opacity: 0.88 !important;
-    box-shadow: 0 0 16px rgba(218,65,103,0.4) !important;
-}
-.stButton > button[kind="secondary"] {
-    background: transparent !important;
-    color: var(--text-muted) !important;
-    border: 1.5px solid var(--bg-card) !important;
-}
-.stButton > button[kind="secondary"]:hover {
-    border-color: var(--accent-primary) !important;
-    color: var(--text-white) !important;
-}
-
-.pakshi-divider {
-    height: 1px;
-    background: var(--border);
-    margin: 1.2rem 0;
-}
-
-.reasoning-box {
-    background: rgba(218,65,103,0.08);
-    border-left: 3px solid var(--accent-primary);
-    border-radius: 0 8px 8px 0;
-    padding: 0.75rem 1rem;
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    font-style: italic;
-    line-height: 1.6;
-    margin: 0.6rem 0;
-}
-
-.step-row {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    margin: 0.3rem 0;
-    font-size: 0.85rem;
-}
-.step-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-}
-.step-dot.done    { background: #22c55e; }
-.step-dot.active  { background: var(--accent-primary); }
-.step-dot.pending { background: var(--bg-card); opacity: 0.4; }
+.stButton > button:hover { opacity: 0.88 !important; box-shadow: 0 0 16px rgba(218,65,103,0.4) !important; }
 
 .stRadio > div { gap: 0.4rem; }
 .stRadio label { font-size: 0.88rem !important; color: var(--text-primary) !important; }
-
 .stSelectbox > div > div {
     background-color: var(--bg-surface) !important;
     color: var(--text-white) !important;
     border: 1.5px solid var(--bg-card) !important;
     border-radius: 8px !important;
 }
-
-.streamlit-expanderHeader {
-    color: var(--accent-primary) !important;
-    font-weight: 600 !important;
-}
-.streamlit-expanderContent {
-    background: var(--bg-surface) !important;
-    color: var(--text-primary) !important;
-    border-radius: 0 0 8px 8px !important;
-}
-
-.stAlert {
-    background-color: var(--bg-surface) !important;
-    border-color: var(--bg-card) !important;
-    color: var(--text-primary) !important;
-}
-.stSuccess {
-    background-color: rgba(34,197,94,0.1) !important;
-    border-color: #22c55e !important;
-    color: #22c55e !important;
-}
-.stInfo {
-    background-color: rgba(218,65,103,0.08) !important;
-    border-color: var(--accent-primary) !important;
-    color: var(--text-primary) !important;
-}
-.stWarning {
-    background-color: rgba(218,65,103,0.08) !important;
-    border-color: var(--accent-primary) !important;
-    color: var(--accent-primary) !important;
-}
-.stError {
-    background-color: rgba(239,68,68,0.1) !important;
-    border-color: #ef4444 !important;
-    color: #ef4444 !important;
-}
+.streamlit-expanderHeader { color: var(--accent) !important; font-weight: 600 !important; }
+.streamlit-expanderContent { background: var(--bg-surface) !important; border-radius: 0 0 8px 8px !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------------------------------------------------------------------
-# Multilingual language detection helper
-# ---------------------------------------------------------------------------
-def _detect_language(text: str) -> str:
-    """
-    Detect the language of the transcribed text and return the appropriate
-    Whisper language code: 'te' (Telugu), 'ta' (Tamil), 'kn' (Kannada),
-    'bn' (Bengali), 'or' (Odia), 'hi' (Hindi), or 'en' (English).
-    """
-    text_lower = text.lower()
-    
-    # Telugu markers
-    telugu_words = {"naaku", "oka", "tella", "cheera", "kaavali", "pelli", "pellikuturu",
-                    "erupu", "pacha", "neelam", "nalla", "pillu", "ugadi", "sankranti"}
-    # Tamil markers
-    tamil_words = {"kalyanam", "pudavai", "sivappu", "pachchai", "vella", "neelam", "karuppu",
-                   "romba", "nalla", "pongal", "deepavali", "manjal"}
-    # Kannada markers
-    kannada_words = {"maduve", "chennagide", "kempu", "hasiru", "bili", "neeli", "kappu",
-                     "dasara", "sankranti", "haladi"}
-    # Bengali markers
-    bengali_words = {"biye", "shada", "lal", "sobuj", "neel", "kalo", "holud", "durga puja",
-                     "khoob", "sundor", "bhalo"}
-    # Odia markers
-    odia_words = {"bibaha", "dhala", "lal", "haria", "neela", "kala", "pila", "nuakhai"}
-    # Hindi markers
-    hindi_words = {"hai", "ka", "ki", "ke", "mein", "se", "koi", "bahut", "acha", "thoda",
-                   "shaadi", "kapda", "lena", "chahiye", "rupaye", "halka", "bhaari", "naram",
-                   "laal", "safed", "pila", "hara", "neela", "kala"}
-
-    words = set(text_lower.split())
-    
-    if words & telugu_words:
-        return "te"  # Telugu
-    if words & tamil_words:
-        return "ta"  # Tamil
-    if words & kannada_words:
-        return "kn"  # Kannada
-    if words & bengali_words:
-        return "bn"  # Bengali
-    if words & odia_words:
-        return "or"  # Odia
-    if words & hindi_words:
-        return "hi"  # Hindi
-    
-    # Default to English if no markers found
-    return "en"
-
 
 # ---------------------------------------------------------------------------
-# Backend loader (cached; gracefully degrades if backend missing)
+# Cached backend loaders
 # ---------------------------------------------------------------------------
 @st.cache_resource(show_spinner=False)
 def _load_agent_class():
@@ -404,11 +210,9 @@ def _load_weaver_profiles():
         return []
 
 
-# ---------------------------------------------------------------------------
-# Whisper loader (cached)
-# ---------------------------------------------------------------------------
 @st.cache_resource(show_spinner=False)
 def _load_whisper_model():
+    """Load Whisper 'base' model once per session. Fast enough on CPU for demo."""
     try:
         import whisper
         return whisper.load_model("base"), None
@@ -417,9 +221,145 @@ def _load_whisper_model():
 
 
 # ---------------------------------------------------------------------------
-# TTS helper
+# Whisper transcription config — tuned for Indian multilingual speech
+#
+# Supported languages: English, Hindi, Telugu, Kannada, Odia, Bengali, Tamil
+# Language is auto-detected (language=None). The initial_prompt seeds the
+# decoder with Indian handloom vocabulary to prevent hallucination on short
+# clips and to bias detection toward the correct language family.
 # ---------------------------------------------------------------------------
-def _tts_bytes(text: str, lang: str = "hi") -> bytes | None:
+_WHISPER_KWARGS = {
+    "language": None,           # auto-detect from 99 Whisper languages
+    "initial_prompt": (
+        "saree, silk, cotton, weaver, handloom, wedding, casual, budget, rupees, "
+        "saadi, kapda, resham, patta, shaadi, zari, ikat, pochampally, lehenga, "
+        "duppata, festive, raat, office, kaam, rang, colour, "
+        "Telugu: saree kosamga, Hindi: shaadi ke liye, "
+        "Kannada: madduve, Bengali: saree, Tamil: pudavai, Odia: posa kapada"
+    ),
+    "beam_size": 5,             # much better than greedy (default 1)
+    "temperature": (0.0, 0.2, 0.4, 0.6),   # retry with higher temps on hard audio
+    "compression_ratio_threshold": 2.4,    # above = likely hallucination
+    "no_speech_threshold": 0.6,            # above = treat as silence
+    "condition_on_previous_text": False,   # each clip is independent
+    "word_timestamps": False,
+    "fp16": False,              # safer on CPU
+}
+
+_LANG_DISPLAY = {
+    "en": "English", "hi": "Hindi",  "te": "Telugu",
+    "kn": "Kannada", "or": "Odia",   "bn": "Bengali", "ta": "Tamil",
+}
+
+# Phrases Whisper commonly hallucinates on near-silence
+_HALLUCINATIONS = {
+    "thank you", "thanks for watching", "thanks for listening",
+    "subscribe", "please subscribe", "bye", "goodbye",
+    "you", "the", "a", "i", ".", "..", "...", "ok", "okay",
+    "hello", "hi", "hey", "so", "and", "um", "uh",
+}
+
+
+def _transcribe_audio(audio_file) -> tuple:
+    """
+    Transcribe a Streamlit audio_input file object.
+
+    Returns (result_string, error_string).
+      Success: ("text|||confidence|||lang", None)
+               confidence is "ok" or "noisy"
+      Failure: (None, human_readable_error)
+
+    Bad-audio conditions handled:
+      - Clip too short / file too small (< 8 KB)
+      - Pure silence (no_speech_prob > 0.75)
+      - Empty / junk output after transcription
+      - Known hallucination phrases
+      - ffmpeg not installed
+      - Whisper reshape error (empty audio tensor)
+      - Temp file cleanup guaranteed via finally
+    """
+    buf = audio_file.getbuffer()
+
+    # Guard 1: size — genuine 2s 16kHz/16-bit mono WAV is ~64 KB
+    if len(buf) < 8_000:
+        return None, (
+            "Recording was too short. "
+            "Hold the button and speak clearly for at least 2 seconds."
+        )
+
+    model, load_err = _load_whisper_model()
+    if load_err or model is None:
+        return None, f"Whisper not available: {load_err}"
+
+    tmp_path = None
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
+            tmp.write(buf)
+            tmp_path = tmp.name
+
+        result = model.transcribe(tmp_path, **_WHISPER_KWARGS)
+
+        text          = (result.get("text") or "").strip()
+        segments      = result.get("segments") or []
+        detected_lang = result.get("language") or "unknown"
+
+        # Guard 2: silence
+        avg_no_speech = (
+            sum(s.get("no_speech_prob", 0.0) for s in segments) / len(segments)
+            if segments else 1.0
+        )
+        if avg_no_speech > 0.75:
+            return None, (
+                "No speech detected. Speak closer to the microphone "
+                "and reduce background noise, then try again."
+            )
+
+        # Guard 3: empty output
+        if not text or len(text) < 4:
+            return None, (
+                "Could not make out the words. "
+                "Please try again or type your request below."
+            )
+
+        # Guard 4: hallucination
+        if text.lower() in _HALLUCINATIONS:
+            return None, (
+                f'Transcribed "{text}" which looks like background noise. '
+                "Please speak for 2-3 seconds or type below."
+            )
+
+        lang = _LANG_DISPLAY.get(detected_lang, detected_lang.upper())
+        confidence = "noisy" if avg_no_speech > 0.4 else "ok"
+        return f"{text}|||{confidence}|||{lang}", None
+
+    except Exception as exc:
+        err = str(exc)
+        if "ffmpeg" in err.lower():
+            return None, (
+                "ffmpeg is required for audio. "
+                "Install: sudo apt install ffmpeg  (Linux) "
+                "or  brew install ffmpeg  (Mac)"
+            )
+        if "reshape" in err.lower() or "size 0" in err.lower():
+            return None, (
+                "Recording was empty or corrupted. "
+                "Speak clearly for 2-3 seconds and try again."
+            )
+        return None, f"Transcription failed: {err}"
+
+    finally:
+        # Always delete temp file, even if transcription raised an exception
+        if tmp_path:
+            try:
+                os.unlink(tmp_path)
+            except OSError:
+                pass
+
+
+# ---------------------------------------------------------------------------
+# TTS helper (gTTS, graceful fallback)
+# ---------------------------------------------------------------------------
+def _tts_bytes(text: str, lang: str = "en") -> bytes | None:
     if not text:
         return None
     spoken = ". ".join(text.split(". ")[:2]).strip()
@@ -450,41 +390,31 @@ def _autoplay_audio(audio_bytes: bytes, fmt: str = "mp3") -> None:
 
 
 # ---------------------------------------------------------------------------
-# Audio processing — fixed and robust
-# ---------------------------------------------------------------------------
-_WHISPER_OPTIONS = {
-    "beam_size": 3,
-    "temperature": (0.0, 0.2, 0.4),
-    "compression_ratio_threshold": 2.4,
-    "no_speech_threshold": 0.6,
-    "condition_on_previous_text": False,
-    "word_timestamps": False,
-    "fp16": False,
-}
-
-
-# ---------------------------------------------------------------------------
-# Session state initialisation
+# Session state
 # ---------------------------------------------------------------------------
 def _init_buyer_state() -> None:
-    defaults: dict = {
-        "agent":           None,
-        "history":         [],
-        "current_state":   "greeting",
-        "swatches":        [],
-        "selected_swatch": None,
-        "order":           None,
-        "agent_data":      {},
-        "awaiting":        None,
-        "reasoning_log":   [],
-        "one_of_a_kind":   [],
-        "buyer_orders":    [],
-        "agent_thinking":  False,
-        "audio_processed": False,   # Simple flag to prevent re-processing
+    defaults = {
+        "agent":            None,
+        "history":          [],
+        "current_state":    "greeting",
+        "swatches":         [],
+        "selected_swatch":  None,
+        "order":            None,
+        "agent_data":       {},
+        "awaiting":         None,
+        "reasoning_log":    [],
+        "one_of_a_kind":    [],
+        "buyer_orders":     [],
+        "agent_thinking":   False,
+        # Audio loop prevention: store hash of last processed clip.
+        # Same hash on rerun = skip transcription = no infinite loop.
+        "last_audio_hash":  None,
+        # Pre-fill text box when noisy audio needs user correction.
+        "prefill_text":     "",
     }
-    for key, val in defaults.items():
-        if key not in st.session_state:
-            st.session_state[key] = val
+    for k, v in defaults.items():
+        if k not in st.session_state:
+            st.session_state[k] = v
 
 
 def _init_weaver_state() -> None:
@@ -494,46 +424,46 @@ def _init_weaver_state() -> None:
         st.session_state["weaver_id"] = "W001"
 
 
-def _make_demo_orders() -> list[dict]:
+def _make_demo_orders() -> list:
     return [
         {
-            "order_id":   "PKS-2847",
-            "fabric":     "Cotton-Silk",
-            "weave_style":"Pochampally Ikat",
-            "color":      "Teal with gold border",
-            "occasion":   "Summer Wedding",
-            "buyer_feel": "flowy, breathable yet elegant",
-            "price":      1800,
-            "delivery_by":"July 26, 2026",
-            "status":     "pending",
-            "photo":      None,
-            "buyer_note": "Light saree, summer wedding, Rs.1500 - agent proposed Cotton-Silk at Rs.1800",
+            "order_id":    "PKS-2847",
+            "fabric":      "Cotton-Silk",
+            "weave_style": "Pochampally Ikat",
+            "color":       "Teal with gold border",
+            "occasion":    "Summer Wedding",
+            "buyer_feel":  "flowy, breathable yet elegant",
+            "price":       1800,
+            "delivery_by": "July 26, 2026",
+            "status":      "pending",
+            "photo":       None,
+            "buyer_note":  "Light saree, summer wedding, Rs.1500 - agent proposed Cotton-Silk at Rs.1800",
         },
         {
-            "order_id":   "PKS-2831",
-            "fabric":     "Cotton",
-            "weave_style":"Pochampally Ikat",
-            "color":      "Navy blue",
-            "occasion":   "Office / Daily Wear",
-            "buyer_feel": "breathable, cool, non-itchy",
-            "price":      750,
-            "delivery_by":"July 20, 2026",
-            "status":     "accepted",
-            "photo":      None,
-            "buyer_note": "Office wear, breathable cotton under Rs.800",
+            "order_id":    "PKS-2831",
+            "fabric":      "Cotton",
+            "weave_style": "Pochampally Ikat",
+            "color":       "Navy blue",
+            "occasion":    "Office / Daily Wear",
+            "buyer_feel":  "breathable, cool, non-itchy",
+            "price":       750,
+            "delivery_by": "July 20, 2026",
+            "status":      "accepted",
+            "photo":       None,
+            "buyer_note":  "Office wear, breathable cotton under Rs.800",
         },
         {
-            "order_id":   "PKS-2819",
-            "fabric":     "Silk",
-            "weave_style":"Pochampally Ikat",
-            "color":      "Deep red with zari",
-            "occasion":   "Wedding Reception",
-            "buyer_feel": "royal, heavy, grand",
-            "price":      4200,
-            "delivery_by":"August 2, 2026",
-            "status":     "pending",
-            "photo":      None,
-            "buyer_note": "Sister's wedding reception, deep red silk, grand",
+            "order_id":    "PKS-2819",
+            "fabric":      "Silk",
+            "weave_style": "Pochampally Ikat",
+            "color":       "Deep red with zari",
+            "occasion":    "Wedding Reception",
+            "buyer_feel":  "royal, heavy, grand",
+            "price":       4200,
+            "delivery_by": "August 2, 2026",
+            "status":      "pending",
+            "photo":       None,
+            "buyer_note":  "Sister's wedding reception, deep red silk, grand",
         },
     ]
 
@@ -545,7 +475,7 @@ def _render_header() -> None:
     c1, _ = st.columns([1, 3])
     with c1:
         st.markdown(
-            '<div class="pakshi-wordmark">Pakshi</div>'
+            '<div class="wordmark">Pakshi</div>'
             '<div class="tagline">Turning buyer intent into artisan opportunity</div>',
             unsafe_allow_html=True,
         )
@@ -554,7 +484,7 @@ def _render_header() -> None:
 # ---------------------------------------------------------------------------
 # Step indicator
 # ---------------------------------------------------------------------------
-STATE_STEPS = [
+_STATE_STEPS = [
     ("greeting",         "Start"),
     ("collecting",       "Intent"),
     ("retrieved",        "Swatches"),
@@ -568,21 +498,16 @@ _HIDDEN_STATES = {"fallback_pending", "broadcasting", "weaver_selected"}
 
 
 def _step_indicator(current: str) -> None:
-    active_idx = next((i for i, (k, _) in enumerate(STATE_STEPS) if k == current), 0)
-    parts = ['<div style="display:flex;gap:1.2rem;align-items:center;'
-             'margin-bottom:1rem;flex-wrap:wrap;">']
-    for i, (key, label) in enumerate(STATE_STEPS):
+    active = next((i for i, (k, _) in enumerate(_STATE_STEPS) if k == current), 0)
+    parts = ['<div style="display:flex;gap:1.2rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap;">']
+    for i, (key, label) in enumerate(_STATE_STEPS):
         if key in _HIDDEN_STATES:
             continue
-        if i < active_idx:
-            dot_cls, color = "done",    "#22c55e"
-        elif i == active_idx:
-            dot_cls, color = "active",  "var(--accent-primary)"
-        else:
-            dot_cls, color = "pending", "var(--text-muted)"
+        cls   = "done" if i < active else ("active" if i == active else "pending")
+        color = "#22c55e" if cls == "done" else ("var(--accent)" if cls == "active" else "var(--text-muted)")
         parts.append(
             f'<div class="step-row">'
-            f'<div class="step-dot {dot_cls}"></div>'
+            f'<div class="step-dot {cls}"></div>'
             f'<span style="font-size:0.78rem;color:{color};font-weight:500;">{label}</span>'
             f'</div>'
         )
@@ -591,33 +516,32 @@ def _step_indicator(current: str) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Swatch card renderer
+# Swatch card
 # ---------------------------------------------------------------------------
-def _render_swatch_card(swatch: dict) -> None:
-    tags_html = "".join(
+def _swatch_card(swatch: dict) -> None:
+    tags = "".join(
         f'<span class="tag">{t}</span>'
         for t in swatch.get("sensory_tags", [])[:3]
     )
     st.markdown(f"""
     <div class="swatch-card">
-        <div style="font-weight:700;font-size:0.95rem;margin-bottom:2px;
-                    color:var(--text-white);">
-            {swatch.get("weave_style", "—")}
+        <div style="font-weight:700;font-size:0.95rem;color:var(--text-white);margin-bottom:2px;">
+            {swatch.get("weave_style","—")}
         </div>
         <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:8px;">
-            {swatch.get("color", "—")}
+            {swatch.get("color","—")}
         </div>
-        <div class="swatch-price">Rs.{swatch.get("price_inr", "?")}</div>
-        <div style="margin:8px 0">{tags_html}</div>
-        <div class="pakshi-divider"></div>
+        <div class="swatch-price">Rs.{swatch.get("price_inr","?")}</div>
+        <div style="margin:8px 0">{tags}</div>
+        <div class="divider"></div>
         <div class="swatch-label">Weaver</div>
-        <div class="swatch-value">{swatch.get("weaver_name", "—")}</div>
+        <div class="swatch-value">{swatch.get("weaver_name","—")}</div>
         <div style="font-size:0.78rem;color:var(--text-muted);">
-            {swatch.get("weaver_cluster", "")}, {swatch.get("weaver_state", "")}
+            {swatch.get("weaver_cluster","")}, {swatch.get("weaver_state","")}
         </div>
         <div style="margin-top:4px;font-size:0.82rem;color:var(--text-primary);">
-            Rating: {swatch.get("weaver_rating", "?")} &nbsp;·&nbsp;
-            {swatch.get("delivery_days", "?")} days
+            Rating: {swatch.get("weaver_rating","?")} &nbsp;·&nbsp;
+            {swatch.get("delivery_days","?")} days
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -626,41 +550,38 @@ def _render_swatch_card(swatch: dict) -> None:
 # ---------------------------------------------------------------------------
 # Core message dispatcher
 # ---------------------------------------------------------------------------
-def _send_message(user_text: str) -> None:
+def _send(user_text: str) -> None:
     user_text = (user_text or "").strip()
     if not user_text:
         return
 
     PakshiAgent, err = _load_agent_class()
     if err or PakshiAgent is None:
-        st.error(f"Backend could not be loaded: {err}")
+        st.error(f"Backend not loaded: {err}. Ensure agent.py is in the same folder.")
         return
 
     if st.session_state.get("agent") is None:
         try:
             st.session_state["agent"] = PakshiAgent()
         except Exception as exc:
-            st.error(f"Agent initialisation failed: {exc}")
+            st.error(f"Agent init failed: {exc}")
             return
 
-    agent = st.session_state["agent"]
     st.session_state["history"].append(("user", user_text))
     st.session_state["agent_thinking"] = True
 
     try:
-        response = agent.chat(user_text)
+        response = st.session_state["agent"].chat(user_text)
     except Exception as exc:
         st.session_state["agent_thinking"] = False
-        st.session_state["history"].append(
-            ("agent", f"Something went wrong: {exc}. Please try again.")
-        )
+        st.session_state["history"].append(("agent", f"Error: {exc}. Please try again."))
         return
 
     st.session_state["agent_thinking"] = False
 
-    msg   = response.get("message", "")
-    state = response.get("state",   "greeting")
-    data  = response.get("data",    {})
+    msg   = response.get("message", "") if isinstance(response, dict) else str(response)
+    state = response.get("state",   "greeting") if isinstance(response, dict) else "greeting"
+    data  = response.get("data",    {})         if isinstance(response, dict) else {}
 
     st.session_state["current_state"] = state
     st.session_state["history"].append(("agent", msg))
@@ -668,7 +589,6 @@ def _send_message(user_text: str) -> None:
 
     if data.get("swatches"):
         st.session_state["swatches"] = data["swatches"]
-
     if data.get("order"):
         st.session_state["order"] = data["order"]
 
@@ -676,19 +596,18 @@ def _send_message(user_text: str) -> None:
         raw = data["order"]
         sw  = raw.get("selected_swatch") or {}
         wv  = raw.get("selected_weaver")  or {}
-        tracked = {
-            "order_id":    raw.get("order_id",    "PKS-???"),
-            "weave_style": sw.get("weave_style",  "—"),
-            "color":       sw.get("color",         "—"),
-            "price":       sw.get("price_inr",     0),
-            "weaver_name": wv.get("weaver_name",  "—"),
+        entry = {
+            "order_id":    raw.get("order_id",   "PKS-???"),
+            "weave_style": sw.get("weave_style", "—"),
+            "color":       sw.get("color",        "—"),
+            "price":       sw.get("price_inr",    0),
+            "weaver_name": wv.get("weaver_name", "—"),
             "status":      "In Production",
             "photo_path":  None,
-            "intent":      user_text,
         }
-        existing_ids = {o["order_id"] for o in st.session_state.get("buyer_orders", [])}
-        if tracked["order_id"] not in existing_ids:
-            st.session_state["buyer_orders"].append(tracked)
+        existing = {o["order_id"] for o in st.session_state.get("buyer_orders", [])}
+        if entry["order_id"] not in existing:
+            st.session_state["buyer_orders"].append(entry)
 
     if state in ("fallback_pending", "broadcasting", "weaver_selected", "confirmed"):
         snippet = msg[:120] + ("..." if len(msg) > 120 else "")
@@ -703,34 +622,30 @@ def _buyer_page() -> None:
 
     st.markdown('<div class="section-label">Buyer</div>', unsafe_allow_html=True)
 
-    with st.expander("How to use this app (Buyer)"):
+    with st.expander("How to use (Buyer)"):
         st.markdown("""
 **Step 1 — Speak or type your request.**
-Describe what you want in your own words and language,
-for example: *"Light saree for summer wedding, Rs.1500, mint green."*
+Describe what you want in your own words, in English, Hindi, Telugu, Kannada, Odia, Bengali or Tamil.
+Example: *"Light saree for summer wedding, Rs.1500, mint green."*
 
 **Step 2 — Review swatches.**
-The agent shows up to 3 matching handloom swatches with fabric, weave style,
-colour, price, weaver name, and delivery estimate.
+The agent shows up to 3 matching handloom swatches with fabric, weave style, colour, price and delivery estimate.
 
 **Step 3 — Select a swatch.**
-Type 1, 2, or 3 — or click the Select button — to lock your choice.
+Type 1, 2, or 3 (or click Select) to lock your choice before production begins.
 
-**Step 4 — Confirm the order.**
-Click Confirm Order. The agent autonomously picks the best available weaver
-based on proximity and delivery history. Your order is placed on Meesho.
+**Step 4 — Confirm.**
+The agent autonomously picks the best weaver by proximity and delivery history. Order placed on Meesho.
 
 **Step 5 — Reject if needed.**
-If the finished piece does not meet your expectation, click Reject Piece.
-It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss.
+If the final piece does not meet your expectation, click Reject Piece. It moves to One of a Kind resale at wholesale price.
         """)
 
     if st.session_state.get("agent_thinking"):
         st.markdown(
-            '<div style="background:rgba(218,65,103,0.12);border-left:3px solid var(--accent-primary);'
+            '<div style="background:rgba(218,65,103,0.12);border-left:3px solid var(--accent);'
             'padding:0.6rem 1rem;border-radius:0 8px 8px 0;font-size:0.85rem;'
-            'color:var(--accent-primary);margin-bottom:0.8rem;">'
-            'Agent is reasoning through fabric options...</div>',
+            'color:var(--accent);margin-bottom:0.8rem;">Agent is reasoning...</div>',
             unsafe_allow_html=True,
         )
 
@@ -739,61 +654,48 @@ It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss
         with st.expander(f"Your Orders ({len(buyer_orders)})"):
             for bo in buyer_orders:
                 status = bo.get("status", "In Production")
-                status_color = {
-                    "In Production":  "var(--accent-primary)",
-                    "Photo Available": "var(--bg-card)",
-                    "Completed":       "#22c55e",
-                }.get(status, "var(--text-muted)")
+                color  = {"In Production": "var(--accent)", "Photo Available": "var(--bg-card)",
+                          "Completed": "#22c55e"}.get(status, "var(--text-muted)")
                 photo_note = (
-                    '<div style="font-size:0.78rem;color:#22c55e;margin-top:4px;">'
-                    'Progress photo received from weaver</div>'
+                    '<div style="font-size:0.78rem;color:#22c55e;margin-top:4px;">Progress photo received</div>'
                     if bo.get("photo_path") else ""
                 )
                 st.markdown(f"""
                 <div style="background:rgba(58,24,112,0.6);border:1px solid var(--border);
                     border-radius:10px;padding:0.8rem 1rem;margin-bottom:0.5rem;">
-                    <div style="display:flex;justify-content:space-between;
-                        align-items:center;flex-wrap:wrap;gap:0.5rem;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
                         <div>
                             <div style="font-weight:700;font-size:0.9rem;color:var(--text-white);">
-                                {bo["weave_style"]} &middot; {bo["color"]}
+                                {bo["weave_style"]} · {bo["color"]}
                             </div>
                             <div style="font-size:0.75rem;color:var(--text-muted);">
-                                #{bo["order_id"]} &middot; {bo["weaver_name"]} &middot; Rs.{bo["price"]:,}
+                                #{bo["order_id"]} · {bo["weaver_name"]} · Rs.{bo["price"]:,}
                             </div>
                             {photo_note}
                         </div>
-                        <div style="background:rgba(0,0,0,0.3);padding:3px 10px;
-                            border-radius:999px;font-size:0.72rem;font-weight:700;
-                            color:{status_color};">
-                            {status}
-                        </div>
+                        <div style="background:rgba(0,0,0,0.3);padding:3px 10px;border-radius:999px;
+                            font-size:0.72rem;font-weight:700;color:{color};">{status}</div>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
-                if st.button(
-                    f"Re-order {bo['order_id']}",
-                    key=f"reorder_{bo['order_id']}",
-                ):
-                    _send_message(f"{bo['weave_style']}, {bo['color']}, Rs.{bo['price']}")
+                if st.button(f"Re-order {bo['order_id']}", key=f"reorder_{bo['order_id']}"):
+                    _send(f"{bo['weave_style']}, {bo['color']}, Rs.{bo['price']}")
                     st.rerun()
 
     _step_indicator(st.session_state["current_state"])
 
     col_chat, col_panel = st.columns([3, 2], gap="large")
 
+    # Right panel
     with col_panel:
         swatches = st.session_state["swatches"]
         if swatches:
-            st.markdown(
-                '<div class="section-label">Matching Swatches</div>',
-                unsafe_allow_html=True,
-            )
+            st.markdown('<div class="section-label">Matching Swatches</div>', unsafe_allow_html=True)
             for i, sw in enumerate(swatches[:3]):
-                _render_swatch_card(sw)
+                _swatch_card(sw)
                 if st.session_state["current_state"] == "retrieved":
                     if st.button(f"Select Swatch {i + 1}", key=f"sel_{i}"):
-                        _send_message(str(i + 1))
+                        _send(str(i + 1))
                         st.rerun()
 
         order = st.session_state["order"]
@@ -803,287 +705,181 @@ It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss
             st.markdown(f"""
             <div class="confirmed-banner">
                 <h2>Order Confirmed</h2>
-                <div style="font-size:0.82rem;color:#86efac;margin-top:4px;">
-                    #{order.get("order_id", "—")}
-                </div>
+                <div style="font-size:0.82rem;color:#86efac;margin-top:4px;">#{order.get("order_id","—")}</div>
                 <div style="margin-top:12px;text-align:left;">
                     <div class="swatch-label">Fabric</div>
-                    <div class="swatch-value">
-                        {sw.get("weave_style", "—")} · {sw.get("color", "—")}
-                    </div>
-                    <div class="swatch-price" style="margin:6px 0;">
-                        Rs.{sw.get("price_inr", "?")}
-                    </div>
-                    <div class="pakshi-divider"></div>
+                    <div class="swatch-value">{sw.get("weave_style","—")} · {sw.get("color","—")}</div>
+                    <div class="swatch-price" style="margin:6px 0;">Rs.{sw.get("price_inr","?")}</div>
+                    <div class="divider"></div>
                     <div class="swatch-label">Weaver (agent-selected)</div>
-                    <div class="swatch-value">{wv.get("weaver_name", "—")}</div>
+                    <div class="swatch-value">{wv.get("weaver_name","—")}</div>
                     <div style="font-size:0.78rem;color:var(--text-muted);">
-                        {wv.get("weaver_cluster", "")}, {wv.get("weaver_state", "")} ·
-                        Rating: {wv.get("weaver_rating", "?")} ·
-                        {wv.get("delivery_days", "?")} days
+                        {wv.get("weaver_cluster","")}, {wv.get("weaver_state","")} ·
+                        Rating: {wv.get("weaver_rating","?")} · {wv.get("delivery_days","?")} days
                     </div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
 
-            st.markdown('<div class="pakshi-divider"></div>', unsafe_allow_html=True)
-            st.markdown(
-                '<div class="section-label">Not satisfied? Reject this piece.</div>',
-                unsafe_allow_html=True,
-            )
+            st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+            st.markdown('<div class="section-label">Not satisfied? Reject this piece.</div>', unsafe_allow_html=True)
             st.caption(
-                "If the final product does not meet your expectation, move it to "
-                "'One of a Kind' resale. The weaver recovers partial value, "
-                "you owe nothing, and a unique piece finds a new buyer."
+                "If the piece does not meet your expectation, move it to One of a Kind resale. "
+                "The weaver recovers partial value. You owe nothing. No waste."
             )
             if st.button("Reject Piece — Move to One of a Kind", use_container_width=True):
-                current_order = st.session_state.get("order") or {}
-                swatch  = current_order.get("selected_swatch") or {}
-                weaver  = current_order.get("selected_weaver")  or {}
-                orig    = swatch.get("price_inr", 0)
-                resale  = int(orig * 0.6)
-                rejected = {
-                    "order_id":       current_order.get("order_id", "PKS-XXXX"),
-                    "weave_style":    swatch.get("weave_style",  "Unknown"),
-                    "color":          swatch.get("color",         "Unknown"),
+                cur_ord = st.session_state.get("order") or {}
+                s = cur_ord.get("selected_swatch") or {}
+                w = cur_ord.get("selected_weaver")  or {}
+                orig   = s.get("price_inr", 0)
+                resale = int(orig * 0.6)
+                st.session_state.setdefault("one_of_a_kind", []).append({
+                    "order_id":       cur_ord.get("order_id",    "PKS-XXXX"),
+                    "weave_style":    s.get("weave_style",       "Unknown"),
+                    "color":          s.get("color",              "Unknown"),
                     "original_price": orig,
                     "resale_price":   resale,
-                    "weaver_name":    weaver.get("weaver_name",  "Unknown"),
-                    "weaver_cluster": weaver.get("weaver_cluster","Unknown"),
-                    "weaver_state":   weaver.get("weaver_state",  "Unknown"),
-                    "sensory_tags":   swatch.get("sensory_tags",  []),
+                    "weaver_name":    w.get("weaver_name",       "Unknown"),
+                    "weaver_cluster": w.get("weaver_cluster",    "Unknown"),
+                    "weaver_state":   w.get("weaver_state",      "Unknown"),
+                    "sensory_tags":   s.get("sensory_tags",       []),
                     "reason":         "Weaving imperfection / colour mismatch",
-                }
-                st.session_state.setdefault("one_of_a_kind", []).append(rejected)
-                for key in ("current_state","order","swatches","history",
-                            "agent","reasoning_log","agent_data","awaiting",
-                            "selected_swatch","agent_thinking"):
-                    st.session_state[key] = (
-                        [] if key in ("swatches","history","reasoning_log") else
-                        {} if key == "agent_data" else
-                        False if key == "agent_thinking" else
-                        None if key in ("order","agent","awaiting","selected_swatch") else
+                })
+                for k in ("current_state","order","swatches","history","agent",
+                          "reasoning_log","agent_data","awaiting","selected_swatch","agent_thinking"):
+                    st.session_state[k] = (
+                        [] if k in ("swatches","history","reasoning_log") else
+                        {} if k == "agent_data" else
+                        False if k == "agent_thinking" else
+                        None if k in ("order","agent","awaiting","selected_swatch") else
                         "greeting"
                     )
-                st.success(
-                    f"Piece moved to One of a Kind at Rs.{resale:,}. "
-                    "Starting a fresh search for you."
-                )
+                st.success(f"Piece moved to One of a Kind at Rs.{resale:,}. Starting fresh.")
                 st.rerun()
 
         if st.session_state["reasoning_log"]:
-            st.markdown(
-                '<div class="section-label" style="margin-top:1rem;">Agent Reasoning</div>',
-                unsafe_allow_html=True,
-            )
+            st.markdown('<div class="section-label" style="margin-top:1rem;">Agent Reasoning</div>', unsafe_allow_html=True)
             for line in st.session_state["reasoning_log"][-3:]:
-                st.markdown(
-                    f'<div class="reasoning-box">{line}</div>',
-                    unsafe_allow_html=True,
-                )
+                st.markdown(f'<div class="reasoning-box">{line}</div>', unsafe_allow_html=True)
 
+    # Left panel — chat + input
     with col_chat:
         for role, text in st.session_state["history"]:
-            bubble_cls = "bubble-agent" if role == "agent" else "bubble-user"
-            st.markdown(
-                f'<div class="{bubble_cls}">{text}</div>',
-                unsafe_allow_html=True,
-            )
+            cls = "bubble-agent" if role == "agent" else "bubble-user"
+            st.markdown(f'<div class="{cls}">{text}</div>', unsafe_allow_html=True)
 
         st.markdown('<div style="height:0.5rem;"></div>', unsafe_allow_html=True)
         cur = st.session_state["current_state"]
 
         if cur == "fallback_pending":
-            st.markdown(
-                '<div class="section-label">Agent is proposing an alternative</div>',
-                unsafe_allow_html=True,
-            )
+            st.markdown('<div class="section-label">Agent is proposing an alternative</div>', unsafe_allow_html=True)
             c1, c2 = st.columns(2)
             with c1:
                 if st.button("Yes, show alternatives", use_container_width=True):
-                    _send_message("yes")
-                    st.rerun()
+                    _send("yes"); st.rerun()
             with c2:
                 if st.button("No, wait for my budget", use_container_width=True):
-                    _send_message("no")
-                    st.rerun()
+                    _send("no"); st.rerun()
 
         elif cur == "swatch_selected":
-            st.markdown(
-                '<div class="section-label">Swatch locked — ready to place order?</div>',
-                unsafe_allow_html=True,
-            )
+            st.markdown('<div class="section-label">Swatch locked — confirm order?</div>', unsafe_allow_html=True)
             c1, c2 = st.columns(2)
             with c1:
                 if st.button("Confirm Order", use_container_width=True):
-                    _send_message("confirm")
-                    st.rerun()
+                    _send("confirm"); st.rerun()
             with c2:
                 if st.button("Change Selection", use_container_width=True):
-                    _send_message("back")
-                    st.rerun()
+                    _send("back"); st.rerun()
 
         elif cur in ("confirmed", "failed"):
             if st.button("Start New Search"):
-                ooak   = st.session_state.get("one_of_a_kind", [])
-                bords  = st.session_state.get("buyer_orders",  [])
-                loaded = st.session_state.get("app_loaded",    False)
+                ooak  = st.session_state.get("one_of_a_kind", [])
+                bords = st.session_state.get("buyer_orders",  [])
                 for k in list(st.session_state.keys()):
                     del st.session_state[k]
                 st.session_state["one_of_a_kind"] = ooak
                 st.session_state["buyer_orders"]  = bords
-                st.session_state["app_loaded"]    = loaded
+                st.session_state["app_loaded"]    = True
                 st.rerun()
 
         else:
+            # Auto-greet
             if cur == "greeting" and not st.session_state["history"]:
-                _send_message("hi")
-                st.rerun()
+                _send("hi"); st.rerun()
 
-            # --- FIXED AUDIO INPUT (Simple flag, no hash issues) ---
-            st.markdown(
-                '<div class="section-label">Speak your request</div>',
-                unsafe_allow_html=True,
-            )
-
-            # Always reset the processed flag on each fresh render
-            # This ensures new recordings get processed
-            if not st.session_state.get("audio_processed", False):
-                st.session_state["audio_processed"] = False
+            # ── Voice input ──
+            # Loop prevention: Streamlit reruns the whole script on every interaction.
+            # st.audio_input returns the same object on reruns until a new clip is recorded.
+            # We hash the raw bytes and compare to last_audio_hash in session_state.
+            # If they match, we already processed this clip — skip to avoid infinite transcription.
+            # On success, we clear last_audio_hash so the widget accepts the next recording.
+            st.markdown('<div class="section-label">Speak your request</div>', unsafe_allow_html=True)
+            st.caption("Supports: English, Hindi, Telugu, Kannada, Odia, Bengali, Tamil. Speak for 2-3 seconds.")
 
             audio_file = st.audio_input(
-                "Record your fabric request (speak clearly for 2-3 seconds)",
+                "Record your fabric request",
                 label_visibility="collapsed",
-                key="audio_input_main",
+                key="pakshi_audio",       # STATIC key — never changes, no widget reset loop
             )
 
-            if audio_file is not None and not st.session_state.get("audio_processed", False):
-                # Mark as processed immediately to prevent loops
-                st.session_state["audio_processed"] = True
+            if audio_file is not None:
+                audio_hash = hash(bytes(audio_file.getbuffer()))
 
-                whisper_model, whisper_err = _load_whisper_model()
-                if whisper_err or whisper_model is None:
-                    st.warning(
-                        f"Voice transcription unavailable ({whisper_err}). "
-                        "Please type your request below."
-                    )
-                    st.session_state["audio_processed"] = False
+                if st.session_state.get("last_audio_hash") == audio_hash:
+                    pass  # Same clip as last rerun — already processed, skip
                 else:
+                    st.session_state["last_audio_hash"] = audio_hash
+
                     with st.spinner("Transcribing..."):
-                        tmp_path = None
-                        try:
-                            with tempfile.NamedTemporaryFile(
-                                delete=False, suffix=".wav"
-                            ) as tmp:
-                                tmp.write(audio_file.getbuffer())
-                                tmp_path = tmp.name
+                        result_str, err = _transcribe_audio(audio_file)
 
-                            # --- First pass: transcribe to detect language ---
-                            result = whisper_model.transcribe(
-                                tmp_path,
-                                language=None,  # Auto-detect first
-                                **_WHISPER_OPTIONS,
+                    if err:
+                        # Bad audio — warn, clear hash so user can try again
+                        st.warning(err)
+                        st.session_state["last_audio_hash"] = None
+                    else:
+                        parts      = (result_str or "").split("|||")
+                        text       = parts[0]                              if len(parts) > 0 else ""
+                        confidence = parts[1]                              if len(parts) > 1 else "ok"
+                        lang       = parts[2]                              if len(parts) > 2 else ""
+
+                        if confidence == "noisy":
+                            # Show warning and pre-fill text box; user can correct before sending
+                            st.warning(
+                                f'Audio was noisy. Best guess: "{text}" (detected: {lang}). '
+                                "Edit below if incorrect, then click Send."
                             )
-                            transcribed = (result.get("text") or "").strip()
-
-                            if not transcribed or len(transcribed) < 2:
-                                st.warning(
-                                    "Could not detect clear speech. "
-                                    "Please try again or type below."
-                                )
-                                st.session_state["audio_processed"] = False
-                                st.rerun()
-                                return
-
-                            # --- Detect language from the transcribed text ---
-                            detected_lang = _detect_language(transcribed)
-                            
-                            # --- Second pass: transcribe with the detected language ---
-                            # This ensures accurate transcription for the specific language
-                            result = whisper_model.transcribe(
-                                tmp_path,
-                                language=detected_lang,
-                                **_WHISPER_OPTIONS,
-                            )
-                            transcribed = (result.get("text") or "").strip()
-
-                            if not transcribed or len(transcribed) < 2:
-                                st.warning(
-                                    "Could not detect clear speech. "
-                                    "Please try again or type below."
-                                )
-                                st.session_state["audio_processed"] = False
-                                st.rerun()
-                                return
-
-                            # Map language code to display name
-                            lang_map = {
-                                "te": "Telugu",
-                                "ta": "Tamil",
-                                "kn": "Kannada",
-                                "bn": "Bengali",
-                                "or": "Odia",
-                                "hi": "Hindi",
-                                "en": "English"
-                            }
-                            lang_display = lang_map.get(detected_lang, "Unknown")
-                            
-                            st.success(f"Heard ({lang_display}): {transcribed}")
-                            _send_message(transcribed)
-                            st.session_state["audio_processed"] = False
+                            st.session_state["prefill_text"] = text
+                        else:
+                            st.success(f'Heard ({lang}): "{text}"')
+                            _send(text)
+                            st.session_state["last_audio_hash"] = None
                             st.rerun()
 
-                        except Exception as exc:
-                            err_msg = str(exc)
-                            if "reshape" in err_msg:
-                                st.warning(
-                                    "🔇 The recording was silent or corrupted. "
-                                    "Please try speaking clearly for 2-3 seconds, or type your request below."
-                                )
-                            else:
-                                st.error(
-                                    f"Transcription error: {err_msg}. "
-                                    "Please type your request below."
-                                )
-                            st.session_state["audio_processed"] = False
-                            st.rerun()
-                        finally:
-                            if tmp_path and os.path.exists(tmp_path):
-                                try:
-                                    os.unlink(tmp_path)
-                                except OSError:
-                                    pass
+            # ── Text input (outside st.form — send + rerun works correctly) ──
+            st.markdown('<div class="section-label" style="margin-top:0.8rem;">Or type</div>', unsafe_allow_html=True)
 
-            st.markdown(
-                '<div class="section-label" style="margin-top:0.8rem;">Or type</div>',
-                unsafe_allow_html=True,
-            )
-
-            placeholder_map = {
+            placeholders = {
                 "collecting": "e.g. Light saree for summer wedding, Rs.1500, mint green...",
                 "retrieved":  "Type 1, 2, or 3 to select a swatch...",
             }
-            placeholder = placeholder_map.get(cur, "Type your message...")
-
+            prefill    = st.session_state.pop("prefill_text", "")
             user_input = st.text_input(
                 "Your message",
-                placeholder=placeholder,
+                value=prefill,
+                placeholder=placeholders.get(cur, "Type your message..."),
                 label_visibility="collapsed",
-                key=f"text_input_{len(st.session_state['history'])}",
+                key=f"txt_{len(st.session_state['history'])}",
             )
             if st.button("Send", key="send_btn") and user_input.strip():
-                _send_message(user_input.strip())
+                _send(user_input.strip())
+                st.session_state["last_audio_hash"] = None
                 st.rerun()
 
+            # Example chips
             if cur in ("greeting", "collecting") and len(st.session_state["history"]) <= 1:
-                st.markdown(
-                    '<div style="margin-top:0.6rem;"></div>',
-                    unsafe_allow_html=True,
-                )
-                st.markdown(
-                    '<div class="section-label">Try saying...</div>',
-                    unsafe_allow_html=True,
-                )
+                st.markdown('<div style="margin-top:0.6rem;"></div>', unsafe_allow_html=True)
+                st.markdown('<div class="section-label">Try saying...</div>', unsafe_allow_html=True)
                 examples = [
                     "Light saree for summer wedding, Rs.1500",
                     "Shaadi ke liye flowy cotton, around Rs.2000",
@@ -1094,8 +890,7 @@ It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss
                 for i, ex in enumerate(examples):
                     with cols[i % 2]:
                         if st.button(ex, key=f"ex_{i}"):
-                            _send_message(ex)
-                            st.rerun()
+                            _send(ex); st.rerun()
 
 
 # ---------------------------------------------------------------------------
@@ -1103,146 +898,84 @@ It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss
 # ---------------------------------------------------------------------------
 def _weaver_page() -> None:
     _init_weaver_state()
-
     weavers = _load_weaver_profiles()
 
-    st.markdown(
-        '<div class="section-label">Weaver Dashboard</div>',
-        unsafe_allow_html=True,
-    )
+    st.markdown('<div class="section-label">Weaver Dashboard</div>', unsafe_allow_html=True)
 
-    with st.expander("How to use this app (Weaver)"):
+    with st.expander("How to use (Weaver)"):
         st.markdown("""
-**Step 1 — Select your weaver profile.**
-Use the dropdown to log in as yourself. Your cluster, speciality,
-rating, and completed orders appear alongside.
+**Step 1 — Select your profile.**
+Use the dropdown to log in. Your cluster, speciality, rating and orders appear alongside.
 
 **Step 2 — Review pending orders.**
-New orders broadcast by the Pakshi agent appear under Pending.
-Each card shows the fabric, weave style, colour, occasion,
-buyer description, price, and delivery deadline.
+New Pakshi agent broadcasts appear under Pending, showing fabric, colour, occasion, buyer description, price and deadline.
 
 **Step 3 — Accept or decline.**
-Click Accept to take the order — production begins.
-Click Decline if you cannot fulfil it; the agent finds another weaver.
+Accept to start production. Decline if you cannot fulfil it — the agent finds another weaver.
 
 **Step 4 — Upload a progress photo.**
-Once weaving starts, upload a mid-production photo.
-It is shared with the buyer for preview and builds trust before delivery.
+Once weaving starts, upload a mid-production photo. It is shared with the buyer for preview.
 
-**Step 5 — Simulate a new broadcast.**
-Click Simulate New Order Broadcast to see how incoming orders
-arrive in real time during the demo.
+**Step 5 — Simulate a broadcast.**
+Click Simulate New Order Broadcast to demo incoming orders in real time.
         """)
 
+    # Guard: no profiles loaded
     if not weavers:
-        st.warning(
-            "No weaver profiles found. "
-            "Make sure weaver_profiles.json is in the same folder as app.py."
-        )
+        st.warning("No weaver profiles found. Ensure weaver_profiles.json is in the same folder.")
         return
 
     col_sel, col_stat = st.columns([2, 3])
     with col_sel:
-        weaver_options = [
-            f"{w['id']} — {w.get('name','Unknown')} ({w.get('cluster','')})"
-            for w in weavers[:10]
-        ]
-        selected = st.selectbox(
-            "Logged in as",
-            weaver_options,
-            label_visibility="collapsed",
-        )
-        wid = selected.split(" — ")[0] if selected else ""
+        options  = [f"{w['id']} — {w.get('name','Unknown')} ({w.get('cluster','')})" for w in weavers[:10]]
+        selected = st.selectbox("Logged in as", options, label_visibility="collapsed")
+        wid      = selected.split(" — ")[0] if selected else ""
         st.session_state["weaver_id"] = wid
 
     profile = next((w for w in weavers if w.get("id") == wid), {})
 
     with col_stat:
         if profile:
-            specialities = ", ".join(profile.get("fabric_specialty", [])) or "—"
+            specs = ", ".join(profile.get("fabric_specialty", [])) or "—"
             st.markdown(f"""
             <div style="display:flex;gap:1.5rem;align-items:center;padding:0.5rem 0;flex-wrap:wrap;">
-                <div>
-                    <div class="swatch-label">Cluster</div>
-                    <div class="swatch-value" style="font-size:0.85rem;">
-                        {profile.get("cluster", "—")}
-                    </div>
-                </div>
-                <div>
-                    <div class="swatch-label">Speciality</div>
-                    <div class="swatch-value" style="font-size:0.85rem;">
-                        {specialities}
-                    </div>
-                </div>
-                <div>
-                    <div class="swatch-label">Rating</div>
-                    <div class="swatch-value" style="font-size:0.85rem;">
-                        {profile.get("rating", "—")}
-                    </div>
-                </div>
-                <div>
-                    <div class="swatch-label">Orders done</div>
-                    <div class="swatch-value" style="font-size:0.85rem;">
-                        {profile.get("orders_completed", "—")}
-                    </div>
-                </div>
+                <div><div class="swatch-label">Cluster</div>
+                     <div class="swatch-value" style="font-size:0.85rem;">{profile.get("cluster","—")}</div></div>
+                <div><div class="swatch-label">Speciality</div>
+                     <div class="swatch-value" style="font-size:0.85rem;">{specs}</div></div>
+                <div><div class="swatch-label">Rating</div>
+                     <div class="swatch-value" style="font-size:0.85rem;">{profile.get("rating","—")}</div></div>
+                <div><div class="swatch-label">Orders done</div>
+                     <div class="swatch-value" style="font-size:0.85rem;">{profile.get("orders_completed","—")}</div></div>
             </div>
             """, unsafe_allow_html=True)
 
-    st.markdown('<div class="pakshi-divider"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
-    orders  = st.session_state["weaver_orders"]
+    orders   = st.session_state["weaver_orders"]
     pending  = [o for o in orders if o.get("status") == "pending"]
     accepted = [o for o in orders if o.get("status") == "accepted"]
     declined = [o for o in orders if o.get("status") == "declined"]
 
     c1, c2, c3 = st.columns(3)
-    with c1:
-        st.markdown(f"""
-        <div class="card" style="text-align:center;">
-            <div style="font-size:1.8rem;font-weight:800;color:var(--accent-primary);">
-                {len(pending)}
-            </div>
-            <div class="swatch-label">Pending</div>
-        </div>""", unsafe_allow_html=True)
-    with c2:
-        st.markdown(f"""
-        <div class="card" style="text-align:center;">
-            <div style="font-size:1.8rem;font-weight:800;color:#22c55e;">
-                {len(accepted)}
-            </div>
-            <div class="swatch-label">Accepted</div>
-        </div>""", unsafe_allow_html=True)
-    with c3:
-        total_value = sum(o.get("price", 0) for o in accepted)
-        st.markdown(f"""
-        <div class="card" style="text-align:center;">
-            <div style="font-size:1.8rem;font-weight:800;color:var(--accent-primary);">
-                Rs.{total_value:,}
-            </div>
-            <div class="swatch-label">Value in hand</div>
-        </div>""", unsafe_allow_html=True)
+    c1.markdown(f'<div class="card" style="text-align:center;"><div style="font-size:1.8rem;font-weight:800;color:var(--accent);">{len(pending)}</div><div class="swatch-label">Pending</div></div>', unsafe_allow_html=True)
+    c2.markdown(f'<div class="card" style="text-align:center;"><div style="font-size:1.8rem;font-weight:800;color:#22c55e;">{len(accepted)}</div><div class="swatch-label">Accepted</div></div>', unsafe_allow_html=True)
+    total = sum(o.get("price", 0) for o in accepted)
+    c3.markdown(f'<div class="card" style="text-align:center;"><div style="font-size:1.8rem;font-weight:800;color:var(--accent);">Rs.{total:,}</div><div class="swatch-label">Value in hand</div></div>', unsafe_allow_html=True)
 
     st.markdown('<div style="height:0.4rem;"></div>', unsafe_allow_html=True)
 
     if pending:
-        st.markdown(
-            '<div class="section-label">New Orders — Awaiting Your Response</div>',
-            unsafe_allow_html=True,
-        )
+        st.markdown('<div class="section-label">New Orders — Awaiting Your Response</div>', unsafe_allow_html=True)
         for order in pending:
-            idx = next(
-                (i for i, o in enumerate(orders) if o.get("order_id") == order.get("order_id")),
-                None,
-            )
+            # Safe index lookup — no O(n^2) items.index()
+            idx = next((i for i, o in enumerate(orders) if o.get("order_id") == order.get("order_id")), None)
             if idx is None:
                 continue
 
             feel_tags = "".join(
                 f'<span class="tag">{t.strip()}</span>'
-                for t in str(order.get("buyer_feel", "")).split(",")[:4]
-                if t.strip()
+                for t in str(order.get("buyer_feel","")).split(",")[:4] if t.strip()
             )
             st.markdown(f"""
             <div class="order-card">
@@ -1267,53 +1000,34 @@ arrive in real time during the demo.
             </div>
             """, unsafe_allow_html=True)
 
-            c1, c2, _ = st.columns([1, 1, 3])
-            with c1:
-                if st.button(
-                    "Accept",
-                    key=f"acc_{order['order_id']}",
-                    use_container_width=True,
-                ):
+            b1, b2, _ = st.columns([1, 1, 3])
+            with b1:
+                if st.button("Accept", key=f"acc_{order['order_id']}", use_container_width=True):
                     st.session_state["weaver_orders"][idx]["status"] = "accepted"
-                    order_summary = (
-                        f"New order: {order.get('weave_style','')}, "
-                        f"{order.get('color','')}, "
-                        f"Rs.{order.get('price',0)}, "
-                        f"due {order.get('delivery_by','')}"
+                    summary = (
+                        f"New order: {order.get('weave_style','')}, {order.get('color','')}, "
+                        f"Rs.{order.get('price',0)}, due {order.get('delivery_by','')}"
                     )
-                    audio_bytes = _tts_bytes(order_summary, lang="en")
-                    if audio_bytes:
-                        _autoplay_audio(audio_bytes)
+                    ab = _tts_bytes(summary, lang="en")
+                    if ab:
+                        _autoplay_audio(ab)
                         st.caption("Listen to order details above")
                     else:
-                        st.info("Audio playback not available. Order accepted.")
-                    st.success(
-                        f"Order {order.get('order_id','')} accepted! Buyer will be notified."
-                    )
+                        st.info("Audio unavailable. Order accepted.")
+                    st.success(f"Order {order.get('order_id','')} accepted!")
                     time.sleep(0.4)
                     st.rerun()
-
-            with c2:
-                if st.button(
-                    "Decline",
-                    key=f"dec_{order['order_id']}",
-                    use_container_width=True,
-                ):
+            with b2:
+                if st.button("Decline", key=f"dec_{order['order_id']}", use_container_width=True):
                     st.session_state["weaver_orders"][idx]["status"] = "declined"
-                    st.info("Order declined. Agent will find another weaver.")
+                    st.info("Declined. Agent will find another weaver.")
                     time.sleep(0.4)
                     st.rerun()
 
     if accepted:
-        st.markdown(
-            '<div class="section-label" style="margin-top:1rem;">In Production</div>',
-            unsafe_allow_html=True,
-        )
+        st.markdown('<div class="section-label" style="margin-top:1rem;">In Production</div>', unsafe_allow_html=True)
         for order in accepted:
-            idx = next(
-                (i for i, o in enumerate(orders) if o.get("order_id") == order.get("order_id")),
-                None,
-            )
+            idx = next((i for i, o in enumerate(orders) if o.get("order_id") == order.get("order_id")), None)
             st.markdown(f"""
             <div class="order-card accepted">
                 <div style="display:flex;justify-content:space-between;">
@@ -1332,18 +1046,14 @@ arrive in real time during the demo.
 
             uploaded = st.file_uploader(
                 f"Upload progress photo for {order.get('order_id','')}",
-                type=["jpg", "jpeg", "png"],
+                type=["jpg","jpeg","png"],
                 key=f"photo_{order.get('order_id','')}",
                 label_visibility="collapsed",
             )
             if uploaded is not None:
                 try:
-                    st.image(
-                        uploaded,
-                        caption=f"Progress: {order.get('order_id','')}",
-                        width=280,
-                    )
-                    st.success("Photo sent to buyer for preview!")
+                    st.image(uploaded, caption=f"Progress: {order.get('order_id','')}", width=280)
+                    st.success("Photo sent to buyer!")
                     if idx is not None:
                         st.session_state["weaver_orders"][idx]["photo"] = uploaded.name
                     for bo in st.session_state.get("buyer_orders", []):
@@ -1357,39 +1067,33 @@ arrive in real time during the demo.
             st.markdown('<div style="height:0.4rem;"></div>', unsafe_allow_html=True)
 
     if declined:
-        st.markdown(
-            '<div class="section-label" style="margin-top:1rem;color:var(--text-muted);">Declined</div>',
-            unsafe_allow_html=True,
-        )
+        st.markdown('<div class="section-label" style="margin-top:1rem;color:var(--text-muted);">Declined</div>', unsafe_allow_html=True)
         for order in declined:
             st.markdown(f"""
             <div class="order-card declined">
                 <span style="font-size:0.85rem;color:var(--text-primary);">
                     {order.get("weave_style","—")} · #{order.get("order_id","—")}
                 </span>
-                <span style="float:right;font-size:0.75rem;color:var(--text-muted);">
-                    Declined
-                </span>
+                <span style="float:right;font-size:0.75rem;color:var(--text-muted);">Declined</span>
             </div>
             """, unsafe_allow_html=True)
 
     st.markdown('<div style="height:1rem;"></div>', unsafe_allow_html=True)
     if st.button("Simulate New Order Broadcast"):
-        weave_style = profile.get("weave_style", "Handloom") if profile else "Handloom"
-        new_order = {
-            "order_id":   f"PKS-{random.randint(2900, 2999)}",
-            "fabric":     random.choice(["Cotton-Silk", "Cotton", "Silk"]),
-            "weave_style": weave_style,
-            "color":      random.choice(["Sage green", "Mustard yellow", "Ivory with zari", "Teal"]),
-            "occasion":   random.choice(["Wedding", "Festival", "Casual"]),
-            "buyer_feel": random.choice(["light, flowy, elegant", "royal, heavy, grand", "breathable, cool"]),
-            "price":      random.choice([900, 1200, 1500, 2000, 2500]),
-            "delivery_by":"July 25, 2026",
-            "status":     "pending",
-            "photo":      None,
-            "buyer_note": "New broadcast from Pakshi agent",
-        }
-        st.session_state["weaver_orders"].insert(0, new_order)
+        weave = profile.get("weave_style", "Handloom") if profile else "Handloom"
+        st.session_state["weaver_orders"].insert(0, {
+            "order_id":    f"PKS-{random.randint(2900, 2999)}",
+            "fabric":      random.choice(["Cotton-Silk", "Cotton", "Silk"]),
+            "weave_style": weave,
+            "color":       random.choice(["Sage green", "Mustard yellow", "Ivory with zari", "Teal"]),
+            "occasion":    random.choice(["Wedding", "Festival", "Casual"]),
+            "buyer_feel":  random.choice(["light, flowy, elegant", "royal, heavy, grand", "breathable, cool"]),
+            "price":       random.choice([900, 1200, 1500, 2000, 2500]),
+            "delivery_by": "July 25, 2026",
+            "status":      "pending",
+            "photo":       None,
+            "buyer_note":  "New broadcast from Pakshi agent",
+        })
         st.success("New order broadcast received!")
         st.rerun()
 
@@ -1397,69 +1101,51 @@ arrive in real time during the demo.
 # ---------------------------------------------------------------------------
 # ONE OF A KIND PAGE
 # ---------------------------------------------------------------------------
-def _one_of_a_kind_page() -> None:
-    st.markdown(
-        '<div class="section-label">One of a Kind — Rejected Custom Pieces</div>',
-        unsafe_allow_html=True,
-    )
+def _ooak_page() -> None:
+    st.markdown('<div class="section-label">One of a Kind — Rejected Custom Pieces</div>', unsafe_allow_html=True)
 
-    items: list[dict] = st.session_state.get("one_of_a_kind", [])
+    items = st.session_state.get("one_of_a_kind", [])
 
     if not items:
         st.markdown("""
         <div class="card" style="text-align:center;padding:2.5rem;">
-            <div style="font-weight:700;font-size:1rem;margin-bottom:0.4rem;
-                        color:var(--text-white);">
+            <div style="font-weight:700;font-size:1rem;color:var(--text-white);margin-bottom:0.4rem;">
                 No rejected pieces yet — that is a good sign
             </div>
             <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.6;">
-                When a custom order does not meet a buyer's expectation,<br>
-                it lands here at wholesale price.<br>
-                <span style="color:var(--accent-primary);font-weight:600;">
-                    No waste. No loss. Every piece finds a buyer.
-                </span>
+                When a custom order is rejected, it lands here at wholesale price.<br>
+                <span style="color:var(--accent);font-weight:600;">No waste. No loss. Every piece finds a buyer.</span>
             </div>
         </div>
         """, unsafe_allow_html=True)
         return
 
-    count = len(items)
-    st.caption(
-        f"{count} unique handwoven piece{'s' if count > 1 else ''} available "
-        "at wholesale prices — ready to ship, each one of a kind."
-    )
-    st.markdown('<div class="pakshi-divider"></div>', unsafe_allow_html=True)
+    st.caption(f"{len(items)} unique handwoven piece{'s' if len(items)>1 else ''} available at wholesale prices.")
+    st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
     for idx, item in enumerate(items):
-        original = item.get("original_price", 0)
+        orig     = item.get("original_price", 0)
         resale   = item.get("resale_price",   0)
-        discount = int((1 - resale / original) * 100) if original > 0 else 0
-        tags_html = "".join(
-            f'<span class="tag">{t}</span>'
-            for t in item.get("sensory_tags", [])[:3]
-        )
+        discount = int((1 - resale / orig) * 100) if orig > 0 else 0
+        tags     = "".join(f'<span class="tag">{t}</span>' for t in item.get("sensory_tags",[])[:3])
 
         col1, col2 = st.columns([4, 1], gap="small")
         with col1:
             st.markdown(f"""
             <div class="card">
-                <div style="display:flex;justify-content:space-between;
-                    align-items:flex-start;flex-wrap:wrap;gap:0.5rem;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;">
                     <div>
                         <div style="font-weight:700;font-size:1rem;color:var(--text-white);">
-                            {item.get("weave_style","—")} &nbsp;·&nbsp; {item.get("color","—")}
+                            {item.get("weave_style","—")} · {item.get("color","—")}
                         </div>
                         <div style="font-size:0.78rem;color:var(--text-muted);margin-top:3px;">
                             Order #{item.get("order_id","—")} · {item.get("reason","—")}
                         </div>
                         <div style="margin:8px 0;">
-                            {tags_html}
-                            <span class="tag" style="background:rgba(34,197,94,0.15);
-                                color:#22c55e;">wholesale</span>
-                            <span class="tag" style="background:rgba(34,197,94,0.15);
-                                color:#22c55e;">ready to ship</span>
-                            <span class="tag" style="background:rgba(239,68,68,0.15);
-                                color:#ef4444;">rejected custom</span>
+                            {tags}
+                            <span class="tag" style="background:rgba(34,197,94,0.15);color:#22c55e;">wholesale</span>
+                            <span class="tag" style="background:rgba(34,197,94,0.15);color:#22c55e;">ready to ship</span>
+                            <span class="tag" style="background:rgba(239,68,68,0.15);color:#ef4444;">rejected custom</span>
                         </div>
                         <div style="font-size:0.82rem;color:var(--text-primary);">
                             Woven by <b>{item.get("weaver_name","—")}</b> ·
@@ -1467,50 +1153,36 @@ def _one_of_a_kind_page() -> None:
                         </div>
                     </div>
                     <div style="text-align:right;flex-shrink:0;">
-                        <div style="font-size:0.78rem;color:var(--text-muted);
-                            text-decoration:line-through;">
-                            Rs.{original:,}
+                        <div style="font-size:0.78rem;color:var(--text-muted);text-decoration:line-through;">
+                            Rs.{orig:,}
                         </div>
                         <div class="swatch-price">Rs.{resale:,}</div>
-                        <div style="background:rgba(34,197,94,0.2);color:#22c55e;
-                            padding:2px 8px;border-radius:999px;font-size:0.72rem;
-                            font-weight:700;display:inline-block;margin-top:2px;">
-                            {discount}% off
-                        </div>
+                        <div style="background:rgba(34,197,94,0.2);color:#22c55e;padding:2px 8px;
+                            border-radius:999px;font-size:0.72rem;font-weight:700;
+                            display:inline-block;margin-top:2px;">{discount}% off</div>
                     </div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
-
         with col2:
             st.markdown('<div style="height:0.6rem;"></div>', unsafe_allow_html=True)
-            if st.button(
-                "Buy Now",
-                key=f"buy_{item.get('order_id', '')}_{idx}",
-                use_container_width=True,
-            ):
-                st.success(
-                    f"{item.get('order_id','')} added to cart! "
-                    "Estimated delivery: 3-5 days."
-                )
+            if st.button("Buy Now", key=f"buy_{item.get('order_id','')}_{idx}", use_container_width=True):
+                st.success(f"{item.get('order_id','')} added to cart! Delivery: 3-5 days.")
 
         st.markdown('<div style="height:0.2rem;"></div>', unsafe_allow_html=True)
 
 
 # ---------------------------------------------------------------------------
-# Main entry point
+# Main
 # ---------------------------------------------------------------------------
 def main() -> None:
     _render_header()
 
     if "app_loaded" not in st.session_state:
         st.markdown(
-            '<div style="background:rgba(218,65,103,0.1);'
-            'border:1px solid rgba(218,65,103,0.3);'
-            'border-radius:8px;padding:0.5rem 1rem;font-size:0.82rem;'
-            'color:var(--accent-primary);margin-bottom:0.8rem;">'
-            'First load — agent is warming up. '
-            'This takes about 15 seconds. Subsequent responses will be faster.</div>',
+            '<div style="background:rgba(218,65,103,0.1);border:1px solid rgba(218,65,103,0.3);'
+            'border-radius:8px;padding:0.5rem 1rem;font-size:0.82rem;color:var(--accent);margin-bottom:0.8rem;">'
+            'First load — agent is warming up. This takes about 15 seconds.</div>',
             unsafe_allow_html=True,
         )
         st.session_state["app_loaded"] = True
@@ -1521,15 +1193,14 @@ def main() -> None:
         horizontal=True,
         label_visibility="collapsed",
     )
-
-    st.markdown('<div class="pakshi-divider"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
     if "Buyer" in tab:
         _buyer_page()
     elif "Weaver" in tab:
         _weaver_page()
     else:
-        _one_of_a_kind_page()
+        _ooak_page()
 
 
 if __name__ == "__main__":
