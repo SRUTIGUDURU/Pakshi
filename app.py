@@ -222,14 +222,9 @@ def _load_whisper_model():
 
 # ---------------------------------------------------------------------------
 # Whisper transcription config — tuned for Indian multilingual speech
-#
-# Supported languages: English, Hindi, Telugu, Kannada, Odia, Bengali, Tamil
-# Language is auto-detected (language=None). The initial_prompt seeds the
-# decoder with Indian handloom vocabulary to prevent hallucination on short
-# clips and to bias detection toward the correct language family.
 # ---------------------------------------------------------------------------
 _WHISPER_KWARGS = {
-    "language": None,           # auto-detect from 99 Whisper languages
+    "language": None,
     "initial_prompt": (
         "saree, silk, cotton, weaver, handloom, wedding, casual, budget, rupees, "
         "saadi, kapda, resham, patta, shaadi, zari, ikat, pochampally, lehenga, "
@@ -237,13 +232,13 @@ _WHISPER_KWARGS = {
         "Telugu: saree kosamga, Hindi: shaadi ke liye, "
         "Kannada: madduve, Bengali: saree, Tamil: pudavai, Odia: posa kapada"
     ),
-    "beam_size": 5,             # much better than greedy (default 1)
-    "temperature": (0.0, 0.2, 0.4, 0.6),   # retry with higher temps on hard audio
-    "compression_ratio_threshold": 2.4,    # above = likely hallucination
-    "no_speech_threshold": 0.6,            # above = treat as silence
-    "condition_on_previous_text": False,   # each clip is independent
+    "beam_size": 5,
+    "temperature": (0.0, 0.2, 0.4, 0.6),
+    "compression_ratio_threshold": 2.4,
+    "no_speech_threshold": 0.6,
+    "condition_on_previous_text": False,
     "word_timestamps": False,
-    "fp16": False,              # safer on CPU
+    "fp16": False,
 }
 
 _LANG_DISPLAY = {
@@ -251,7 +246,6 @@ _LANG_DISPLAY = {
     "kn": "Kannada", "or": "Odia",   "bn": "Bengali", "ta": "Tamil",
 }
 
-# Phrases Whisper commonly hallucinates on near-silence
 _HALLUCINATIONS = {
     "thank you", "thanks for watching", "thanks for listening",
     "subscribe", "please subscribe", "bye", "goodbye",
@@ -261,31 +255,11 @@ _HALLUCINATIONS = {
 
 
 def _transcribe_audio(audio_file) -> tuple:
-    """
-    Transcribe a Streamlit audio_input file object.
-
-    Returns (result_string, error_string).
-      Success: ("text|||confidence|||lang", None)
-               confidence is "ok" or "noisy"
-      Failure: (None, human_readable_error)
-
-    Bad-audio conditions handled:
-      - Clip too short / file too small (< 8 KB)
-      - Pure silence (no_speech_prob > 0.75)
-      - Empty / junk output after transcription
-      - Known hallucination phrases
-      - ffmpeg not installed
-      - Whisper reshape error (empty audio tensor)
-      - Temp file cleanup guaranteed via finally
-    """
+    """Transcribe audio with Whisper. Returns (result_string, error_string)."""
     buf = audio_file.getbuffer()
 
-    # Guard 1: size — genuine 2s 16kHz/16-bit mono WAV is ~64 KB
     if len(buf) < 8_000:
-        return None, (
-            "Recording was too short. "
-            "Hold the button and speak clearly for at least 2 seconds."
-        )
+        return None, "Recording too short. Speak clearly for at least 2 seconds."
 
     model, load_err = _load_whisper_model()
     if load_err or model is None:
@@ -299,34 +273,22 @@ def _transcribe_audio(audio_file) -> tuple:
 
         result = model.transcribe(tmp_path, **_WHISPER_KWARGS)
 
-        text          = (result.get("text") or "").strip()
-        segments      = result.get("segments") or []
+        text = (result.get("text") or "").strip()
+        segments = result.get("segments") or []
         detected_lang = result.get("language") or "unknown"
 
-        # Guard 2: silence
         avg_no_speech = (
             sum(s.get("no_speech_prob", 0.0) for s in segments) / len(segments)
             if segments else 1.0
         )
         if avg_no_speech > 0.75:
-            return None, (
-                "No speech detected. Speak closer to the microphone "
-                "and reduce background noise, then try again."
-            )
+            return None, "No speech detected. Speak closer to the microphone."
 
-        # Guard 3: empty output
         if not text or len(text) < 4:
-            return None, (
-                "Could not make out the words. "
-                "Please try again or type your request below."
-            )
+            return None, "Could not make out the words. Please try again."
 
-        # Guard 4: hallucination
         if text.lower() in _HALLUCINATIONS:
-            return None, (
-                f'Transcribed "{text}" which looks like background noise. '
-                "Please speak for 2-3 seconds or type below."
-            )
+            return None, f'Transcribed "{text}" — likely background noise. Please try again.'
 
         lang = _LANG_DISPLAY.get(detected_lang, detected_lang.upper())
         confidence = "noisy" if avg_no_speech > 0.4 else "ok"
@@ -335,20 +297,12 @@ def _transcribe_audio(audio_file) -> tuple:
     except Exception as exc:
         err = str(exc)
         if "ffmpeg" in err.lower():
-            return None, (
-                "ffmpeg is required for audio. "
-                "Install: sudo apt install ffmpeg  (Linux) "
-                "or  brew install ffmpeg  (Mac)"
-            )
+            return None, "ffmpeg required. Install: sudo apt install ffmpeg"
         if "reshape" in err.lower() or "size 0" in err.lower():
-            return None, (
-                "Recording was empty or corrupted. "
-                "Speak clearly for 2-3 seconds and try again."
-            )
+            return None, "Recording was empty or corrupted. Please try again."
         return None, f"Transcription failed: {err}"
 
     finally:
-        # Always delete temp file, even if transcription raised an exception
         if tmp_path:
             try:
                 os.unlink(tmp_path)
@@ -357,7 +311,7 @@ def _transcribe_audio(audio_file) -> tuple:
 
 
 # ---------------------------------------------------------------------------
-# TTS helper (gTTS, graceful fallback)
+# TTS helper
 # ---------------------------------------------------------------------------
 def _tts_bytes(text: str, lang: str = "en") -> bytes | None:
     if not text:
@@ -406,10 +360,7 @@ def _init_buyer_state() -> None:
         "one_of_a_kind":    [],
         "buyer_orders":     [],
         "agent_thinking":   False,
-        # Audio loop prevention: store hash of last processed clip.
-        # Same hash on rerun = skip transcription = no infinite loop.
-        "last_audio_hash":  None,
-        # Pre-fill text box when noisy audio needs user correction.
+        "audio_processed":  False,      # <--- FIX: prevents audio loop
         "prefill_text":     "",
     }
     for k, v in defaults.items():
@@ -800,6 +751,7 @@ If the final piece does not meet your expectation, click Reject Piece. It moves 
                 st.session_state["one_of_a_kind"] = ooak
                 st.session_state["buyer_orders"]  = bords
                 st.session_state["app_loaded"]    = True
+                st.session_state["audio_processed"] = False  # <--- Reset for new search
                 st.rerun()
 
         else:
@@ -808,55 +760,47 @@ If the final piece does not meet your expectation, click Reject Piece. It moves 
                 _send("hi"); st.rerun()
 
             # ── Voice input ──
-            # Loop prevention: Streamlit reruns the whole script on every interaction.
-            # st.audio_input returns the same object on reruns until a new clip is recorded.
-            # We hash the raw bytes and compare to last_audio_hash in session_state.
-            # If they match, we already processed this clip — skip to avoid infinite transcription.
-            # On success, we clear last_audio_hash so the widget accepts the next recording.
-            st.markdown('<div class="section-label">Speak your request</div>', unsafe_allow_html=True)
-            st.caption("Supports: English, Hindi, Telugu, Kannada, Odia, Bengali, Tamil. Speak for 2-3 seconds.")
+            # FIX: Only show microphone if audio hasn't been processed yet
+            if not st.session_state.get("audio_processed", False):
+                st.markdown('<div class="section-label">Speak your request</div>', unsafe_allow_html=True)
+                st.caption("Supports: English, Hindi, Telugu, Kannada, Odia, Bengali, Tamil. Speak for 2-3 seconds.")
 
-            audio_file = st.audio_input(
-                "Record your fabric request",
-                label_visibility="collapsed",
-                key="pakshi_audio",       # STATIC key — never changes, no widget reset loop
-            )
+                audio_file = st.audio_input(
+                    "Record your fabric request",
+                    label_visibility="collapsed",
+                    key="pakshi_audio",
+                )
 
-            if audio_file is not None:
-                audio_hash = hash(bytes(audio_file.getbuffer()))
-
-                if st.session_state.get("last_audio_hash") == audio_hash:
-                    pass  # Same clip as last rerun — already processed, skip
-                else:
-                    st.session_state["last_audio_hash"] = audio_hash
+                if audio_file is not None:
+                    # Immediately mark as processed to prevent loop
+                    st.session_state["audio_processed"] = True
 
                     with st.spinner("Transcribing..."):
                         result_str, err = _transcribe_audio(audio_file)
 
                     if err:
-                        # Bad audio — warn, clear hash so user can try again
                         st.warning(err)
-                        st.session_state["last_audio_hash"] = None
+                        st.session_state["audio_processed"] = False  # Allow retry on error
                     else:
                         parts      = (result_str or "").split("|||")
-                        text       = parts[0]                              if len(parts) > 0 else ""
-                        confidence = parts[1]                              if len(parts) > 1 else "ok"
-                        lang       = parts[2]                              if len(parts) > 2 else ""
+                        text       = parts[0] if len(parts) > 0 else ""
+                        confidence = parts[1] if len(parts) > 1 else "ok"
+                        lang       = parts[2] if len(parts) > 2 else ""
 
                         if confidence == "noisy":
-                            # Show warning and pre-fill text box; user can correct before sending
-                            st.warning(
-                                f'Audio was noisy. Best guess: "{text}" (detected: {lang}). '
-                                "Edit below if incorrect, then click Send."
-                            )
+                            st.warning(f'Audio was noisy. Best guess: "{text}" (detected: {lang}). Edit below if incorrect.')
                             st.session_state["prefill_text"] = text
+                            st.session_state["audio_processed"] = False  # Allow retry
                         else:
                             st.success(f'Heard ({lang}): "{text}"')
                             _send(text)
-                            st.session_state["last_audio_hash"] = None
+                            st.session_state["audio_processed"] = True
                             st.rerun()
+            else:
+                # Audio already processed — show clear instruction
+                st.info("🎤 Voice request received. Type **1**, **2**, or **3** to select a swatch, or type a new message below.")
 
-            # ── Text input (outside st.form — send + rerun works correctly) ──
+            # ── Text input ──
             st.markdown('<div class="section-label" style="margin-top:0.8rem;">Or type</div>', unsafe_allow_html=True)
 
             placeholders = {
@@ -873,7 +817,7 @@ If the final piece does not meet your expectation, click Reject Piece. It moves 
             )
             if st.button("Send", key="send_btn") and user_input.strip():
                 _send(user_input.strip())
-                st.session_state["last_audio_hash"] = None
+                st.session_state["audio_processed"] = False  # Allow new audio after sending text
                 st.rerun()
 
             # Example chips
@@ -920,7 +864,6 @@ Once weaving starts, upload a mid-production photo. It is shared with the buyer 
 Click Simulate New Order Broadcast to demo incoming orders in real time.
         """)
 
-    # Guard: no profiles loaded
     if not weavers:
         st.warning("No weaver profiles found. Ensure weaver_profiles.json is in the same folder.")
         return
@@ -968,7 +911,6 @@ Click Simulate New Order Broadcast to demo incoming orders in real time.
     if pending:
         st.markdown('<div class="section-label">New Orders — Awaiting Your Response</div>', unsafe_allow_html=True)
         for order in pending:
-            # Safe index lookup — no O(n^2) items.index()
             idx = next((i for i, o in enumerate(orders) if o.get("order_id") == order.get("order_id")), None)
             if idx is None:
                 continue
