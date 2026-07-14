@@ -86,22 +86,33 @@ html, body, [class*="css"] {
     margin-bottom: 1.5rem;
 }
 
-/* ── Cards ── */
+/* ── Cards — glassmorphism + hover lift ── */
 .card {
-    background: var(--bg-surface);
-    border: 1px solid var(--border);
+    background: rgba(58,24,112,0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.08);
     border-radius: 12px;
     padding: 1.2rem 1.4rem;
     margin-bottom: 1rem;
     color: var(--text-primary);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
 }
 .card-highlight {
-    background: var(--bg-card);
+    background: rgba(58,24,112,0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border: 1.5px solid var(--accent-primary);
     border-radius: 12px;
     padding: 1.2rem 1.4rem;
     margin-bottom: 1rem;
+    transition: transform 0.18s ease;
 }
+.card-highlight:hover { transform: translateY(-2px); }
 
 /* ── Swatch card ── */
 .swatch-card {
@@ -238,7 +249,10 @@ html, body, [class*="css"] {
     font-family: 'Inter', sans-serif !important;
     transition: opacity 0.15s;
 }
-.stButton > button:hover { opacity: 0.88 !important; }
+.stButton > button:hover {
+    opacity: 0.88 !important;
+    box-shadow: 0 0 16px rgba(245,166,35,0.4) !important;
+}
 
 .stButton > button[kind="secondary"] {
     background: transparent !important;
@@ -404,6 +418,8 @@ def _init_buyer_state():
         "awaiting": None, # "swatch_select" | "fallback_yn" | "confirm" | None
         "reasoning_log": [],
         "one_of_a_kind": [], # rejected custom pieces -> resale
+        "buyer_orders": [],     # confirmed orders for tracking
+        "agent_thinking": False, # shows thinking spinner
     }
     for k, v in defaults.items():
         if k not in st.session_state:
@@ -549,12 +565,14 @@ def _send_message(user_text: str):
 
     agent = st.session_state["agent"]
     st.session_state["history"].append(("user", user_text))
+    st.session_state["agent_thinking"] = True
 
     response = agent.chat(user_text)
     msg = response.get("message", "")
     state = response.get("state", "greeting")
     data = response.get("data", {})
 
+    st.session_state["agent_thinking"] = False
     st.session_state["current_state"] = state
     st.session_state["history"].append(("agent", msg))
     st.session_state["agent_data"] = data
@@ -563,9 +581,27 @@ def _send_message(user_text: str):
     if data.get("swatches"):
         st.session_state["swatches"] = data["swatches"]
 
-    # Extract confirmed order
+    # Extract confirmed order + save to buyer_orders tracker
     if data.get("order"):
         st.session_state["order"] = data["order"]
+
+    if state == "confirmed" and data.get("order"):
+        raw = data["order"]
+        sw  = raw.get("selected_swatch") or {}
+        wv  = raw.get("selected_weaver") or {}
+        tracked = {
+            "order_id":    raw.get("order_id", "PKS-???"),
+            "weave_style": sw.get("weave_style", "—"),
+            "color":       sw.get("color", "—"),
+            "price":       sw.get("price_inr", 0),
+            "weaver_name": wv.get("weaver_name", "—"),
+            "status":      "In Production",
+            "photo_path":  None,
+            "intent":      user_text,
+        }
+        existing_ids = [o["order_id"] for o in st.session_state.get("buyer_orders", [])]
+        if tracked["order_id"] not in existing_ids:
+            st.session_state["buyer_orders"].append(tracked)
 
     # Log reasoning for "Why It's Agentic" panel
     if state in ("fallback_pending", "broadcasting", "weaver_selected", "confirmed"):
@@ -600,6 +636,57 @@ If the finished piece does not match your expectation, click
 Reject Piece. It moves to the One of a Kind resale tab at a wholesale price.
 No waste, no loss.
         """)
+
+    # Agent thinking banner (Feature 5)
+    if st.session_state.get("agent_thinking"):
+        st.markdown(
+            '<div style="background:rgba(245,166,35,0.12);border-left:3px solid #f5a623;'
+            'padding:0.6rem 1rem;border-radius:0 8px 8px 0;font-size:0.85rem;'
+            'color:#f5a623;margin-bottom:0.8rem;">'
+            'Agent is reasoning through fabric options...</div>',
+            unsafe_allow_html=True
+        )
+
+    # My Orders dashboard (Feature 1c)
+    buyer_orders = st.session_state.get("buyer_orders", [])
+    if buyer_orders:
+        with st.expander(f"Your Orders ({len(buyer_orders)})"):
+            for bo in buyer_orders:
+                status = bo.get("status", "In Production")
+                status_color = {
+                    "In Production":  "#f5a623",
+                    "Photo Available": "#7b3fc4",
+                    "Completed":      "#22c55e",
+                }.get(status, "#b0a8c8")
+                photo_note = (
+                    '<div style="font-size:0.78rem;color:#22c55e;margin-top:4px;">'
+                    'Progress photo received from weaver</div>'
+                    if bo.get("photo_path") else ""
+                )
+                st.markdown(f"""
+                <div style="background:rgba(58,24,112,0.6);border:1px solid rgba(255,255,255,0.08);
+                    border-radius:10px;padding:0.8rem 1rem;margin-bottom:0.5rem;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+                        <div>
+                            <div style="font-weight:700;font-size:0.9rem;">
+                                {bo['weave_style']} &middot; {bo['color']}
+                            </div>
+                            <div style="font-size:0.75rem;color:var(--grey-muted,#b0a8c8);">
+                                #{bo['order_id']} &middot; {bo['weaver_name']} &middot; Rs.{bo['price']:,}
+                            </div>
+                            {photo_note}
+                        </div>
+                        <div style="background:rgba(0,0,0,0.3);padding:3px 10px;
+                            border-radius:999px;font-size:0.72rem;font-weight:700;color:{status_color};">
+                            {status}
+                        </div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+                # Re-order button (Feature 2)
+                if st.button(f"Re-order  {bo['order_id']}", key=f"reorder_{bo['order_id']}"):
+                    _send_message(f"{bo['weave_style']}, {bo['color']}, Rs.{bo['price']}")
+                    st.rerun()
 
     _step_indicator(st.session_state["current_state"])
 
@@ -1051,6 +1138,12 @@ arrive in real time during the demo.
                 st.image(uploaded, caption=f"Progress: {order['order_id']}", width=280)
                 st.success("Photo sent to buyer for preview!")
                 st.session_state["weaver_orders"][idx]["photo"] = uploaded.name
+                # Sync to buyer_orders (Feature 1d)
+                for bo in st.session_state.get("buyer_orders", []):
+                    if bo["order_id"] == order["order_id"]:
+                        bo["photo_path"] = uploaded.name
+                        bo["status"] = "Photo Available"
+                        break
 
             st.markdown('<div style="height:0.4rem;"></div>', unsafe_allow_html=True)
 
@@ -1105,9 +1198,22 @@ def _one_of_a_kind_page():
     if not items:
         st.markdown("""
         <div class="card" style="text-align:center;padding:2.5rem;">
-            <div style="font-size:2rem;margin-bottom:0.5rem;"></div>
-            <div style="font-weight:700;margin-bottom:0.4rem;color:white;">No pieces here yet</div>
-            <div style="font-size:0.85rem;color:var(--grey-muted);">When a buyer rejects a custom order, it appears here at wholesale price.<br>No waste. No loss written off entirely.
+            <div style="margin-bottom:0.75rem;opacity:0.6;">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="24" cy="24" r="22" stroke="#f5a623" stroke-width="2"
+                        stroke-dasharray="4 3"/>
+                    <path d="M24 14v10l6 4" stroke="#f5a623" stroke-width="2"
+                        stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div style="font-weight:700;font-size:1rem;margin-bottom:0.4rem;color:white;">
+                No rejected pieces yet — that is a good sign
+            </div>
+            <div style="font-size:0.82rem;color:var(--grey-muted);line-height:1.6;">
+                When a custom order does not meet a buyer's expectation,<br>
+                it lands here at wholesale price.<br>
+                <span style="color:#f5a623;font-weight:600;">No waste. No loss. Every piece finds a buyer.</span>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1183,6 +1289,17 @@ def _one_of_a_kind_page():
 # ---------------------------------------------------------------------------
 def main():
     _render_header()
+
+    # Cold start banner — only shows on very first load (Feature 3a)
+    if "app_loaded" not in st.session_state:
+        st.markdown(
+            '<div style="background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);'
+            'border-radius:8px;padding:0.5rem 1rem;font-size:0.82rem;color:#f5a623;'
+            'margin-bottom:0.8rem;">First load — agent is warming up. '
+            'This takes about 15 seconds. Subsequent responses will be faster.</div>',
+            unsafe_allow_html=True
+        )
+        st.session_state["app_loaded"] = True
 
     # Tab switcher using radio (styled as pills via CSS)
     tab = st.radio(
