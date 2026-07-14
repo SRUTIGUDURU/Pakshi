@@ -12,6 +12,7 @@ Pipeline:
 
 Supports:
   - English, Hinglish, romanised Telugu/Tamil/Kannada/Bengali/Odia
+  - Hindi Devanagari script for colors and occasions
   - Budget expressions: "1500 rupees", "₹1500", "1.5k", "under 2000",
     "around 800", "1500 se kam", "below 2k"
   - Occasion aliases: "shaadi", "kalyanam", "pellikuturu", "biye",
@@ -66,7 +67,7 @@ for _fab in _ONTOLOGY["fabrics"]:
 
 # ---------------------------------------------------------------------------
 # Occasion aliases  (alias → canonical occasion tag)
-# ── Expanded with Telugu, Tamil, Kannada, Bengali, Odia ──
+# ── Expanded with Hindi Devanagari + Telugu, Tamil, Kannada, Bengali, Odia ──
 # ---------------------------------------------------------------------------
 OCCASION_ALIASES: dict[str, str] = {
     # ── Wedding ──
@@ -76,6 +77,9 @@ OCCASION_ALIASES: dict[str, str] = {
     "vivah":            "wedding",
     "marriage":         "wedding",
     "nikah":            "wedding",
+    # Hindi Devanagari
+    "शादी":             "wedding",
+    "वेडिंग":           "wedding",
     # Telugu wedding
     "pellikuturu":      "wedding",
     "pelliki":          "wedding",
@@ -116,6 +120,12 @@ OCCASION_ALIASES: dict[str, str] = {
     # Odia festivals
     "nuakhai":          "festival",
     "raja":             "festival",
+    # Hindi Devanagari
+    "फेस्टिवल":         "festival",
+    "त्योहार":          "festival",
+    "पूजा":             "festival",
+    "दिवाली":           "festival",
+    "होली":             "festival",
 
     # ── Casual / Daily ──
     "casual":           "casual",
@@ -126,6 +136,10 @@ OCCASION_ALIASES: dict[str, str] = {
     "roz ka":           "daily_wear",
     "rozana":           "daily_wear",
     "normal":           "daily_wear",
+    # Hindi Devanagari
+    "कैज़ुअल":          "casual",
+    "दैनिक":            "daily_wear",
+    "रोज़":             "daily_wear",
 
     # ── Work / Office ──
     "office":           "work",
@@ -134,12 +148,17 @@ OCCASION_ALIASES: dict[str, str] = {
     "formal":           "formal",
     "meeting":          "work",
     "conference":       "work",
+    # Hindi Devanagari
+    "ऑफिस":             "work",
+    "कार्यालय":         "work",
 
     # ── College / Young ──
     "college":          "college",
     "university":       "college",
     "campus":           "college",
     "class":            "college",
+    # Hindi Devanagari
+    "कॉलेज":            "college",
 
     # ── Summer ──
     "summer":           "summer",
@@ -247,7 +266,7 @@ FEEL_KEYWORDS: dict[str, list[str]] = {
 
 # ---------------------------------------------------------------------------
 # Color keyword map  (keyword → (display_name, color_family))
-# ── Comprehensive across 6 languages (Hindi, Telugu, Tamil, Kannada, Bengali, Odia) ──
+# ── Comprehensive across 7 languages (Hindi Devanagari + 6 others) ──
 # ---------------------------------------------------------------------------
 COLOR_KEYWORDS: dict[str, tuple[str, str]] = {
     # ── RED ──
@@ -259,12 +278,15 @@ COLOR_KEYWORDS: dict[str, tuple[str, str]] = {
     "wine":         ("wine red", "red"),
     "crimson":      ("crimson", "red"),
     "vermillion":   ("vermillion red", "red"),
-    "laal":         ("red", "red"),               # Hindi
+    "laal":         ("red", "red"),               # Hindi (romanised)
     "surkh":        ("red", "red"),               # Urdu
     "erupu":        ("red", "red"),               # Telugu
     "sivappu":      ("red", "red"),               # Tamil
     "kempu":        ("red", "red"),               # Kannada
     "lal":          ("red", "red"),               # Bengali / Odia
+    # Hindi Devanagari
+    "लाल":          ("red", "red"),
+    "लाल रंग":      ("red", "red"),
 
     # ── PINK ──
     "pink":         ("pink", "pink"),
@@ -276,16 +298,21 @@ COLOR_KEYWORDS: dict[str, tuple[str, str]] = {
     "magenta":      ("magenta", "pink"),
     "hot pink":     ("magenta", "pink"),
     "coral":        ("coral", "pink"),
-    "gulaabi":      ("pink", "pink"),             # Hindi
+    "gulaabi":      ("pink", "pink"),             # Hindi (romanised)
+    # Hindi Devanagari
+    "गुलाबी":       ("pink", "pink"),
 
     # ── ORANGE ──
     "orange":       ("orange", "orange"),
     "saffron":      ("saffron", "orange"),
-    "kesari":       ("saffron", "orange"),        # Hindi
+    "kesari":       ("saffron", "orange"),        # Hindi (romanised)
     "peach":        ("peach", "orange"),
     "rust":         ("rust", "orange"),
     "terracotta":   ("rust", "orange"),
     "kumkum":       ("saffron", "orange"),        # Telugu/Tamil/Kannada
+    # Hindi Devanagari
+    "नारंगी":       ("orange", "orange"),
+    "केसरिया":      ("saffron", "orange"),
 
     # ── YELLOW ──
     "yellow":       ("yellow", "yellow"),
@@ -295,12 +322,16 @@ COLOR_KEYWORDS: dict[str, tuple[str, str]] = {
     "pale gold":    ("pale gold", "yellow"),
     "champagne":    ("champagne", "yellow"),
     "ivory":        ("ivory", "neutral"),
-    "pila":         ("yellow", "yellow"),          # Hindi
+    "pila":         ("yellow", "yellow"),          # Hindi (romanised)
     "pillu":        ("yellow", "yellow"),          # Telugu
     "manjal":       ("yellow", "yellow"),          # Tamil
     "haladi":       ("yellow", "yellow"),          # Kannada
     "holud":        ("yellow", "yellow"),          # Bengali
     "pila":         ("yellow", "yellow"),          # Odia
+    # Hindi Devanagari
+    "पीला":         ("yellow", "yellow"),
+    "पीली":         ("yellow", "yellow"),
+    "पीला रंग":     ("yellow", "yellow"),
 
     # ── GREEN ──
     "green":        ("green", "green"),
@@ -315,13 +346,17 @@ COLOR_KEYWORDS: dict[str, tuple[str, str]] = {
     "jade":         ("jade green", "green"),
     "bottle green": ("dark green", "green"),
     "forest green": ("dark green", "green"),
-    "hara":         ("green", "green"),            # Hindi
-    "mehendi":      ("dark green", "green"),       # Hindi
+    "hara":         ("green", "green"),            # Hindi (romanised)
+    "mehendi":      ("dark green", "green"),       # Hindi (romanised)
     "pacha":        ("green", "green"),            # Telugu
     "pachchai":     ("green", "green"),            # Tamil
     "hasiru":       ("green", "green"),            # Kannada
     "sobuj":        ("green", "green"),            # Bengali
     "haria":        ("green", "green"),            # Odia
+    # Hindi Devanagari
+    "हरा":          ("green", "green"),
+    "हरी":          ("green", "green"),
+    "हरा रंग":      ("green", "green"),
 
     # ── BLUE ──
     "blue":         ("blue", "blue"),
@@ -337,10 +372,14 @@ COLOR_KEYWORDS: dict[str, tuple[str, str]] = {
     "peacock blue": ("peacock blue", "blue"),
     "aqua":         ("aqua", "blue"),
     "turquoise":    ("turquoise", "blue"),
-    "neela":        ("blue", "blue"),             # Hindi
+    "neela":        ("blue", "blue"),             # Hindi (romanised)
     "neelam":       ("blue", "blue"),             # Telugu
     "neel":         ("blue", "blue"),             # Bengali / Odia
     "neeli":        ("blue", "blue"),             # Kannada
+    # Hindi Devanagari
+    "नीला":         ("blue", "blue"),
+    "नीली":         ("blue", "blue"),
+    "नीला रंग":     ("blue", "blue"),
 
     # ── PURPLE ──
     "purple":       ("purple", "purple"),
@@ -350,8 +389,10 @@ COLOR_KEYWORDS: dict[str, tuple[str, str]] = {
     "deep purple":  ("deep purple", "purple"),
     "plum":         ("deep purple", "purple"),
     "mauve":        ("lilac", "purple"),
-    "baingani":     ("purple", "purple"),         # Hindi
+    "baingani":     ("purple", "purple"),         # Hindi (romanised)
     "gulabi":       ("pink", "pink"),             # Kannada
+    # Hindi Devanagari
+    "बैंगनी":       ("purple", "purple"),
 
     # ── WHITE (Neutral) ──
     "white":        ("white", "neutral"),
@@ -362,23 +403,30 @@ COLOR_KEYWORDS: dict[str, tuple[str, str]] = {
     "nude":         ("beige", "neutral"),
     "natural":      ("natural beige", "neutral"),
     "brown":        ("natural beige", "neutral"),
-    "safed":        ("white", "neutral"),         # Hindi
+    "safed":        ("white", "neutral"),         # Hindi (romanised)
     "tella":        ("white", "neutral"),         # Telugu
     "vella":        ("white", "neutral"),         # Tamil
     "bili":         ("white", "neutral"),         # Kannada
     "shada":        ("white", "neutral"),         # Bengali
     "dhala":        ("white", "neutral"),         # Odia
+    # Hindi Devanagari
+    "सफेद":         ("white", "neutral"),
+    "सफेद रंग":     ("white", "neutral"),
 
     # ── BLACK (Neutral) ──
     "black":        ("black", "neutral"),
     "grey":         ("grey", "neutral"),
     "gray":         ("grey", "neutral"),
-    "kala":         ("black", "neutral"),         # Hindi
+    "kala":         ("black", "neutral"),         # Hindi (romanised)
     "nalla":        ("black", "neutral"),         # Telugu
     "karuppu":      ("black", "neutral"),         # Tamil
     "kappu":        ("black", "neutral"),         # Kannada
     "kalo":         ("black", "neutral"),         # Bengali
     "kala":         ("black", "neutral"),         # Odia
+    # Hindi Devanagari
+    "काला":         ("black", "neutral"),
+    "काली":         ("black", "neutral"),
+    "काला रंग":     ("black", "neutral"),
 
     # ── Vague / descriptive ──
     "pastel":       ("pastel", "neutral"),
@@ -459,11 +507,15 @@ def _parse_budget(text: str) -> tuple[int | None, bool]:
 
 # ---------------------------------------------------------------------------
 # Language detection (lightweight heuristic — no external model needed)
-# ── Expanded for 6 languages ──
+# ── Expanded for Hindi Devanagari + 6 languages ──
 # ---------------------------------------------------------------------------
 _HINDI_MARKERS   = {"hai", "ka", "ki", "ke", "mein", "se", "koi", "bahut",
                     "acha", "thoda", "shaadi", "kapda", "lena", "chahiye",
                     "rupaye", "halka", "bhaari", "naram", "laal", "safed"}
+
+_HINDI_DEVANAGARI_MARKERS = {"है", "का", "की", "के", "में", "से", "कोई", "बहुत",
+                             "अच्छा", "थोड़ा", "शादी", "कपड़ा", "लेना", "चाहिए",
+                             "रुपये", "हल्का", "भारी", "नरम", "लाल", "सफेद"}
 
 _TELUGU_MARKERS  = {"kalyanam", "pellikuturu", "pelli", "saree", "chali",
                     "manchidi", "erupu", "pacha", "tella", "neelam", "nalla",
@@ -485,6 +537,11 @@ _ODIA_MARKERS    = {"bibaha", "saree", "bhalo", "dhala", "lal", "haria",
 
 def _detect_language(text: str) -> str:
     words = set(text.lower().split())
+    # Check for Devanagari script presence (any character in Devanagari Unicode range)
+    devanagari_chars = any('\u0900' <= c <= '\u097F' for c in text)
+    
+    if devanagari_chars:
+        return "hindi_devanagari"
     if words & _HINDI_MARKERS:
         return "hinglish"
     if words & _TELUGU_MARKERS:
@@ -658,7 +715,7 @@ def build_followup_question(missing: list[str]) -> str | None:
 
 
 # ---------------------------------------------------------------------------
-# Test harness — includes Odia test case
+# Test harness — includes Hindi Devanagari test case
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
@@ -683,6 +740,8 @@ if __name__ == "__main__":
         "Biye te porar jonno lal saree, 1500 taka budget",
         # Odia — wedding
         "Bibaha paain lal saree, budget 2000, light feel",
+        # Hindi Devanagari — yellow Kanchipuram saree
+        "मुझे एक पीले रंग की कांचीपुरम साड़ी चाहिए",
         # Over-detailed
         "I need a royal silk saree for my sister's wedding reception next month, "
         "deep red or maroon, budget is around ₹8000, it should be heavy and grand",
