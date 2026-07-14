@@ -969,7 +969,7 @@ It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss
 
             if audio_file is not None:
                 # Generate a unique hash for this audio file
-                audio_hash = hash(audio_file.getbuffer())
+                audio_hash = hash(bytes(audio_file.getbuffer()))
                 
                 # Only process if this is a NEW audio recording (not the same as before)
                 if st.session_state.get("last_audio_hash") != audio_hash:
