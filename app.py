@@ -878,7 +878,7 @@ No waste, no loss.
 
                             @st.cache_resource
                             def _load_whisper():
-                                return whisper.load_model("tiny")
+                                return whisper.load_model("small")
 
                             model = _load_whisper()
                             with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
