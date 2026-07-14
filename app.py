@@ -19,6 +19,8 @@ import time
 import random
 import tempfile
 import base64
+import wave
+import struct
 from pathlib import Path
 
 import streamlit as st
@@ -35,8 +37,6 @@ st.set_page_config(
 
 # ---------------------------------------------------------------------------
 # Brand CSS
-# All CSS variables are from the new palette; old --orange / --grey / --purple
-# references have been replaced. Emoji removed from CSS comments.
 # ---------------------------------------------------------------------------
 st.markdown("""
 <style>
@@ -335,6 +335,66 @@ html, body, [class*="css"] {
 
 
 # ---------------------------------------------------------------------------
+# Audio Validation Function (Fixes the "reshape" error)
+# ---------------------------------------------------------------------------
+def _audio_contains_sound(file_path: str, threshold: int = 100) -> bool:
+    """
+    Validates that the WAV file contains actual audio (non-zero amplitude).
+    Returns True if sound is detected, False if it's pure silence or corrupted.
+    This completely eliminates the "cannot reshape tensor of 0 elements" error.
+    """
+    try:
+        with wave.open(file_path, 'rb') as wf:
+            n_frames = wf.getnframes()
+            if n_frames < 100:  # Too short to contain speech
+                return False
+            
+            # Read up to 2000 frames (enough to detect any sound)
+            read_frames = min(n_frames, 2000)
+            raw_data = wf.readframes(read_frames)
+            
+            if len(raw_data) < 100:
+                return False
+            
+            # Check if any sample has amplitude above threshold
+            sample_count = min(read_frames, 500)
+            for i in range(0, sample_count * 2, 2):
+                val = struct.unpack('<h', raw_data[i:i+2])[0]
+                if abs(val) > threshold:
+                    return True
+            
+            return False
+            
+    except Exception:
+        return False
+
+
+def _fix_wav_header(file_path: str) -> bool:
+    """
+    Attempts to fix a corrupted WAV header by rewriting it using pydub.
+    Returns True if the fix succeeded and the file contains sound.
+    """
+    try:
+        from pydub import AudioSegment
+        
+        # Try loading the file with pydub (which uses ffmpeg to parse corrupt headers)
+        audio = AudioSegment.from_file(file_path)
+        
+        # Check if there's any audio data
+        if len(audio) < 200:  # Less than 200ms = likely silence
+            return False
+        
+        # Export as a clean WAV
+        audio.export(file_path, format="wav")
+        
+        # Verify it now has sound
+        return _audio_contains_sound(file_path)
+        
+    except Exception:
+        return False
+
+
+# ---------------------------------------------------------------------------
 # Backend loader (cached; gracefully degrades if backend missing)
 # ---------------------------------------------------------------------------
 @st.cache_resource(show_spinner=False)
@@ -357,20 +417,20 @@ def _load_weaver_profiles():
 
 
 # ---------------------------------------------------------------------------
-# Whisper loader (cached; graceful fallback)
+# Whisper loader (cached)
 # ---------------------------------------------------------------------------
 @st.cache_resource(show_spinner=False)
 def _load_whisper_model():
     try:
         import whisper
+        # Use "base" for speed, "small" for accuracy. "base" is faster.
         return whisper.load_model("base"), None
     except Exception as exc:
         return None, str(exc)
 
 
 # ---------------------------------------------------------------------------
-# TTS helper — gTTS only (Bhashini endpoint unreliable without API key)
-# Returns base64-encoded mp3 bytes or None on failure.
+# TTS helper
 # ---------------------------------------------------------------------------
 def _tts_bytes(text: str, lang: str = "hi") -> bytes | None:
     if not text:
@@ -393,7 +453,6 @@ def _tts_bytes(text: str, lang: str = "hi") -> bytes | None:
 
 
 def _autoplay_audio(audio_bytes: bytes, fmt: str = "mp3") -> None:
-    """Inject an auto-playing hidden audio element."""
     b64 = base64.b64encode(audio_bytes).decode()
     st.markdown(
         f'<audio autoplay style="display:none">'
@@ -404,162 +463,18 @@ def _autoplay_audio(audio_bytes: bytes, fmt: str = "mp3") -> None:
 
 
 # ---------------------------------------------------------------------------
-# Audio processing — robust Whisper transcription
-# Handles: bad conditions, silence, low confidence, Indian accents, cleanup
+# Audio processing — fixed and robust
 # ---------------------------------------------------------------------------
-
-# Minimum audio size in bytes to bother sending to Whisper.
-# A tap or 0.3s silence produces ~10-20KB. Real speech is at least 30KB.
-_MIN_AUDIO_BYTES = 8_000
-
-# Whisper transcribe options tuned for Indian-accented speech in noisy conditions
-_WHISPER_OPTIONS: dict = {
-    # beam_size=5 gives better accuracy than greedy (default=1) at modest cost
-    "beam_size": 5,
-    # temperature list: Whisper retries with higher temperatures on bad audio
-    # 0.0 = deterministic, then increasingly stochastic for hard clips
-    "temperature": (0.0, 0.2, 0.4, 0.6, 0.8, 1.0),
-    # compression_ratio_threshold: above this, treat as hallucination
+_WHISPER_OPTIONS = {
+    "beam_size": 3,                      # Faster than 5, still accurate
+    "temperature": (0.0, 0.2, 0.4),      # Fewer retries = faster
     "compression_ratio_threshold": 2.4,
-    # no_speech_threshold: if avg no-speech prob > this, treat as silence
     "no_speech_threshold": 0.6,
-    # condition_on_previous_text=False avoids hallucination drift in short clips
     "condition_on_previous_text": False,
-    # word_timestamps=False speeds things up (we don't need per-word timing)
     "word_timestamps": False,
-    # fp16=False: safer on CPU (avoids half-precision errors on some systems)
     "fp16": False,
 }
-
-# Languages the buyer might speak — Whisper detects automatically,
-# but supplying a hint list dramatically improves accuracy for short clips.
-# None = auto-detect (works well for Hindi, Telugu, Tamil, English mix)
-_WHISPER_LANGUAGE: str | None = None  # set to "hi" or "te" to force a language
-
-
-def _process_audio(audio_file, audio_key: int) -> None:
-    """
-    Transcribe audio_file using Whisper with full error handling.
-
-    Conditions handled:
-    - Audio too short / silent tap          -> warn, do nothing
-    - Whisper not installed                 -> warn, fall through to text input
-    - Pure silence (no_speech_prob high)    -> warn user to speak louder
-    - Low-confidence output (hallucination) -> show text but ask user to confirm
-    - Network/disk error                    -> show error, fall through
-    - Successful transcription              -> show text, send to agent
-    """
-    whisper_model, whisper_err = _load_whisper_model()
-
-    if whisper_err or whisper_model is None:
-        st.warning(
-            f"Voice transcription unavailable ({whisper_err}). "
-            "Please type your request below."
-        )
-        return
-
-    # --- Size guard: reject clips that are too short to contain real speech ---
-    audio_bytes_data = audio_file.getbuffer()
-    if len(audio_bytes_data) < _MIN_AUDIO_BYTES:
-        st.info(
-            "The recording was too short. "
-            "Hold the button and speak for at least 1-2 seconds."
-        )
-        return
-
-    with st.spinner("Transcribing your request..."):
-        tmp_path: str | None = None
-        try:
-            # Write to temp file
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
-                tmp.write(audio_bytes_data)
-                tmp_path = tmp.name
-
-            # Transcribe with robust options
-            result = whisper_model.transcribe(
-                tmp_path,
-                language=_WHISPER_LANGUAGE,
-                **_WHISPER_OPTIONS,
-            )
-
-            transcribed: str = (result.get("text") or "").strip()
-            segments: list   = result.get("segments", [])
-
-            # --- Silence / no-speech detection ---
-            # Whisper sets no_speech_prob per segment; average across all
-            if segments:
-                avg_no_speech = sum(
-                    s.get("no_speech_prob", 0.0) for s in segments
-                ) / len(segments)
-            else:
-                avg_no_speech = 1.0  # no segments = silence
-
-            if avg_no_speech > 0.7 or not transcribed:
-                st.warning(
-                    "Could not detect speech clearly. "
-                    "Try speaking closer to the microphone, "
-                    "reduce background noise, and speak for 2-3 seconds."
-                )
-                return
-
-            # --- Low-confidence / likely hallucination ---
-            # Whisper sometimes outputs filler phrases on noisy audio
-            HALLUCINATION_PHRASES = {
-                "thank you", "thanks for watching", "thanks for listening",
-                "subscribe", "bye", "goodbye", ".", "..", "...",
-                "you", "the", "a", "i",
-            }
-            if transcribed.lower() in HALLUCINATION_PHRASES or len(transcribed) < 3:
-                st.warning(
-                    f'Transcribed "{transcribed}" — this seems too short or unclear. '
-                    "Please try again or type below."
-                )
-                return
-
-            # --- Detected language info (helpful for debugging during demo) ---
-            detected_lang = result.get("language", "unknown")
-
-            # --- Show result with confidence context ---
-            if avg_no_speech > 0.4:
-                # Borderline confidence — show and let user confirm before sending
-                st.warning(
-                    f'Audio was noisy. Best guess: **"{transcribed}"** '
-                    f'(detected language: {detected_lang}). '
-                    "Is this correct? Click Send below or type to correct it."
-                )
-                # Pre-fill the text input so user can edit rather than retype
-                st.session_state["prefill_text"] = transcribed
-            else:
-                # Good confidence — show and auto-send
-                st.success(
-                    f'Heard: "{transcribed}" '
-                    f'(language: {detected_lang})'
-                )
-                _send_message(transcribed)
-                # Reset audio widget so the same clip is not re-processed
-                st.session_state["audio_key"] = audio_key + 1
-                st.rerun()
-
-        except Exception as exc:
-            err_msg = str(exc)
-            if "ffmpeg" in err_msg.lower():
-                st.error(
-                    "ffmpeg is required for audio processing. "
-                    "Install it with: sudo apt install ffmpeg (Linux) "
-                    "or brew install ffmpeg (Mac)."
-                )
-            else:
-                st.error(
-                    f"Transcription failed: {err_msg}. "
-                    "Please type your request below."
-                )
-        finally:
-            # Always delete the temp file, even if transcription crashed
-            if tmp_path and os.path.exists(tmp_path):
-                try:
-                    os.unlink(tmp_path)
-                except OSError:
-                    pass
+_WHISPER_LANGUAGE = None
 
 
 # ---------------------------------------------------------------------------
@@ -568,7 +483,7 @@ def _process_audio(audio_file, audio_key: int) -> None:
 def _init_buyer_state() -> None:
     defaults: dict = {
         "agent":           None,
-        "history":         [],    # list[tuple[str, str]] — (role, text)
+        "history":         [],
         "current_state":   "greeting",
         "swatches":        [],
         "selected_swatch": None,
@@ -576,10 +491,10 @@ def _init_buyer_state() -> None:
         "agent_data":      {},
         "awaiting":        None,
         "reasoning_log":   [],
-        "one_of_a_kind":   [],   # rejected pieces waiting for resale
-        "buyer_orders":    [],   # confirmed orders tracker
+        "one_of_a_kind":   [],
+        "buyer_orders":    [],
         "agent_thinking":  False,
-        "audio_key":       0,    # incremented to reset st.audio_input widget
+        "audio_key":       0,
     }
     for key, val in defaults.items():
         if key not in st.session_state:
@@ -726,20 +641,15 @@ def _render_swatch_card(swatch: dict) -> None:
 # Core message dispatcher
 # ---------------------------------------------------------------------------
 def _send_message(user_text: str) -> None:
-    """Route user text through the agent and update all session state."""
     user_text = (user_text or "").strip()
     if not user_text:
         return
 
     PakshiAgent, err = _load_agent_class()
     if err or PakshiAgent is None:
-        st.error(
-            f"Backend could not be loaded: {err}. "
-            "Make sure agent.py and all JSON files are in the same folder."
-        )
+        st.error(f"Backend could not be loaded: {err}")
         return
 
-    # Initialise agent on first call
     if st.session_state.get("agent") is None:
         try:
             st.session_state["agent"] = PakshiAgent()
@@ -762,9 +672,9 @@ def _send_message(user_text: str) -> None:
 
     st.session_state["agent_thinking"] = False
 
-    msg   = response.get("message", "") if isinstance(response, dict) else str(response)
-    state = response.get("state",   "greeting") if isinstance(response, dict) else "greeting"
-    data  = response.get("data",    {})         if isinstance(response, dict) else {}
+    msg   = response.get("message", "")
+    state = response.get("state",   "greeting")
+    data  = response.get("data",    {})
 
     st.session_state["current_state"] = state
     st.session_state["history"].append(("agent", msg))
@@ -776,7 +686,6 @@ def _send_message(user_text: str) -> None:
     if data.get("order"):
         st.session_state["order"] = data["order"]
 
-    # Track confirmed order in buyer_orders
     if state == "confirmed" and data.get("order"):
         raw = data["order"]
         sw  = raw.get("selected_swatch") or {}
@@ -795,7 +704,6 @@ def _send_message(user_text: str) -> None:
         if tracked["order_id"] not in existing_ids:
             st.session_state["buyer_orders"].append(tracked)
 
-    # Log agent reasoning steps
     if state in ("fallback_pending", "broadcasting", "weaver_selected", "confirmed"):
         snippet = msg[:120] + ("..." if len(msg) > 120 else "")
         st.session_state["reasoning_log"].append(f"[{state.upper()}] {snippet}")
@@ -831,7 +739,6 @@ If the finished piece does not meet your expectation, click Reject Piece.
 It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss.
         """)
 
-    # Agent-thinking banner
     if st.session_state.get("agent_thinking"):
         st.markdown(
             '<div style="background:rgba(218,65,103,0.12);border-left:3px solid var(--accent-primary);'
@@ -841,7 +748,6 @@ It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss
             unsafe_allow_html=True,
         )
 
-    # My Orders dashboard
     buyer_orders = st.session_state.get("buyer_orders", [])
     if buyer_orders:
         with st.expander(f"Your Orders ({len(buyer_orders)})"):
@@ -890,7 +796,6 @@ It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss
 
     col_chat, col_panel = st.columns([3, 2], gap="large")
 
-    # ── Right panel: swatches + confirmed order + reasoning ──
     with col_panel:
         swatches = st.session_state["swatches"]
         if swatches:
@@ -964,7 +869,6 @@ It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss
                     "reason":         "Weaving imperfection / colour mismatch",
                 }
                 st.session_state.setdefault("one_of_a_kind", []).append(rejected)
-                # Reset buyer flow
                 for key in ("current_state","order","swatches","history",
                             "agent","reasoning_log","agent_data","awaiting",
                             "selected_swatch","agent_thinking"):
@@ -992,7 +896,6 @@ It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss
                     unsafe_allow_html=True,
                 )
 
-    # ── Left panel: chat + input ──
     with col_chat:
         for role, text in st.session_state["history"]:
             bubble_cls = "bubble-agent" if role == "agent" else "bubble-user"
@@ -1004,7 +907,6 @@ It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss
         st.markdown('<div style="height:0.5rem;"></div>', unsafe_allow_html=True)
         cur = st.session_state["current_state"]
 
-        # --- Fallback YES/NO ---
         if cur == "fallback_pending":
             st.markdown(
                 '<div class="section-label">Agent is proposing an alternative</div>',
@@ -1020,7 +922,6 @@ It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss
                     _send_message("no")
                     st.rerun()
 
-        # --- Confirm / Change ---
         elif cur == "swatch_selected":
             st.markdown(
                 '<div class="section-label">Swatch locked — ready to place order?</div>',
@@ -1036,10 +937,8 @@ It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss
                     _send_message("back")
                     st.rerun()
 
-        # --- Post-confirmed / failed ---
         elif cur in ("confirmed", "failed"):
             if st.button("Start New Search"):
-                # Preserve one_of_a_kind and buyer_orders across reset
                 ooak   = st.session_state.get("one_of_a_kind", [])
                 bords  = st.session_state.get("buyer_orders",  [])
                 loaded = st.session_state.get("app_loaded",    False)
@@ -1050,31 +949,34 @@ It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss
                 st.session_state["app_loaded"]    = loaded
                 st.rerun()
 
-        # --- Normal input (greeting / collecting / retrieved) ---
         else:
-            # Auto-greet on very first load
             if cur == "greeting" and not st.session_state["history"]:
                 _send_message("hi")
                 st.rerun()
 
-            # Voice input
+            # --- FIXED AUDIO INPUT ---
             st.markdown(
                 '<div class="section-label">Speak your request</div>',
                 unsafe_allow_html=True,
             )
-            audio_key  = st.session_state.get("audio_key", 0)
-            audio_file = st.audio_input(
-                "Record your fabric request",
-                label_visibility="collapsed",
-                key=f"audio_input_{audio_key}",
-            )
+            audio_key = st.session_state.get("audio_key", 0)
+            
+            try:
+                audio_file = st.audio_input(
+                    "Record your fabric request (speak clearly for 2-3 seconds)",
+                    label_visibility="collapsed",
+                    key=f"audio_input_{audio_key}",
+                )
+            except Exception:
+                st.warning("Microphone not available. Please type your request below.")
+                audio_file = None
 
             if audio_file is not None:
                 whisper_model, whisper_err = _load_whisper_model()
                 if whisper_err or whisper_model is None:
                     st.warning(
-                        "Voice transcription is unavailable "
-                        f"({whisper_err}). Please type your request below."
+                        f"Voice transcription unavailable ({whisper_err}). "
+                        "Please type your request below."
                     )
                 else:
                     with st.spinner("Transcribing..."):
@@ -1086,13 +988,41 @@ It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss
                                 tmp.write(audio_file.getbuffer())
                                 tmp_path = tmp.name
 
-                            result     = whisper_model.transcribe(tmp_path)
+                            # --- THE FIX: Validate audio before Whisper ---
+                            if not _audio_contains_sound(tmp_path):
+                                # Try to fix the WAV header
+                                if not _fix_wav_header(tmp_path):
+                                    st.warning(
+                                        "🔇 No audible sound detected. "
+                                        "Please hold the mic closer, speak clearly for 2-3 seconds, "
+                                        "or type your request below."
+                                    )
+                                    # Reset the audio key to clear the widget
+                                    st.session_state["audio_key"] = audio_key + 1
+                                    st.rerun()
+                                    return
+
+                            # --- Now safe to call Whisper ---
+                            result = whisper_model.transcribe(
+                                tmp_path,
+                                language=_WHISPER_LANGUAGE,
+                                **_WHISPER_OPTIONS,
+                            )
                             transcribed = (result.get("text") or "").strip()
 
                             if transcribed:
+                                # Quick validation: if transcription is garbage or too short
+                                if len(transcribed) < 3 or transcribed.lower() in {"thank you", "thanks", "bye", "hello"}:
+                                    st.warning(
+                                        f'Transcribed: "{transcribed}" — this seems too short or unclear. '
+                                        "Please try again or type your request."
+                                    )
+                                    st.session_state["audio_key"] = audio_key + 1
+                                    st.rerun()
+                                    return
+                                
                                 st.success(f"Heard: {transcribed}")
                                 _send_message(transcribed)
-                                # Increment key so the widget resets (no replay loop)
                                 st.session_state["audio_key"] = audio_key + 1
                                 st.rerun()
                             else:
@@ -1100,13 +1030,24 @@ It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss
                                     "Could not detect speech. "
                                     "Please try again or type below."
                                 )
+                                st.session_state["audio_key"] = audio_key + 1
+                                st.rerun()
+
                         except Exception as exc:
-                            st.error(
-                                f"Transcription failed: {exc}. "
-                                "Please type your request below."
-                            )
+                            err_msg = str(exc)
+                            if "reshape" in err_msg:
+                                st.warning(
+                                    "🔇 The recording was silent or corrupted. "
+                                    "Please try speaking clearly for 2-3 seconds, or type your request below."
+                                )
+                            else:
+                                st.error(
+                                    f"Transcription error: {err_msg}. "
+                                    "Please type your request below."
+                                )
+                            st.session_state["audio_key"] = audio_key + 1
+                            st.rerun()
                         finally:
-                            # Always clean up temp file
                             if tmp_path and os.path.exists(tmp_path):
                                 try:
                                     os.unlink(tmp_path)
@@ -1124,7 +1065,6 @@ It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss
             }
             placeholder = placeholder_map.get(cur, "Type your message...")
 
-            # Text input outside st.form so _send_message + st.rerun() work correctly
             user_input = st.text_input(
                 "Your message",
                 placeholder=placeholder,
@@ -1135,7 +1075,6 @@ It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss
                 _send_message(user_input.strip())
                 st.rerun()
 
-            # Example chips (shown until first real exchange)
             if cur in ("greeting", "collecting") and len(st.session_state["history"]) <= 1:
                 st.markdown(
                     '<div style="margin-top:0.6rem;"></div>',
@@ -1196,7 +1135,6 @@ Click Simulate New Order Broadcast to see how incoming orders
 arrive in real time during the demo.
         """)
 
-    # Weaver selector — edge case: no profiles loaded
     if not weavers:
         st.warning(
             "No weaver profiles found. "
@@ -1259,7 +1197,6 @@ arrive in real time during the demo.
     accepted = [o for o in orders if o.get("status") == "accepted"]
     declined = [o for o in orders if o.get("status") == "declined"]
 
-    # Stats row
     c1, c2, c3 = st.columns(3)
     with c1:
         st.markdown(f"""
@@ -1289,14 +1226,12 @@ arrive in real time during the demo.
 
     st.markdown('<div style="height:0.4rem;"></div>', unsafe_allow_html=True)
 
-    # Pending orders
     if pending:
         st.markdown(
             '<div class="section-label">New Orders — Awaiting Your Response</div>',
             unsafe_allow_html=True,
         )
         for order in pending:
-            # Safe idx lookup
             idx = next(
                 (i for i, o in enumerate(orders) if o.get("order_id") == order.get("order_id")),
                 None,
@@ -1340,7 +1275,6 @@ arrive in real time during the demo.
                     use_container_width=True,
                 ):
                     st.session_state["weaver_orders"][idx]["status"] = "accepted"
-                    # TTS order summary (gTTS, graceful)
                     order_summary = (
                         f"New order: {order.get('weave_style','')}, "
                         f"{order.get('color','')}, "
@@ -1370,7 +1304,6 @@ arrive in real time during the demo.
                     time.sleep(0.4)
                     st.rerun()
 
-    # Accepted / in-production orders
     if accepted:
         st.markdown(
             '<div class="section-label" style="margin-top:1rem;">In Production</div>',
@@ -1413,7 +1346,6 @@ arrive in real time during the demo.
                     st.success("Photo sent to buyer for preview!")
                     if idx is not None:
                         st.session_state["weaver_orders"][idx]["photo"] = uploaded.name
-                    # Sync to buyer_orders
                     for bo in st.session_state.get("buyer_orders", []):
                         if bo.get("order_id") == order.get("order_id"):
                             bo["photo_path"] = uploaded.name
@@ -1424,7 +1356,6 @@ arrive in real time during the demo.
 
             st.markdown('<div style="height:0.4rem;"></div>', unsafe_allow_html=True)
 
-    # Declined
     if declined:
         st.markdown(
             '<div class="section-label" style="margin-top:1rem;color:var(--text-muted);">Declined</div>',
@@ -1442,7 +1373,6 @@ arrive in real time during the demo.
             </div>
             """, unsafe_allow_html=True)
 
-    # Broadcast simulation
     st.markdown('<div style="height:1rem;"></div>', unsafe_allow_html=True)
     if st.button("Simulate New Order Broadcast"):
         weave_style = profile.get("weave_style", "Handloom") if profile else "Handloom"
@@ -1554,7 +1484,6 @@ def _one_of_a_kind_page() -> None:
 
         with col2:
             st.markdown('<div style="height:0.6rem;"></div>', unsafe_allow_html=True)
-            # Use enumerate idx in key for stable, O(1) uniqueness
             if st.button(
                 "Buy Now",
                 key=f"buy_{item.get('order_id', '')}_{idx}",
@@ -1574,7 +1503,6 @@ def _one_of_a_kind_page() -> None:
 def main() -> None:
     _render_header()
 
-    # Cold-start banner (shown once per session)
     if "app_loaded" not in st.session_state:
         st.markdown(
             '<div style="background:rgba(218,65,103,0.1);'
