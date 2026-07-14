@@ -30,7 +30,7 @@ import streamlit as st
 # ---------------------------------------------------------------------------
 st.set_page_config(
     page_title="Pakshi",
-    page_icon="",
+    page_icon="🪶",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -44,154 +44,234 @@ st.markdown("""
 
 :root {
     --bg-deep:        #19031c;
-    --bg-surface:     #52104c;
-    --bg-card:        #8a1c7c;
+    --bg-surface:     #2d0d2a;
+    --bg-card:        #52104c;
+    --bg-card-2:      #8a1c7c;
     --accent:         #da4167;
-    --accent-hover:   #b22f72;
+    --accent-glow:    rgba(218,65,103,0.35);
     --text-primary:   #f0bcd4;
-    --text-muted:     #bdada6;
+    --text-muted:     #9c8a95;
     --text-white:     #ffffff;
     --success:        #22c55e;
     --danger:         #ef4444;
-    --border:         rgba(240,188,212,0.12);
+    --border:         rgba(240,188,212,0.10);
+    --border-strong:  rgba(240,188,212,0.20);
 }
 
-html, body, [class*="css"] {
-    font-family: 'Inter', sans-serif;
-    background-color: var(--bg-deep);
-    color: var(--text-primary);
+html, body { background-color: var(--bg-deep) !important; }
+.stApp { background-color: var(--bg-deep) !important; font-family: 'Inter', sans-serif !important; }
+.main .block-container {
+    padding: 1.5rem 2rem 4rem !important;
+    max-width: 1140px !important;
+    background-color: var(--bg-deep) !important;
 }
-.main  { background-color: var(--bg-deep); }
-.block-container { padding: 1.5rem 2rem 3rem; max-width: 1100px; }
-#MainMenu, footer, header { visibility: hidden; }
+section[data-testid="stSidebar"] { background-color: var(--bg-surface) !important; }
+#MainMenu, footer, header { visibility: hidden !important; }
+
+p, li, span, label { color: var(--text-primary); font-family: 'Inter', sans-serif !important; }
+h1, h2, h3 { color: var(--text-white) !important; font-family: 'Inter', sans-serif !important; }
 
 .wordmark {
-    font-size: 2rem; font-weight: 800;
-    color: var(--text-white); letter-spacing: -0.5px;
+    font-size: 2.2rem; font-weight: 800;
+    color: var(--text-white); letter-spacing: -0.8px; line-height: 1.1;
 }
 .wordmark span { color: var(--accent); }
-.tagline { font-size: 0.85rem; color: var(--text-muted); margin-top: -4px; margin-bottom: 1.5rem; }
+.tagline {
+    font-size: 0.82rem; color: var(--text-muted);
+    margin-top: 2px; margin-bottom: 0; letter-spacing: 0.02em;
+}
+
+.meesho-badge {
+    font-size: 0.65rem; color: rgba(240,188,212,0.5);
+    background: rgba(218,65,103,0.10);
+    border: 1px solid rgba(218,65,103,0.2);
+    padding: 2px 10px; border-radius: 999px;
+    display: inline-block; margin-top: 4px;
+    letter-spacing: 0.06em; font-weight: 600;
+}
 
 .card {
-    background: rgba(58,24,112,0.6);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    background: rgba(45,13,42,0.85);
+    border: 1px solid var(--border-strong);
+    border-radius: 14px;
     padding: 1.2rem 1.4rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.9rem;
     color: var(--text-primary);
     transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
-.card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+.card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.45); }
 
 .swatch-card {
     background: var(--bg-surface);
-    border: 1px solid var(--border);
-    border-radius: 10px; padding: 1rem; height: 100%;
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+    margin-bottom: 0.6rem;
 }
-.swatch-price { font-size: 1.4rem; font-weight: 800; color: var(--accent); }
-.swatch-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-.swatch-value { font-size: 0.9rem; font-weight: 500; color: var(--text-white); }
+.swatch-price { font-size: 1.5rem; font-weight: 800; color: var(--accent); line-height: 1.1; }
+.swatch-label {
+    font-size: 0.68rem; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    margin-top: 0.7rem; margin-bottom: 0.1rem;
+}
+.swatch-value { font-size: 0.9rem; font-weight: 600; color: var(--text-white); }
+
 .tag {
-    display: inline-block; padding: 2px 8px; border-radius: 999px;
+    display: inline-block; padding: 2px 9px; border-radius: 999px;
     background: rgba(218,65,103,0.15); color: var(--accent);
-    font-size: 0.72rem; font-weight: 500; margin: 2px 2px 0 0;
+    font-size: 0.7rem; font-weight: 600; margin: 2px 2px 0 0;
+    border: 1px solid rgba(218,65,103,0.25);
 }
 
+.chat-wrap { display: flex; flex-direction: column; gap: 0.3rem; padding-bottom: 0.5rem; }
 .bubble-agent {
-    background: var(--bg-surface); border: 1px solid var(--border);
-    border-radius: 12px 12px 12px 2px; padding: 0.75rem 1rem;
-    margin: 0.4rem 0; max-width: 82%; font-size: 0.9rem;
-    line-height: 1.55; white-space: pre-wrap; color: var(--text-primary);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 14px 14px 14px 3px;
+    padding: 0.8rem 1rem;
+    max-width: 86%;
+    font-size: 0.88rem; line-height: 1.6;
+    white-space: pre-wrap; color: var(--text-primary);
+    align-self: flex-start;
 }
 .bubble-user {
-    background: var(--bg-card); border-radius: 12px 12px 2px 12px;
-    padding: 0.75rem 1rem; margin: 0.4rem 0 0.4rem auto;
-    max-width: 70%; font-size: 0.9rem; line-height: 1.55;
-    text-align: right; color: var(--text-white);
+    background: var(--bg-card-2);
+    border: 1px solid rgba(218,65,103,0.2);
+    border-radius: 14px 14px 3px 14px;
+    padding: 0.8rem 1rem;
+    max-width: 74%;
+    font-size: 0.88rem; line-height: 1.6;
+    color: var(--text-white);
+    align-self: flex-end; text-align: right;
 }
 
 .section-label {
-    font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.12em; color: var(--accent); margin-bottom: 0.4rem;
+    font-size: 0.68rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.14em;
+    color: var(--accent); margin-bottom: 0.45rem;
 }
+.divider { height: 1px; background: var(--border); margin: 1.1rem 0; }
 
 .confirmed-banner {
-    background: linear-gradient(135deg,rgba(34,197,94,0.13),rgba(34,197,94,0.04));
-    border: 1.5px solid #22c55e; border-radius: 12px;
-    padding: 1.4rem; text-align: center; margin-top: 1rem;
+    background: linear-gradient(135deg,rgba(34,197,94,0.12),rgba(34,197,94,0.03));
+    border: 1.5px solid rgba(34,197,94,0.5);
+    border-radius: 14px; padding: 1.4rem; text-align: center; margin-top: 1rem;
 }
-.confirmed-banner h2 { color: #22c55e; margin: 0; font-size: 1.5rem; }
+.confirmed-banner h2 { color: #22c55e !important; margin: 0; font-size: 1.4rem; }
 
 .order-card {
-    background: var(--bg-surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 1rem 1.2rem; margin-bottom: 0.8rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    padding: 1rem 1.2rem; margin-bottom: 0.75rem;
 }
-.order-card.accepted { border-color: rgba(34,197,94,0.3); }
-.order-card.declined { border-color: rgba(239,68,68,0.3); opacity: 0.6; }
+.order-card.accepted { border-color: rgba(34,197,94,0.35); background: rgba(34,197,94,0.04); }
+.order-card.declined { border-color: rgba(239,68,68,0.25); opacity: 0.55; }
 
 .state-badge {
-    display: inline-block; padding: 2px 10px; border-radius: 999px;
-    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
-    text-transform: uppercase; margin-bottom: 0.6rem;
+    display: inline-block; padding: 3px 10px; border-radius: 999px;
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
-.state-active  { background: rgba(34,197,94,0.2);  color: #22c55e; }
-.state-pending { background: rgba(218,65,103,0.2); color: var(--accent); }
+.state-active  { background: rgba(34,197,94,0.18);  color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+.state-pending { background: rgba(218,65,103,0.15); color: var(--accent); border: 1px solid rgba(218,65,103,0.3); }
+
+.step-row { display: flex; align-items: center; gap: 0.55rem; font-size: 0.82rem; }
+.step-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.step-dot.done    { background: #22c55e; box-shadow: 0 0 5px rgba(34,197,94,0.5); }
+.step-dot.active  { background: var(--accent); box-shadow: 0 0 6px var(--accent-glow); }
+.step-dot.pending { background: var(--bg-card); opacity: 0.35; }
 
 .correction-banner {
-    background: rgba(218,65,103,0.08);
-    border: 1px solid rgba(218,65,103,0.3);
+    background: rgba(218,65,103,0.07);
+    border: 1px solid rgba(218,65,103,0.28);
     border-radius: 8px; padding: 0.6rem 1rem;
-    font-size: 0.82rem; color: var(--accent); margin-bottom: 0.5rem;
+    font-size: 0.82rem; color: var(--accent); margin-bottom: 0.55rem;
 }
-
 .reasoning-box {
-    background: rgba(218,65,103,0.08); border-left: 3px solid var(--accent);
-    border-radius: 0 8px 8px 0; padding: 0.75rem 1rem;
-    font-size: 0.82rem; color: var(--text-muted);
-    font-style: italic; line-height: 1.6; margin: 0.6rem 0;
+    background: rgba(218,65,103,0.06);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 0.7rem 1rem;
+    font-size: 0.8rem; color: var(--text-muted);
+    font-style: italic; line-height: 1.65; margin: 0.5rem 0;
 }
 
-.step-row { display: flex; align-items: center; gap: 0.6rem; margin: 0.3rem 0; font-size: 0.85rem; }
-.step-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.step-dot.done    { background: #22c55e; }
-.step-dot.active  { background: var(--accent); }
-.step-dot.pending { background: var(--bg-card); opacity: 0.4; }
-
-.divider { height: 1px; background: var(--border); margin: 1.2rem 0; }
-
-.stTextInput > div > div > input,
-.stTextArea > div > div > textarea {
+.stTextInput input,
+.stTextArea textarea {
     background-color: var(--bg-surface) !important;
     color: var(--text-white) !important;
     border: 1.5px solid var(--bg-card) !important;
-    border-radius: 8px !important;
+    border-radius: 10px !important;
     font-family: 'Inter', sans-serif !important;
-    font-size: 1rem !important;
+    font-size: 0.95rem !important;
+    caret-color: var(--accent) !important;
 }
-.stTextInput > div > div > input:focus,
-.stTextArea > div > div > textarea:focus {
+.stTextInput input:focus,
+.stTextArea textarea:focus {
     border-color: var(--accent) !important;
-    box-shadow: 0 0 0 2px rgba(218,65,103,0.25) !important;
+    box-shadow: 0 0 0 2px rgba(218,65,103,0.22) !important;
+    outline: none !important;
 }
 
 .stButton > button {
-    background: var(--accent) !important; color: var(--text-white) !important;
-    font-weight: 700 !important; border: none !important;
-    border-radius: 8px !important; padding: 0.5rem 1.4rem !important;
-    font-family: 'Inter', sans-serif !important; transition: opacity 0.15s;
+    background: var(--accent) !important;
+    color: var(--text-white) !important;
+    font-weight: 700 !important;
+    border: none !important;
+    border-radius: 9px !important;
+    padding: 0.5rem 1.4rem !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 0.88rem !important;
+    transition: opacity 0.15s, box-shadow 0.15s !important;
+    letter-spacing: 0.01em !important;
 }
-.stButton > button:hover { opacity: 0.88 !important; box-shadow: 0 0 16px rgba(218,65,103,0.4) !important; }
+.stButton > button:hover {
+    opacity: 0.88 !important;
+    box-shadow: 0 0 18px var(--accent-glow) !important;
+}
+.stButton > button:active { opacity: 0.75 !important; }
 
-.stRadio > div { gap: 0.4rem; }
-.stRadio label { font-size: 0.88rem !important; color: var(--text-primary) !important; }
+div[role="radiogroup"] {
+    display: flex !important;
+    gap: 0.3rem !important;
+    background: var(--bg-surface) !important;
+    padding: 4px !important;
+    border-radius: 10px !important;
+    border: 1px solid var(--border-strong) !important;
+    width: fit-content !important;
+}
+div[role="radiogroup"] label {
+    padding: 0.35rem 0.9rem !important;
+    border-radius: 7px !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    color: var(--text-muted) !important;
+    transition: background 0.15s, color 0.15s !important;
+}
+div[role="radiogroup"] label:has(input:checked) {
+    background: var(--accent) !important;
+    color: var(--text-white) !important;
+}
+div[role="radiogroup"] input[type="radio"] { display: none !important; }
+
 .stSelectbox > div > div {
     background-color: var(--bg-surface) !important;
     color: var(--text-white) !important;
     border: 1.5px solid var(--bg-card) !important;
-    border-radius: 8px !important;
+    border-radius: 9px !important;
 }
-.streamlit-expanderHeader { color: var(--accent) !important; font-weight: 600 !important; }
-.streamlit-expanderContent { background: var(--bg-surface) !important; border-radius: 0 0 8px 8px !important; }
+.stSelectbox > div > div:focus-within { border-color: var(--accent) !important; }
+
+details summary { color: var(--accent) !important; font-weight: 600 !important; font-size: 0.88rem !important; }
+
+.stCaption { color: var(--text-muted) !important; font-size: 0.78rem !important; }
+.stAlert { border-radius: 10px !important; border-left-width: 4px !important; }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--bg-card); border-radius: 2px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -463,16 +543,23 @@ def _make_demo_orders() -> list:
 
 
 # ---------------------------------------------------------------------------
-# Header
+# Header (with "Powered by Meesho" badge)
 # ---------------------------------------------------------------------------
 def _render_header() -> None:
-    c1, _ = st.columns([1, 3])
-    with c1:
-        st.markdown(
-            '<div class="wordmark">Pakshi</div>'
-            '<div class="tagline">Turning buyer intent into artisan opportunity</div>',
-            unsafe_allow_html=True,
-        )
+    st.markdown(
+        '<div style="display:flex;align-items:center;justify-content:space-between;'
+        'padding:0.5rem 0 1.2rem;border-bottom:1px solid rgba(240,188,212,0.10);margin-bottom:1.2rem;">'
+        '<div>'
+        '<div class="wordmark">Pak<span>shi</span> 🪶</div>'
+        '<div class="tagline">Turning buyer intent into artisan opportunity</div>'
+        '<div class="meesho-badge">🪢 A made-to-order vertical on Meesho</div>'
+        '</div>'
+        '<div style="font-size:0.75rem;color:rgba(240,188,212,0.35);font-weight:500;letter-spacing:0.05em;">'
+        'HANDLOOM · DIRECT · ZERO WASTE'
+        '</div>'
+        '</div>',
+        unsafe_allow_html=True,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -510,7 +597,7 @@ def _step_indicator(current: str) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Swatch card
+# Swatch card with image, description, reviews
 # ---------------------------------------------------------------------------
 def _swatch_card(swatch: dict) -> None:
     tags = "".join(
@@ -521,16 +608,29 @@ def _swatch_card(swatch: dict) -> None:
     if swatch.get("weaver_cluster"):
         location = f"{swatch.get('weaver_cluster')}, {location}" if location else swatch.get("weaver_cluster")
 
+    # Reviews HTML
+    reviews = swatch.get("reviews", []) or []
+    reviews_html = ""
+    for r in reviews[:2]:
+        stars = "⭐" * int(r.get("rating", 5))
+        reviews_html += f'<div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px;">{stars} <span style="color:var(--text-primary);">{r.get("user", "")}</span>: "{r.get("comment", "")}"</div>'
+
     st.markdown(f"""
     <div class="swatch-card">
+        <img src="https://picsum.photos/seed/{swatch.get("swatch_id", "S001")}/300/200"
+             style="width:100%;height:160px;object-fit:cover;border-radius:10px;margin-bottom:8px;background:var(--bg-card);"
+             alt="{swatch.get("weave_style", "Fabric")}" loading="lazy"/>
         <div style="font-weight:700;font-size:0.95rem;color:var(--text-white);margin-bottom:2px;">
             {swatch.get("weave_style","—")}
         </div>
-        <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:8px;">
+        <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:6px;">
             {swatch.get("color","—")} · <span style="color:var(--accent);">{location}</span>
         </div>
+        <div style="font-size:0.78rem;color:var(--text-primary);line-height:1.5;margin-bottom:8px;opacity:0.9;">
+            {swatch.get("description", "Handwoven by skilled artisans.")}
+        </div>
         <div class="swatch-price">Rs.{swatch.get("price_inr","?")}</div>
-        <div style="margin:8px 0">{tags}</div>
+        <div style="margin:6px 0;">{tags}</div>
         <div class="divider"></div>
         <div class="swatch-label">Weaver</div>
         <div class="swatch-value">{swatch.get("weaver_name","—")}</div>
@@ -539,6 +639,7 @@ def _swatch_card(swatch: dict) -> None:
             Rating: {swatch.get("weaver_rating","?")} &nbsp;·&nbsp;
             {swatch.get("delivery_days","?")} days
         </div>
+        {reviews_html}
     </div>
     """, unsafe_allow_html=True)
 
@@ -635,6 +736,20 @@ def _buyer_page() -> None:
     _init_buyer_state()
 
     st.markdown('<div class="section-label">Buyer</div>', unsafe_allow_html=True)
+
+    # ── Powered by Meesho info box ──
+    st.markdown("""
+    <div style="background:rgba(218,65,103,0.06);border:1px solid rgba(218,65,103,0.2);
+        border-radius:10px;padding:0.7rem 1rem;margin-bottom:0.8rem;font-size:0.82rem;
+        color:var(--text-primary);line-height:1.6;">
+        <strong style="color:var(--accent);">🧵 What is Pakshi?</strong>
+        Tell us what you want in your own words — we find the perfect handloom saree made just for you.
+        <span style="color:var(--accent);">No middlemen. No generic catalog.</span><br>
+        <span style="font-size:0.72rem;color:var(--text-muted);">
+        Powered by Meesho — your order becomes a live listing on India's largest social commerce platform.
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
 
     with st.expander("How to use (Buyer)"):
         st.markdown("""
@@ -797,9 +912,12 @@ If the piece doesn't meet your expectation, click Reject Piece. It moves to One 
 
     # ── Left panel — chat + input ──
     with col_chat:
-        for role, text in st.session_state["history"]:
-            cls = "bubble-agent" if role == "agent" else "bubble-user"
-            st.markdown(f'<div class="{cls}">{text}</div>', unsafe_allow_html=True)
+        if st.session_state["history"]:
+            bubbles = "".join(
+                f'<div class="{"bubble-agent" if role == "agent" else "bubble-user"}">{text}</div>'
+                for role, text in st.session_state["history"]
+            )
+            st.markdown(f'<div class="chat-wrap">{bubbles}</div>', unsafe_allow_html=True)
 
         st.markdown('<div style="height:0.5rem;"></div>', unsafe_allow_html=True)
         cur = st.session_state["current_state"]
