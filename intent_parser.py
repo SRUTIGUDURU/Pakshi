@@ -1,25 +1,22 @@
 """
-Pakshi — Intent Parser
-=======================
+Pakshi — Intent Parser (Devanagari‑Enhanced)
+=============================================
 Converts raw buyer text (any Indian language, romanised, or English)
 into a structured intent dict consumed by retrieval.py.
+
+Now with comprehensive Devanagari support for:
+  - sensory words (feel)
+  - occasions
+  - colours
+  - locations (clusters and states)
+  - budget (including Devanagari numerals)
+  - urgency
 
 Pipeline:
   raw text → language detection → keyword normalisation
            → feel extraction → occasion mapping → budget extraction
-           → color extraction → urgency detection → confidence scoring
-           → structured IntentResult
-
-Supports:
-  - English, Hinglish, romanised Telugu/Tamil/Kannada/Bengali/Odia
-  - Hindi Devanagari script for colors and occasions
-  - Budget expressions: "1500 rupees", "₹1500", "1.5k", "under 2000",
-    "around 800", "1500 se kam", "below 2k"
-  - Occasion aliases: "shaadi", "kalyanam", "pellikuturu", "biye",
-    "casual", "office", "college", etc.
-  - Urgency: "within a week", "urgent", "jaldi", "next month"
-  - Color hints: "deep red", "pastel", "earth tones", "light colours"
-  - Confidence score so the agent knows when to ask a follow-up
+           → color extraction → location extraction → urgency detection
+           → confidence scoring → structured IntentResult
 """
 
 import re
@@ -39,6 +36,7 @@ class IntentResult:
     budget_flex:   bool            = False   # True if "around", "approx" etc.
     color:         str | None      = None
     color_family:  str | None      = None
+    location:      str | None      = None    # NEW: extracted from text
     urgency_days:  int | None      = None    # max delivery days acceptable
     language_hint: str             = "english"
     raw_input:     str             = ""
@@ -65,10 +63,10 @@ for _fab in _ONTOLOGY["fabrics"]:
     _VALID_SENSORY.update(_fab["sensory_descriptors"])
 
 
-# ---------------------------------------------------------------------------
-# Occasion aliases  (alias → canonical occasion tag)
-# ── Expanded with Hindi Devanagari + Telugu, Tamil, Kannada, Bengali, Odia ──
-# ---------------------------------------------------------------------------
+# ===========================================================================
+# 1. OCCASION ALIASES  (alias → canonical occasion tag)
+#    Massive expansion with Devanagari, romanised Indian languages.
+# ===========================================================================
 OCCASION_ALIASES: dict[str, str] = {
     # ── Wedding ──
     "wedding":          "wedding",
@@ -80,6 +78,8 @@ OCCASION_ALIASES: dict[str, str] = {
     # Hindi Devanagari
     "शादी":             "wedding",
     "वेडिंग":           "wedding",
+    "विवाह":            "wedding",
+    "निकाह":            "wedding",
     # Telugu wedding
     "pellikuturu":      "wedding",
     "pelliki":          "wedding",
@@ -98,6 +98,9 @@ OCCASION_ALIASES: dict[str, str] = {
     "reception":        "reception",
     "engagement":       "reception",
     "roka":             "reception",
+    "मंगनी":            "reception",
+    "सगाई":             "reception",
+    "रिसेप्शन":         "reception",
 
     # ── Festival ──
     "festival":         "festival",
@@ -120,11 +123,20 @@ OCCASION_ALIASES: dict[str, str] = {
     # Odia festivals
     "nuakhai":          "festival",
     "raja":             "festival",
-    # Hindi Devanagari
-    "फेस्टिवल":         "festival",
+    # Devanagari
     "त्योहार":          "festival",
     "पूजा":             "festival",
+    "नवरात्रि":         "festival",
+    "दशहरा":            "festival",
     "दिवाली":           "festival",
+    "दीपावली":          "festival",
+    "ओणम":              "festival",
+    "पोंगल":            "festival",
+    "उगादी":            "festival",
+    "संक्रांति":        "festival",
+    "ईद":               "festival",
+    "दुर्गा पूजा":      "festival",
+    "गणेश चतुर्थी":    "festival",
     "होली":             "festival",
 
     # ── Casual / Daily ──
@@ -136,10 +148,12 @@ OCCASION_ALIASES: dict[str, str] = {
     "roz ka":           "daily_wear",
     "rozana":           "daily_wear",
     "normal":           "daily_wear",
-    # Hindi Devanagari
+    # Devanagari
     "कैज़ुअल":          "casual",
     "दैनिक":            "daily_wear",
     "रोज़":             "daily_wear",
+    "रोज":              "daily_wear",
+    "नॉर्मल":           "daily_wear",
 
     # ── Work / Office ──
     "office":           "work",
@@ -148,23 +162,27 @@ OCCASION_ALIASES: dict[str, str] = {
     "formal":           "formal",
     "meeting":          "work",
     "conference":       "work",
-    # Hindi Devanagari
+    # Devanagari
     "ऑफिस":             "work",
     "कार्यालय":         "work",
+    "प्रोफेशनल":       "work",
+    "मीटिंग":           "work",
 
     # ── College / Young ──
     "college":          "college",
     "university":       "college",
     "campus":           "college",
     "class":            "college",
-    # Hindi Devanagari
+    # Devanagari
     "कॉलेज":            "college",
+    "यूनिवर्सिटी":     "college",
 
     # ── Summer ──
     "summer":           "summer",
     "summer wedding":   "summer_wedding",
     "beach":            "summer",
     "grishma":          "summer",
+    "गर्मी":            "summer",
 
     # ── Semi-formal ──
     "semi formal":      "semi_formal",
@@ -178,13 +196,17 @@ OCCASION_ALIASES: dict[str, str] = {
     "housewarming":     "ceremony",
     "baby shower":      "ceremony",
     "seemantham":       "ceremony",
+    # Devanagari
+    "समारोह":           "ceremony",
+    "गृहप्रवेश":       "ceremony",
+    "बेबी शावर":       "ceremony",
 }
 
 
-# ---------------------------------------------------------------------------
-# Feel / sensory keyword map  (keyword → list of feel tags)
-# ── Expanded with Telugu, Tamil, Odia ──
-# ---------------------------------------------------------------------------
+# ===========================================================================
+# 2. FEEL / SENSORY KEYWORDS (keyword → list of feel tags)
+#    Massive expansion with Devanagari and regional language words.
+# ===========================================================================
 FEEL_KEYWORDS: dict[str, list[str]] = {
     # ── Lightness ──
     "light":            ["light", "airy"],
@@ -199,6 +221,14 @@ FEEL_KEYWORDS: dict[str, list[str]] = {
     "breezy":           ["airy", "breathable", "cool"],
     "cool":             ["cool", "breathable"],
     "thanda":           ["cool", "breathable"],
+    # Devanagari
+    "हल्का":            ["light", "airy"],
+    "हल्की":            ["light", "airy"],
+    "हवादार":          ["airy", "breathable"],
+    "सांस लेने योग्य": ["breathable", "airy"],
+    "बहने वाला":       ["flowy", "airy"],
+    "ठंडा":             ["cool", "breathable"],
+    "ठंडी":             ["cool", "breathable"],
 
     # ── Softness / comfort ──
     "soft":             ["soft", "comfortable"],
@@ -211,6 +241,12 @@ FEEL_KEYWORDS: dict[str, list[str]] = {
     "manchidi":         ["comfortable", "soft"],
     # Odia: good / nice → soft/comfortable
     "bhalo":            ["comfortable", "soft"],
+    # Devanagari
+    "नरम":              ["soft"],
+    "मुलायम":           ["soft", "comfortable"],
+    "सुविधाजनक":        ["comfortable"],
+    "आरामदायक":         ["comfortable"],
+    "आरामदायी":         ["comfortable"],
 
     # ── Richness / formality ──
     "rich":             ["rich", "elegant"],
@@ -222,6 +258,14 @@ FEEL_KEYWORDS: dict[str, list[str]] = {
     "elegant":          ["elegant"],
     "classy":           ["elegant", "rich"],
     "graceful":         ["elegant", "flowy"],
+    # Devanagari
+    "शाही":             ["royal", "grand"],
+    "शानदार":           ["luxurious", "rich"],
+    "भव्य":             ["grand", "royal"],
+    "राजसी":            ["royal", "grand"],
+    "सुंदर":            ["elegant"],
+    "क्लासी":           ["elegant", "rich"],
+    "गरिमामय":          ["elegant"],
 
     # ── Sheen / finish ──
     "shiny":            ["glossy", "shiny"],
@@ -230,6 +274,9 @@ FEEL_KEYWORDS: dict[str, list[str]] = {
     "shimmer":          ["glossy", "shiny"],
     "glitter":          ["glossy"],
     "dull":             ["matte"],
+    # Devanagari
+    "चमकदार":          ["glossy", "shiny"],
+    "मैट":              ["matte"],
 
     # ── Weight ──
     "heavy":            ["heavy", "stiff"],
@@ -237,6 +284,11 @@ FEEL_KEYWORDS: dict[str, list[str]] = {
     "stiff":            ["stiff"],
     "structured":       ["stiff", "structured"],
     "thick":            ["heavy"],
+    # Devanagari
+    "भारी":             ["heavy", "stiff"],
+    "मोटा":             ["heavy"],
+    "कड़ा":             ["stiff"],
+    "संरचित":           ["stiff", "structured"],
 
     # ── Occasion-derived feel ──
     "wedding fabric":   ["elegant", "rich"],
@@ -248,6 +300,10 @@ FEEL_KEYWORDS: dict[str, list[str]] = {
     "fusion":           ["versatile"],
     "modern":           ["versatile"],
     "indo western":     ["versatile"],
+    # Devanagari
+    "पारंपरिक":         ["traditional"],
+    "एथनिक":            ["traditional"],
+    "फ्यूजन":           ["versatile"],
 
     # ── Sensory metaphors ──
     "summer wedding":   ["flowy", "breathable yet elegant", "light but rich"],
@@ -264,10 +320,10 @@ FEEL_KEYWORDS: dict[str, list[str]] = {
 }
 
 
-# ---------------------------------------------------------------------------
-# Color keyword map  (keyword → (display_name, color_family))
-# ── Comprehensive across 7 languages (Hindi Devanagari + 6 others) ──
-# ---------------------------------------------------------------------------
+# ===========================================================================
+# 3. COLOR KEYWORDS (keyword → (display_name, color_family))
+#    Comprehensive: Devanagari, romanised, and English.
+# ===========================================================================
 COLOR_KEYWORDS: dict[str, tuple[str, str]] = {
     # ── RED ──
     "red":          ("red", "red"),
@@ -284,9 +340,12 @@ COLOR_KEYWORDS: dict[str, tuple[str, str]] = {
     "sivappu":      ("red", "red"),               # Tamil
     "kempu":        ("red", "red"),               # Kannada
     "lal":          ("red", "red"),               # Bengali / Odia
-    # Hindi Devanagari
+    # Devanagari
     "लाल":          ("red", "red"),
     "लाल रंग":      ("red", "red"),
+    "गहरा लाल":     ("deep red", "red"),
+    "मरून":         ("maroon", "red"),
+    "बरगंडी":       ("maroon", "red"),
 
     # ── PINK ──
     "pink":         ("pink", "pink"),
@@ -299,8 +358,11 @@ COLOR_KEYWORDS: dict[str, tuple[str, str]] = {
     "hot pink":     ("magenta", "pink"),
     "coral":        ("coral", "pink"),
     "gulaabi":      ("pink", "pink"),             # Hindi (romanised)
-    # Hindi Devanagari
+    # Devanagari
     "गुलाबी":       ("pink", "pink"),
+    "हल्की गुलाबी": ("pale pink", "pink"),
+    "मैजेंटा":      ("magenta", "pink"),
+    "कोरल":         ("coral", "pink"),
 
     # ── ORANGE ──
     "orange":       ("orange", "orange"),
@@ -310,9 +372,11 @@ COLOR_KEYWORDS: dict[str, tuple[str, str]] = {
     "rust":         ("rust", "orange"),
     "terracotta":   ("rust", "orange"),
     "kumkum":       ("saffron", "orange"),        # Telugu/Tamil/Kannada
-    # Hindi Devanagari
+    # Devanagari
     "नारंगी":       ("orange", "orange"),
     "केसरिया":      ("saffron", "orange"),
+    "पीच":          ("peach", "orange"),
+    "जंग":          ("rust", "orange"),
 
     # ── YELLOW ──
     "yellow":       ("yellow", "yellow"),
@@ -328,10 +392,15 @@ COLOR_KEYWORDS: dict[str, tuple[str, str]] = {
     "haladi":       ("yellow", "yellow"),          # Kannada
     "holud":        ("yellow", "yellow"),          # Bengali
     "pila":         ("yellow", "yellow"),          # Odia
-    # Hindi Devanagari
+    # Devanagari
     "पीला":         ("yellow", "yellow"),
     "पीली":         ("yellow", "yellow"),
     "पीला रंग":     ("yellow", "yellow"),
+    "सरसों":        ("mustard yellow", "yellow"),
+    "गोल्डन":       ("soft gold", "yellow"),
+    "सोना":         ("soft gold", "yellow"),
+    "शैम्पेन":      ("champagne", "yellow"),
+    "हाथी दाँत":    ("ivory", "neutral"),
 
     # ── GREEN ──
     "green":        ("green", "green"),
@@ -353,10 +422,17 @@ COLOR_KEYWORDS: dict[str, tuple[str, str]] = {
     "hasiru":       ("green", "green"),            # Kannada
     "sobuj":        ("green", "green"),            # Bengali
     "haria":        ("green", "green"),            # Odia
-    # Hindi Devanagari
+    # Devanagari
     "हरा":          ("green", "green"),
     "हरी":          ("green", "green"),
     "हरा रंग":      ("green", "green"),
+    "गहरा हरा":     ("dark green", "green"),
+    "हल्का हरा":    ("light green", "green"),
+    "पुदीना":       ("mint green", "green"),
+    "ऋषि":          ("sage green", "green"),
+    "नील":          ("teal", "green"),
+    "जैतून":        ("olive", "green"),
+    "जेड":          ("jade green", "green"),
 
     # ── BLUE ──
     "blue":         ("blue", "blue"),
@@ -376,10 +452,16 @@ COLOR_KEYWORDS: dict[str, tuple[str, str]] = {
     "neelam":       ("blue", "blue"),             # Telugu
     "neel":         ("blue", "blue"),             # Bengali / Odia
     "neeli":        ("blue", "blue"),             # Kannada
-    # Hindi Devanagari
+    # Devanagari
     "नीला":         ("blue", "blue"),
     "नीली":         ("blue", "blue"),
     "नीला रंग":     ("blue", "blue"),
+    "गहरा नीला":    ("navy blue", "blue"),
+    "शाही नीला":    ("royal blue", "blue"),
+    "आसमानी":       ("sky blue", "blue"),
+    "हल्का नीला":   ("pale blue", "blue"),
+    "मोर नीला":     ("peacock blue", "blue"),
+    "फ़िरोज़ा":     ("turquoise", "blue"),
 
     # ── PURPLE ──
     "purple":       ("purple", "purple"),
@@ -390,11 +472,15 @@ COLOR_KEYWORDS: dict[str, tuple[str, str]] = {
     "plum":         ("deep purple", "purple"),
     "mauve":        ("lilac", "purple"),
     "baingani":     ("purple", "purple"),         # Hindi (romanised)
-    "gulabi":       ("pink", "pink"),             # Kannada
-    # Hindi Devanagari
+    # Devanagari
     "बैंगनी":       ("purple", "purple"),
+    "जामुनी":       ("purple", "purple"),
+    "बैंगनी":       ("purple", "purple"),
+    "गहरा बैंगनी": ("deep purple", "purple"),
+    "लैवेंडर":      ("lavender", "purple"),
+    "लाइलैक":       ("lilac", "purple"),
 
-    # ── WHITE (Neutral) ──
+    # ── NEUTRAL (white, cream, beige, black, grey) ──
     "white":        ("white", "neutral"),
     "cream":        ("cream", "neutral"),
     "off white":    ("off-white", "neutral"),
@@ -409,11 +495,6 @@ COLOR_KEYWORDS: dict[str, tuple[str, str]] = {
     "bili":         ("white", "neutral"),         # Kannada
     "shada":        ("white", "neutral"),         # Bengali
     "dhala":        ("white", "neutral"),         # Odia
-    # Hindi Devanagari
-    "सफेद":         ("white", "neutral"),
-    "सफेद रंग":     ("white", "neutral"),
-
-    # ── BLACK (Neutral) ──
     "black":        ("black", "neutral"),
     "grey":         ("grey", "neutral"),
     "gray":         ("grey", "neutral"),
@@ -423,10 +504,18 @@ COLOR_KEYWORDS: dict[str, tuple[str, str]] = {
     "kappu":        ("black", "neutral"),         # Kannada
     "kalo":         ("black", "neutral"),         # Bengali
     "kala":         ("black", "neutral"),         # Odia
-    # Hindi Devanagari
+    # Devanagari
+    "सफेद":         ("white", "neutral"),
+    "सफेद रंग":     ("white", "neutral"),
+    "क्रीम":         ("cream", "neutral"),
+    "मलाई":         ("cream", "neutral"),
+    "बेज":          ("beige", "neutral"),
+    "भूरा":         ("natural beige", "neutral"),
     "काला":         ("black", "neutral"),
     "काली":         ("black", "neutral"),
     "काला रंग":     ("black", "neutral"),
+    "ग्रे":          ("grey", "neutral"),
+    "धूसर":         ("grey", "neutral"),
 
     # ── Vague / descriptive ──
     "pastel":       ("pastel", "neutral"),
@@ -443,37 +532,108 @@ COLOR_KEYWORDS: dict[str, tuple[str, str]] = {
 }
 
 
-# ---------------------------------------------------------------------------
-# Urgency patterns
-# ---------------------------------------------------------------------------
-URGENCY_PATTERNS: list[tuple[re.Pattern, int]] = [
-    (re.compile(r"today|abhi|aaj",           re.I), 1),
-    (re.compile(r"tomor",                    re.I), 2),
-    (re.compile(r"2\s*days?|do\s*din",       re.I), 2),
-    (re.compile(r"3\s*days?|teen\s*din",     re.I), 3),
-    (re.compile(r"this\s*week|is\s*hafte",   re.I), 5),
-    (re.compile(r"week|hafte",               re.I), 7),
-    (re.compile(r"10\s*days?",               re.I), 10),
-    (re.compile(r"2\s*weeks?|do\s*hafte",    re.I), 14),
-    (re.compile(r"next\s*month|agle\s*mahine",re.I), 30),
-    (re.compile(r"month|mahine",             re.I), 30),
-    (re.compile(r"no\s*rush|anytime",        re.I), 90),
-]
+# ===========================================================================
+# 4. LOCATION ALIASES (alias → canonical cluster/state name)
+#    Includes Devanagari and romanised versions.
+# ===========================================================================
+LOCATION_ALIASES: dict[str, str] = {
+    # Clusters (English / Romanised)
+    "kanchipuram": "Kanchipuram",
+    "kancheepuram": "Kanchipuram",
+    "pochampally": "Pochampally",
+    "pochampalli": "Pochampally",
+    "banarasi": "Varanasi",
+    "varanasi": "Varanasi",
+    "ilkal": "Ilkal",
+    "kota": "Kota",
+    "chanderi": "Chanderi",
+    "maheshwar": "Maheshwar",
+    "maheshwari": "Maheshwar",
+    "dharmavaram": "Dharmavaram",
+    "molakalmuru": "Molakalmuru",
+    "mysore": "Mysore",
+    "sambalpur": "Sambalpuri",
+    "sambalpuri": "Sambalpuri",
+    "nuapatna": "Nuapatna",
+    "bagru": "Bagru",
+    "sanganer": "Sanganer",
+    "kutch": "Kutch",
+    "kerala": "Kerala",
+    "tamilnadu": "Tamil Nadu",
+    "tamil nadu": "Tamil Nadu",
+    "andhra": "Andhra Pradesh",
+    "andhra pradesh": "Andhra Pradesh",
+    "telangana": "Telangana",
+    "karnataka": "Karnataka",
+    "rajasthan": "Rajasthan",
+    "west bengal": "West Bengal",
+    "bengal": "West Bengal",
+    "odisha": "Odisha",
+    "orissa": "Odisha",
+    "gujarat": "Gujarat",
+    "maharashtra": "Maharashtra",
+    "bihar": "Bihar",
+    "uttar pradesh": "Uttar Pradesh",
+    # Devanagari
+    "कांचीपुरम": "Kanchipuram",
+    "पोचमपल्ली": "Pochampally",
+    "बनारसी": "Varanasi",
+    "वाराणसी": "Varanasi",
+    "इलकल": "Ilkal",
+    "कोटा": "Kota",
+    "चंदेरी": "Chanderi",
+    "महेश्वर": "Maheshwar",
+    "धर्मावरम": "Dharmavaram",
+    "मैसूर": "Mysore",
+    "संबलपुर": "Sambalpuri",
+    "बागरू": "Bagru",
+    "संगानेर": "Sanganer",
+    "कच्छ": "Kutch",
+    "केरल": "Kerala",
+    "तमिलनाडु": "Tamil Nadu",
+    "आंध्र": "Andhra Pradesh",
+    "आंध्र प्रदेश": "Andhra Pradesh",
+    "तेलंगाना": "Telangana",
+    "कर्नाटक": "Karnataka",
+    "राजस्थान": "Rajasthan",
+    "पश्चिम बंगाल": "West Bengal",
+    "बंगाल": "West Bengal",
+    "उड़ीसा": "Odisha",
+    "ओडिशा": "Odisha",
+    "गुजरात": "Gujarat",
+    "महाराष्ट्र": "Maharashtra",
+    "बिहार": "Bihar",
+    "उत्तर प्रदेश": "Uttar Pradesh",
+}
 
 
-# ---------------------------------------------------------------------------
-# Budget patterns — covers Indian English + Hindi expressions
-# ---------------------------------------------------------------------------
+# ===========================================================================
+# 5. BUDGET PATTERNS – now also handles Devanagari numerals
+# ===========================================================================
+_DEVANAGARI_DIGITS = {
+    '०': '0', '१': '1', '२': '2', '३': '3', '४': '4',
+    '५': '5', '६': '6', '७': '7', '८': '8', '९': '9',
+}
+
+def _devanagari_to_arabic(s: str) -> str:
+    """Convert Devanagari digits to Arabic numerals."""
+    return ''.join(_DEVANAGARI_DIGITS.get(c, c) for c in s)
+
+
 def _parse_budget(text: str) -> tuple[int | None, bool]:
     """
     Returns (budget_inr, is_flexible).
     is_flexible = True when phrasing suggests "around/approx/under".
+    Handles Devanagari script and numerals.
     """
+    # First, convert Devanagari digits to Arabic
+    text = _devanagari_to_arabic(text)
     text = text.lower().replace(",", "")
 
     flex_words = re.compile(
         r"\b(around|approx|approximately|about|roughly|nearly|"
-        r"lagbhag|lagbhag|kaafi|under|below|less than|se kam|tak|upto|up to)\b",
+        r"lagbhag|kaafi|under|below|less than|se kam|tak|upto|up to|"
+        r"लगभग|करीब|क़रीब|तक|से कम|अंडर|बेलो|क़रीबन)\b",
         re.I
     )
     is_flexible = bool(flex_words.search(text))
@@ -481,12 +641,12 @@ def _parse_budget(text: str) -> tuple[int | None, bool]:
     # Patterns ranked by specificity
     patterns = [
         # ₹1,500 or Rs 1500
-        (r"(?:₹|rs\.?|inr)\s*(\d+(?:\.\d+)?)\s*k",    1000),
-        (r"(?:₹|rs\.?|inr)\s*(\d[\d,]*)",              1),
+        (r"(?:₹|rs\.?|inr|रु\.?|रुपये?)\s*(\d+(?:\.\d+)?)\s*k",    1000),
+        (r"(?:₹|rs\.?|inr|रु\.?|रुपये?)\s*(\d[\d,]*)",              1),
         # "1.5k" or "2k"
         (r"(\d+(?:\.\d+)?)\s*k(?:rupee|rupees?)?",      1000),
         # "1500 rupees" or "1500 rs"
-        (r"(\d[\d,]*)\s*(?:rupees?|rs\.?|inr)",         1),
+        (r"(\d[\d,]*)\s*(?:rupees?|rs\.?|inr|रुपये?|रु)",         1),
         # bare number that looks like a price (300–99999)
         (r"\b(\d{3,5})\b",                              1),
     ]
@@ -505,10 +665,28 @@ def _parse_budget(text: str) -> tuple[int | None, bool]:
     return None, False
 
 
-# ---------------------------------------------------------------------------
-# Language detection (lightweight heuristic — no external model needed)
-# ── Expanded for Hindi Devanagari + 6 languages ──
-# ---------------------------------------------------------------------------
+# ===========================================================================
+# 6. URGENCY PATTERNS (including Devanagari)
+# ===========================================================================
+URGENCY_PATTERNS: list[tuple[re.Pattern, int]] = [
+    (re.compile(r"today|abhi|aaj|आज|अभी",            re.I), 1),
+    (re.compile(r"tomor|कल|tomorrow",                re.I), 2),
+    (re.compile(r"2\s*days?|do\s*din|दो दिन",        re.I), 2),
+    (re.compile(r"3\s*days?|teen\s*din|तीन दिन",     re.I), 3),
+    (re.compile(r"this\s*week|is\s*hafte|इस हफ्ते",  re.I), 5),
+    (re.compile(r"week|hafte|हफ्ता",                 re.I), 7),
+    (re.compile(r"10\s*days?|दस दिन",                re.I), 10),
+    (re.compile(r"2\s*weeks?|do\s*hafte|दो हफ्ते",   re.I), 14),
+    (re.compile(r"next\s*month|agle\s*mahine|अगले महीने", re.I), 30),
+    (re.compile(r"month|mahine|महीना",               re.I), 30),
+    (re.compile(r"no\s*rush|anytime|कोई जल्दी नहीं", re.I), 90),
+    (re.compile(r"जल्दी|उर्जेंट|urgent|जरूरी",      re.I), 3),
+]
+
+
+# ===========================================================================
+# 7. LANGUAGE DETECTION (now marks Devanagari script)
+# ===========================================================================
 _HINDI_MARKERS   = {"hai", "ka", "ki", "ke", "mein", "se", "koi", "bahut",
                     "acha", "thoda", "shaadi", "kapda", "lena", "chahiye",
                     "rupaye", "halka", "bhaari", "naram", "laal", "safed"}
@@ -537,9 +715,8 @@ _ODIA_MARKERS    = {"bibaha", "saree", "bhalo", "dhala", "lal", "haria",
 
 def _detect_language(text: str) -> str:
     words = set(text.lower().split())
-    # Check for Devanagari script presence (any character in Devanagari Unicode range)
+    # Check for Devanagari script presence
     devanagari_chars = any('\u0900' <= c <= '\u097F' for c in text)
-    
     if devanagari_chars:
         return "hindi_devanagari"
     if words & _HINDI_MARKERS:
@@ -557,9 +734,9 @@ def _detect_language(text: str) -> str:
     return "english"
 
 
-# ---------------------------------------------------------------------------
-# Core parsing functions
-# ---------------------------------------------------------------------------
+# ===========================================================================
+# 8. EXTRACTION FUNCTIONS
+# ===========================================================================
 
 def _extract_feel(text: str) -> list[str]:
     """Multi-word phrases first, then single words."""
@@ -583,27 +760,31 @@ def _extract_feel(text: str) -> list[str]:
 def _extract_occasion(text: str) -> str | None:
     """Returns canonical occasion tag or None."""
     text_lower = text.lower()
-
-    # Multi-word phrases first
     for phrase, canonical in sorted(OCCASION_ALIASES.items(),
                                     key=lambda x: len(x[0]), reverse=True):
         if re.search(r'\b' + re.escape(phrase) + r'\b', text_lower):
             return canonical
-
     return None
 
 
 def _extract_color(text: str) -> tuple[str | None, str | None]:
     """Returns (color_display_name, color_family) or (None, None)."""
     text_lower = text.lower()
-
     # Multi-word colors first
     for phrase, (display, family) in sorted(COLOR_KEYWORDS.items(),
                                             key=lambda x: len(x[0]), reverse=True):
         if re.search(r'\b' + re.escape(phrase) + r'\b', text_lower):
             return display, family
-
     return None, None
+
+
+def _extract_location(text: str) -> str | None:
+    """Extract a location (cluster or state) from buyer text."""
+    text_lower = text.lower()
+    for alias, canonical in LOCATION_ALIASES.items():
+        if re.search(r'\b' + re.escape(alias) + r'\b', text_lower):
+            return canonical
+    return None
 
 
 def _extract_urgency(text: str) -> int | None:
@@ -617,7 +798,7 @@ def _extract_urgency(text: str) -> int | None:
 def _compute_confidence(result: IntentResult) -> tuple[float, list[str]]:
     """
     Returns (confidence_score, list_of_missing_fields).
-    Scoring: feel=40pts, occasion=30pts, budget=20pts, color=10pts
+    Scoring: feel=40pts, occasion=30pts, budget=20pts, color=5pts, location=5pts.
     """
     score = 0.0
     missing = []
@@ -638,24 +819,25 @@ def _compute_confidence(result: IntentResult) -> tuple[float, list[str]]:
         missing.append("budget")
 
     if result.color:
-        score += 0.10
+        score += 0.05
     else:
         missing.append("color")
+
+    if result.location:
+        score += 0.05
+    else:
+        missing.append("location")
 
     return round(score, 2), missing
 
 
-# ---------------------------------------------------------------------------
-# Public API
-# ---------------------------------------------------------------------------
+# ===========================================================================
+# 9. PUBLIC API
+# ===========================================================================
 
 def parse_intent(raw_text: str) -> IntentResult:
     """
     Main entry point. Takes raw buyer text and returns IntentResult.
-
-    Usage:
-        result = parse_intent("Light saree for summer wedding, budget ₹1500")
-        print(result.to_dict())
     """
     result = IntentResult(raw_input=raw_text)
 
@@ -674,13 +856,20 @@ def parse_intent(raw_text: str) -> IntentResult:
     # 5. Color extraction
     result.color, result.color_family = _extract_color(raw_text)
 
-    # 6. Urgency extraction
+    # 6. Location extraction
+    result.location = _extract_location(raw_text)
+
+    # 7. Urgency extraction
     result.urgency_days = _extract_urgency(raw_text)
 
-    # 7. Confidence + missing fields
+    # 8. Smart default: if user gave location or color but no feel, inject a neutral feel
+    if not result.feel and (result.location or result.color):
+        result.feel = ["comfortable", "elegant"]
+
+    # 9. Confidence + missing fields
     result.confidence, result.missing = _compute_confidence(result)
 
-    # 8. Warnings
+    # 10. Warnings
     if result.budget and result.budget < 300:
         result.warnings.append(
             f"Budget ₹{result.budget} is below minimum weaver pricing (₹300). "
@@ -701,7 +890,7 @@ def parse_intent(raw_text: str) -> IntentResult:
 
 def build_followup_question(missing: list[str]) -> str | None:
     """Generates a single follow-up question for the most important missing field."""
-    priority = ["feel", "occasion", "budget", "color"]
+    priority = ["feel", "occasion", "budget", "color", "location"]
     for field in priority:
         if field in missing:
             questions = {
@@ -709,74 +898,49 @@ def build_followup_question(missing: list[str]) -> str | None:
                 "occasion": "What's the occasion? (wedding, festival, casual, office...)",
                 "budget":   "What's your budget? (in rupees)",
                 "color":    "Any color preference? (or say 'no preference')",
+                "location": "Any specific weaving cluster or state you prefer? (e.g. Kanchipuram, Banaras, Kota...)",
             }
             return questions[field]
     return None
 
 
-# ---------------------------------------------------------------------------
-# Test harness — includes Hindi Devanagari test case
-# ---------------------------------------------------------------------------
-
+# ===========================================================================
+# 10. TEST HARNESS – run to see the new capabilities
+# ===========================================================================
 if __name__ == "__main__":
     test_inputs = [
-        # English — standard
-        "I want a light airy saree for a summer wedding, budget ₹1500, preferably in green",
-        # Hinglish
-        "Shaadi ke liye kuch flowy chahiye, around 2000 rupaye, light colour",
-        # Very vague
-        "something nice for a function",
-        # Budget only
-        "saree under 800",
-        # Romanised Telugu
-        "Pellikuturu ki cotton silk saree, 3000 ke andar, pastel colours",
-        # Telugu — white saree
-        "naaku oka tella cheera kaavali, casual, 1000 ki",
-        # Tamil — wedding
-        "Kalyanam ku pudavai venum, red colour, budget 2500",
-        # Kannada — wedding
-        "Maduve ge saree bekagide, dark blue, 2000 around",
-        # Bengali — wedding
-        "Biye te porar jonno lal saree, 1500 taka budget",
-        # Odia — wedding
-        "Bibaha paain lal saree, budget 2000, light feel",
-        # Hindi Devanagari — yellow Kanchipuram saree
+        # Devanagari – heavy, Kanchipuram
         "मुझे एक पीले रंग की कांचीपुरम साड़ी चाहिए",
-        # Over-detailed
-        "I need a royal silk saree for my sister's wedding reception next month, "
-        "deep red or maroon, budget is around ₹8000, it should be heavy and grand",
-        # Low budget trigger
-        "casual cotton saree, very cheap, 200 rupees only",
-        # Urgency
-        "need a saree for office within this week, breathable cotton, under 1000",
-        # Color-heavy
-        "mustard yellow flowy saree for Diwali, around 1500",
-        # Multi-word occasion
-        "something for durga puja, soft and comfortable, 1200 budget",
-        # Very high budget
-        "Kanjivaram silk for wedding, ₹15000, deep green with gold border",
-        # Romanised Bengali
-        "biye te porer jonno ekta sundor saree, 3000 takar modhye, light colour",
+        "कांचीपुरम सिल्क साठी चाहिए भारी",
+        "शादी के लिए भारी रेशमी साड़ी, ₹1500 से कम",
+        "हल्की सूती साड़ी ऑफिस के लिए, 800 रुपये",
+        "मुझे बनारसी साड़ी चाहिए, रिसेप्शन के लिए, 5000 के आसपास",
+        "पूजा के लिए एक शाही साड़ी, राजस्थान से, 2000 की बजट",
+        "कच्छ की कॉटन साड़ी, रोज़ाना पहनने के लिए, 600 रु",
+        # English / romanised
+        "Kanchipuram silk saree for wedding, under ₹5000",
+        "Light cotton saree for office, ₹700",
+        "Banarasi saree for reception, around 8000",
+        "Heavy royal silk for wedding, deep red, grand",
     ]
 
     print("=" * 70)
-    print("PAKSHI INTENT PARSER — TEST RUNS")
+    print("PAKSHI INTENT PARSER — DEVANAGARI ENHANCED")
     print("=" * 70)
 
-    for i, text in enumerate(test_inputs, 1):
-        result = parse_intent(text)
-        print(f"\n[{i:02d}] INPUT : {text}")
-        print(f"      LANG   : {result.language_hint}")
-        print(f"      FEEL   : {result.feel}")
-        print(f"      OCC    : {result.occasion}")
-        print(f"      BUDGET : ₹{result.budget}" +
-              (" (flexible)" if result.budget_flex else "") +
-              (" — " + str(result.warnings[0]) if result.warnings else ""))
-        print(f"      COLOR  : {result.color} ({result.color_family})")
-        print(f"      URGENCY: {result.urgency_days} days" if result.urgency_days else
-              f"      URGENCY: not specified")
-        print(f"      CONF   : {result.confidence:.0%}")
-        if result.missing:
-            followup = build_followup_question(result.missing)
+    for i, txt in enumerate(test_inputs, 1):
+        res = parse_intent(txt)
+        print(f"\n[{i:02d}] INPUT : {txt}")
+        print(f"      LANG   : {res.language_hint}")
+        print(f"      FEEL   : {res.feel}")
+        print(f"      OCC    : {res.occasion}")
+        print(f"      BUDGET : ₹{res.budget}" + (" (flexible)" if res.budget_flex else ""))
+        print(f"      COLOR  : {res.color} ({res.color_family})")
+        print(f"      LOC    : {res.location}")
+        print(f"      URGENCY: {res.urgency_days} days" if res.urgency_days else "      URGENCY: not specified")
+        print(f"      CONF   : {res.confidence:.0%}")
+        if res.missing:
+            followup = build_followup_question(res.missing)
             print(f"      FOLLOWUP → \"{followup}\"")
-        print()
+        if res.warnings:
+            print(f"      WARN   : {res.warnings[0]}")
