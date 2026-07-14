@@ -21,33 +21,38 @@ def _load_swatch_catalog():
     """Load the complete fabric_swatches.json and create a lookup by swatch_id."""
     with open(BASE_DIR / "fabric_swatches.json") as f:
         data = json.load(f)
-    # Build a fast lookup dictionary: swatch_id -> full swatch object
     return {swatch["id"]: swatch for swatch in data["fabric_swatches"]}
 
 _SWATCH_CATALOG = _load_swatch_catalog()
 
+
 def load_ontology():
     with open(BASE_DIR / "fabric_ontology.json") as f:
         return json.load(f)
+
 
 def build_query_text(intent: dict) -> str:
     """
     Converts parsed buyer intent into a query string that mirrors
     the swatch document format, maximising TF-IDF overlap.
 
-    intent keys expected:
+    intent keys expected (from IntentResult.to_dict()):
       - feel      : list[str]  e.g. ["light", "airy"]
       - occasion  : str        e.g. "wedding"
       - budget    : int        e.g. 1500
-      - color     : str|None   e.g. "green" (optional)
-      - location  : str|None   e.g. "Kanchipuram" (optional)
+      - color     : str|None   e.g. "green"
+      - location  : str|None   e.g. "Kanchipuram"
     """
-    parts = intent.get("feel", []) + [intent.get("occasion", "")]
-    if intent.get("color"):
-        parts.append(intent["color"])
-    if intent.get("location"):
-        parts.append(intent["location"])
+    feel = intent.get("feel") or []
+    occ = intent.get("occasion") or ""
+    color = intent.get("color") or ""
+    location = intent.get("location") or ""
+
+    # Build parts list, filtering out None and empty strings
+    parts = feel + [occ, color, location]
+    parts = [p for p in parts if p and isinstance(p, str)]
     return " ".join(parts)
+
 
 def get_fallback(fabric_type: str, budget: int, ontology: dict) -> dict | None:
     """Returns fallback rule if budget is below minimum for fabric_type."""
@@ -57,6 +62,7 @@ def get_fallback(fabric_type: str, budget: int, ontology: dict) -> dict | None:
             return rule
     return None
 
+
 def _matches_location(meta: dict, requested_location: str | None) -> bool:
     """
     Check if a swatch's weaver matches the requested location.
@@ -64,20 +70,21 @@ def _matches_location(meta: dict, requested_location: str | None) -> bool:
     """
     if not requested_location:
         return True
-    
+
     location_lower = requested_location.lower()
-    
+
     # Check cluster (e.g., "Kanchipuram", "Pochampally")
     cluster = meta.get("weaver_cluster", "").lower()
     if location_lower in cluster or cluster in location_lower:
         return True
-    
+
     # Check state (e.g., "Tamil Nadu", "Telangana")
     state = meta.get("weaver_state", "").lower()
     if location_lower in state or state in location_lower:
         return True
-    
+
     return False
+
 
 def _get_swatch_details(swatch_id: str) -> dict:
     """
@@ -90,6 +97,7 @@ def _get_swatch_details(swatch_id: str) -> dict:
         "image_url": swatch.get("image_url", ""),
         "reviews": swatch.get("reviews", []),
     }
+
 
 def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
     """
@@ -107,14 +115,23 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
     collection, ef = load_swatches_into_chroma()
 
     budget = intent.get("budget", 99999)
-    location = intent.get("location")
+    location = intent.get("location")  # may be None
     query_text = build_query_text(intent)
 
     # Step 1 — semantic search over full collection (retrieve more, filter after)
-    raw_results = collection.query(
-        query_texts=[query_text],
-        n_results=min(20, collection.count()),
-    )
+    try:
+        raw_results = collection.query(
+            query_texts=[query_text],
+            n_results=min(20, collection.count()),
+        )
+    except Exception as e:
+        # If query fails (e.g., no documents), return no_match
+        return {
+            "status": "no_match",
+            "results": [],
+            "fallback": None,
+            "agent_message": f"Search error: {e}. Please try a different description."
+        }
 
     candidates = []
     for i, meta in enumerate(raw_results["metadatas"][0]):
@@ -127,7 +144,7 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
     # Step 2 — filter by budget, availability, AND location
     filtered = [
         c for c in candidates
-        if (c["meta"]["price_inr"] <= budget 
+        if (c["meta"]["price_inr"] <= budget
             and c["meta"]["available"]
             and _matches_location(c["meta"], location))
     ]
@@ -144,7 +161,22 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
             m = r["meta"]
             swatch_id = m["swatch_id"]
             details = _get_swatch_details(swatch_id)
-            
+
+            # Safely parse sensory_tags and occasion_tags (they might be None)
+            sensory_tags = m.get("sensory_tags")
+            if sensory_tags is None:
+                sensory_tags = ""
+            if not isinstance(sensory_tags, str):
+                sensory_tags = ""
+            sensory_list = [t.strip() for t in sensory_tags.split(",") if t.strip()]
+
+            occasion_tags = m.get("occasion_tags")
+            if occasion_tags is None:
+                occasion_tags = ""
+            if not isinstance(occasion_tags, str):
+                occasion_tags = ""
+            occasion_list = [t.strip() for t in occasion_tags.split(",") if t.strip()]
+
             results.append({
                 "swatch_id":      swatch_id,
                 "fabric_type":    m["fabric_type"],
@@ -156,9 +188,8 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
                 "weaver_cluster": m["weaver_cluster"],
                 "weaver_state":   m["weaver_state"],
                 "weaver_rating":  m["weaver_rating"],
-                "sensory_tags":   m["sensory_tags"].split(","),
-                "occasion_tags":  m["occasion_tags"].split(","),
-                # Rich details from the JSON file:
+                "sensory_tags":   sensory_list,
+                "occasion_tags":  occasion_list,
                 "description":    details["description"],
                 "image_url":      details["image_url"],
                 "reviews":        details["reviews"],
@@ -180,15 +211,16 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
     sensory_map = ontology["sensory_to_fabric_mapping"]
     fabric_votes: dict[str, int] = {}
     for tag in feel_tags:
-        for fabric in sensory_map.get(tag, []):
-            fabric_votes[fabric] = fabric_votes.get(fabric, 0) + 1
+        if tag in sensory_map:
+            for fabric in sensory_map[tag]:
+                fabric_votes[fabric] = fabric_votes.get(fabric, 0) + 1
 
     intended_fabric = max(fabric_votes, key=fabric_votes.get) if fabric_votes else "cotton"
     fallback_rule = get_fallback(intended_fabric, budget, ontology)
 
     if fallback_rule and fallback_rule["fallback_fabric"]:
         fallback_fabric = fallback_rule["fallback_fabric"]
-        
+
         # Retrieve swatches for the fallback fabric within a relaxed budget
         relaxed_budget = budget + 800
         fallback_candidates = [
@@ -208,7 +240,21 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
             m = r["meta"]
             swatch_id = m["swatch_id"]
             details = _get_swatch_details(swatch_id)
-            
+
+            sensory_tags = m.get("sensory_tags")
+            if sensory_tags is None:
+                sensory_tags = ""
+            if not isinstance(sensory_tags, str):
+                sensory_tags = ""
+            sensory_list = [t.strip() for t in sensory_tags.split(",") if t.strip()]
+
+            occasion_tags = m.get("occasion_tags")
+            if occasion_tags is None:
+                occasion_tags = ""
+            if not isinstance(occasion_tags, str):
+                occasion_tags = ""
+            occasion_list = [t.strip() for t in occasion_tags.split(",") if t.strip()]
+
             fallback_swatches.append({
                 "swatch_id":      swatch_id,
                 "fabric_type":    m["fabric_type"],
@@ -220,8 +266,8 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
                 "weaver_cluster": m["weaver_cluster"],
                 "weaver_state":   m["weaver_state"],
                 "weaver_rating":  m["weaver_rating"],
-                "sensory_tags":   m["sensory_tags"].split(","),
-                "occasion_tags":  m["occasion_tags"].split(","),
+                "sensory_tags":   sensory_list,
+                "occasion_tags":  occasion_list,
                 "description":    details["description"],
                 "image_url":      details["image_url"],
                 "reviews":        details["reviews"],
