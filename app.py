@@ -137,6 +137,13 @@ html, body, [class*="css"] {
 .state-active  { background: rgba(34,197,94,0.2);  color: #22c55e; }
 .state-pending { background: rgba(218,65,103,0.2); color: var(--accent); }
 
+.correction-banner {
+    background: rgba(218,65,103,0.08);
+    border: 1px solid rgba(218,65,103,0.3);
+    border-radius: 8px; padding: 0.6rem 1rem;
+    font-size: 0.82rem; color: var(--accent); margin-bottom: 0.5rem;
+}
+
 .reasoning-box {
     background: rgba(218,65,103,0.08); border-left: 3px solid var(--accent);
     border-radius: 0 8px 8px 0; padding: 0.75rem 1rem;
@@ -215,26 +222,23 @@ def _load_weaver_profiles():
 # Edge TTS (Text-to-Speech) — Completely Free, No API Key
 # ---------------------------------------------------------------------------
 _EDGE_TTS_VOICES = {
-    "te": "te-IN-MohanNeural",      # Telugu
-    "ta": "ta-IN-ValluvarNeural",   # Tamil
-    "kn": "kn-IN-GaganNeural",      # Kannada
-    "hi": "hi-IN-MadhurNeural",     # Hindi
-    "bn": "bn-IN-TanishaaNeural",   # Bengali
-    "or": "or-IN-SambitNeural",     # Odia
-    "en": "en-IN-PrabhatNeural",    # English (Indian accent)
+    "te": "te-IN-MohanNeural",
+    "ta": "ta-IN-ValluvarNeural",
+    "kn": "kn-IN-GaganNeural",
+    "hi": "hi-IN-MadhurNeural",
+    "bn": "bn-IN-TanishaaNeural",
+    "or": "or-IN-SambitNeural",
+    "en": "en-IN-PrabhatNeural",
 }
 
 
-def _tts_edge(text: str, lang: str = "te") -> bytes | None:
-    """Convert text to speech using Edge TTS (Microsoft Edge voices)."""
+def _tts_edge(text: str, lang: str = "en") -> bytes | None:
     if not text:
         return None
-
-    voice = _EDGE_TTS_VOICES.get(lang, "hi-IN-MadhurNeural")
+    voice = _EDGE_TTS_VOICES.get(lang, "en-IN-PrabhatNeural")
     spoken = ". ".join(text.split(". ")[:2]).strip()
     if not spoken:
         return None
-
     try:
         import edge_tts
 
@@ -249,25 +253,19 @@ def _tts_edge(text: str, lang: str = "te") -> bytes | None:
         asyncio.set_event_loop(loop)
         tmp_path = loop.run_until_complete(generate())
         loop.close()
-
         with open(tmp_path, "rb") as f:
             data = f.read()
-
         try:
             os.unlink(tmp_path)
         except OSError:
             pass
-
         return data
-
     except Exception as e:
         print(f"Edge TTS error: {e}")
         return None
 
 
 def _tts_bytes(text: str, lang: str = "en") -> bytes | None:
-    if not text:
-        return None
     return _tts_edge(text, lang)
 
 
@@ -282,62 +280,108 @@ def _autoplay_audio(audio_bytes: bytes, fmt: str = "mp3") -> None:
 
 
 # ---------------------------------------------------------------------------
-# Edge STT (Speech-to-Text) — Completely Free, No API Key
+# STT — fixed: auto-detect language first, no language-loop guessing
 # ---------------------------------------------------------------------------
-def _stt_edge(audio_bytes: bytes) -> tuple:
-    """Transcribe audio using Edge STT (Microsoft Azure Speech SDK free tier)."""
+def _stt_edge(audio_bytes: bytes) -> tuple[str | None, str | None]:
+    """
+    Transcribe audio without assuming a language.
+
+    Strategy:
+      1. Try Google with no language hint  — it auto-detects the spoken language.
+      2. If that fails (poor audio quality), try en-IN as a single fallback.
+      3. Never loop through every Indian language code: doing so returns the
+         first code that produces *any* text, which was causing Hindi
+         gibberish even when the user spoke in English or Telugu.
+    """
     if len(audio_bytes) < 8_000:
-        return None, "Recording too short. Speak clearly for at least 2 seconds."
+        return None, "Recording too short — please speak clearly for at least 2 seconds."
 
     try:
         import speech_recognition as sr
-
-        recognizer = sr.Recognizer()
-
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
-            tmp.write(audio_bytes)
-            tmp_path = tmp.name
-
-        with sr.AudioFile(tmp_path) as source:
-            audio = recognizer.record(source)
-
-        try:
-            # Try with language hints
-            for lang_code in ["hi-IN", "te-IN", "ta-IN", "kn-IN", "bn-IN", "or-IN", "en-IN"]:
-                try:
-                    text = recognizer.recognize_google(audio, language=lang_code)
-                    if text and len(text) > 2:
-                        return text, None
-                except:
-                    continue
-
-            text = recognizer.recognize_google(audio)
-            if text and len(text) > 2:
-                return text, None
-
-            return None, "Could not understand. Please try again."
-
-        except sr.UnknownValueError:
-            return None, "Could not understand audio. Please try again."
-        except sr.RequestError as e:
-            return None, f"Speech recognition service unavailable: {e}"
-        finally:
-            try:
-                os.unlink(tmp_path)
-            except OSError:
-                pass
-
     except ImportError:
         return None, "SpeechRecognition library not installed. Please type your request."
 
+    recognizer = sr.Recognizer()
+    recognizer.pause_threshold = 0.8   # don't cut off mid-word
+
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
+        tmp.write(audio_bytes)
+        tmp_path = tmp.name
+
+    try:
+        with sr.AudioFile(tmp_path) as source:
+            # Adjust for ambient noise so short recordings aren't misread
+            recognizer.adjust_for_ambient_noise(source, duration=0.3)
+            audio = recognizer.record(source)
+
+        # --- Attempt 1: let Google decide the language ---
+        try:
+            text = recognizer.recognize_google(audio)
+            if text and len(text.strip()) > 1:
+                return text.strip(), None
+        except sr.UnknownValueError:
+            pass
+        except sr.RequestError as e:
+            return None, f"Speech recognition service unavailable: {e}"
+
+        # --- Attempt 2: English (Indian) explicit hint ---
+        try:
+            text = recognizer.recognize_google(audio, language="en-IN")
+            if text and len(text.strip()) > 1:
+                return text.strip(), None
+        except sr.UnknownValueError:
+            pass
+        except sr.RequestError as e:
+            return None, f"Speech recognition service unavailable: {e}"
+
+        return None, "Could not understand the audio. Please try speaking more clearly, or type your request."
+
     except Exception as e:
         return None, f"Speech recognition error: {e}"
+    finally:
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
 
 
-def _transcribe_audio(audio_file) -> tuple:
-    """Transcribe a Streamlit audio_input file object."""
+def _transcribe_audio(audio_file) -> tuple[str | None, str | None]:
     buf = audio_file.getbuffer()
-    return _stt_edge(buf)
+    return _stt_edge(bytes(buf))
+
+
+# ---------------------------------------------------------------------------
+# Correction / reiteration helpers
+# ---------------------------------------------------------------------------
+_CORRECTION_PHRASES = {
+    "not what i want", "that's not", "thats not", "wrong", "not this",
+    "different", "no not", "not these", "show me something else",
+    "change", "none of these", "not right", "not matching",
+    "not kanchipuram", "not silk", "not cotton", "not banarasi",
+    "not pochampally", "search again", "try again", "redo",
+    "not for me", "nahi chahiye", "aur dikhao", "kuch aur",
+    "వేరే చూపించు", "வேறு காட்டு",
+}
+
+
+def _is_correction(text: str) -> bool:
+    """Return True if the user text looks like a correction/reiteration request."""
+    t = text.lower().strip()
+    return any(phrase in t for phrase in _CORRECTION_PHRASES)
+
+
+def _is_number_selection(text: str) -> bool:
+    """Return True if the text is a swatch selection (1/2/3 or word equivalents)."""
+    t = text.lower().strip()
+    return t in {
+        "1", "2", "3",
+        "one", "two", "three",
+        "first", "second", "third",
+        "ona", "rendu", "moodu",
+        "ondru", "irandu", "moondru",
+        "ondu", "eradu", "mooru",
+        "ek", "do", "teen",
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -358,6 +402,9 @@ def _init_buyer_state() -> None:
         "buyer_orders":     [],
         "agent_thinking":   False,
         "prefill_text":     "",
+        # NEW: guards to prevent re-triggering
+        "greeted":          False,   # ensures auto-greet fires only once
+        "audio_counter":    0,       # incremented after each audio clip is processed
     }
     for k, v in defaults.items():
         if k not in st.session_state:
@@ -463,7 +510,7 @@ def _step_indicator(current: str) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Swatch card with location display
+# Swatch card
 # ---------------------------------------------------------------------------
 def _swatch_card(swatch: dict) -> None:
     tags = "".join(
@@ -472,8 +519,8 @@ def _swatch_card(swatch: dict) -> None:
     )
     location = swatch.get("weaver_state", "")
     if swatch.get("weaver_cluster"):
-        location = f"{swatch.get('weaver_cluster')}, {location}" if location else swatch.get('weaver_cluster')
-    
+        location = f"{swatch.get('weaver_cluster')}, {location}" if location else swatch.get("weaver_cluster")
+
     st.markdown(f"""
     <div class="swatch-card">
         <div style="font-weight:700;font-size:0.95rem;color:var(--text-white);margin-bottom:2px;">
@@ -487,9 +534,7 @@ def _swatch_card(swatch: dict) -> None:
         <div class="divider"></div>
         <div class="swatch-label">Weaver</div>
         <div class="swatch-value">{swatch.get("weaver_name","—")}</div>
-        <div style="font-size:0.78rem;color:var(--text-muted);">
-            {location}
-        </div>
+        <div style="font-size:0.78rem;color:var(--text-muted);">{location}</div>
         <div style="margin-top:4px;font-size:0.82rem;color:var(--text-primary);">
             Rating: {swatch.get("weaver_rating","?")} &nbsp;·&nbsp;
             {swatch.get("delivery_days","?")} days
@@ -501,7 +546,14 @@ def _swatch_card(swatch: dict) -> None:
 # ---------------------------------------------------------------------------
 # Core message dispatcher
 # ---------------------------------------------------------------------------
-def _send(user_text: str) -> None:
+def _send(user_text: str, *, force_new_search: bool = False) -> None:
+    """
+    Send a message to the agent.
+
+    force_new_search=True clears existing swatches and resets the
+    conversation state to 'collecting' so the agent performs a fresh
+    retrieval pass instead of asking the user to pick from stale results.
+    """
     user_text = (user_text or "").strip()
     if not user_text:
         return
@@ -511,9 +563,18 @@ def _send(user_text: str) -> None:
         st.error(f"Backend not loaded: {err}. Ensure agent.py is in the same folder.")
         return
 
+    # ── If the user is correcting a previous search, wipe stale results ──
+    if force_new_search:
+        st.session_state["swatches"]      = []
+        st.session_state["agent_data"]    = {}
+        st.session_state["current_state"] = "collecting"
+        # Also reset the agent so it re-parses intent cleanly
+        st.session_state["agent"] = None
+
     if st.session_state.get("agent") is None:
         try:
-            st.session_state["agent"] = PakshiAgent()
+            AgentClass = PakshiAgent
+            st.session_state["agent"] = AgentClass()
         except Exception as exc:
             st.error(f"Agent init failed: {exc}")
             return
@@ -538,8 +599,10 @@ def _send(user_text: str) -> None:
     st.session_state["history"].append(("agent", msg))
     st.session_state["agent_data"]    = data
 
+    # Only overwrite swatches if the agent returned NEW ones
     if data.get("swatches"):
         st.session_state["swatches"] = data["swatches"]
+
     if data.get("order"):
         st.session_state["order"] = data["order"]
 
@@ -584,6 +647,7 @@ The agent shows matching handloom swatches from weavers in your preferred region
 
 **Step 3 — Select a swatch.**
 Say "one", "two", or "three" — or click Select.
+If none match, click **"None of these — Search Again"** to describe again.
 
 **Step 4 — Confirm.**
 The agent picks the best weaver. Order placed on Meesho.
@@ -637,7 +701,7 @@ If the piece doesn't meet your expectation, click Reject Piece. It moves to One 
 
     col_chat, col_panel = st.columns([3, 2], gap="large")
 
-    # Right panel
+    # ── Right panel ──
     with col_panel:
         swatches = st.session_state["swatches"]
         if swatches:
@@ -648,6 +712,20 @@ If the piece doesn't meet your expectation, click Reject Piece. It moves to One 
                     if st.button(f"Select Swatch {i + 1}", key=f"sel_{i}", use_container_width=True):
                         _send(str(i + 1))
                         st.rerun()
+
+            # ── "None of these" escape hatch shown alongside swatches ──
+            if st.session_state["current_state"] == "retrieved":
+                st.markdown('<div style="height:0.3rem;"></div>', unsafe_allow_html=True)
+                if st.button("None of these — Search Again", use_container_width=True, key="none_of_these"):
+                    # Clear swatches, go back to collecting state
+                    st.session_state["swatches"]      = []
+                    st.session_state["current_state"] = "collecting"
+                    st.session_state["history"].append(
+                        ("agent",
+                         "No problem! Please describe what you're looking for again — "
+                         "be as specific as you like about fabric, colour, occasion, region, or budget.")
+                    )
+                    st.rerun()
 
         order = st.session_state["order"]
         if order and st.session_state["current_state"] == "confirmed":
@@ -699,11 +777,13 @@ If the piece doesn't meet your expectation, click Reject Piece. It moves to One 
                     "reason":         "Weaving imperfection / colour mismatch",
                 })
                 for k in ("current_state","order","swatches","history","agent",
-                          "reasoning_log","agent_data","awaiting","selected_swatch","agent_thinking"):
+                          "reasoning_log","agent_data","awaiting","selected_swatch",
+                          "agent_thinking","greeted","audio_counter"):
                     st.session_state[k] = (
                         [] if k in ("swatches","history","reasoning_log") else
                         {} if k == "agent_data" else
-                        False if k == "agent_thinking" else
+                        False if k in ("agent_thinking", "greeted") else
+                        0 if k == "audio_counter" else
                         None if k in ("order","agent","awaiting","selected_swatch") else
                         "greeting"
                     )
@@ -715,7 +795,7 @@ If the piece doesn't meet your expectation, click Reject Piece. It moves to One 
             for line in st.session_state["reasoning_log"][-3:]:
                 st.markdown(f'<div class="reasoning-box">{line}</div>', unsafe_allow_html=True)
 
-    # Left panel — chat + input
+    # ── Left panel — chat + input ──
     with col_chat:
         for role, text in st.session_state["history"]:
             cls = "bubble-agent" if role == "agent" else "bubble-user"
@@ -756,51 +836,77 @@ If the piece doesn't meet your expectation, click Reject Piece. It moves to One 
                 st.rerun()
 
         else:
-            # Auto-greet
-            if cur == "greeting" and not st.session_state["history"]:
-                _send("hi"); st.rerun()
+            # ── Auto-greet: fires ONCE, guarded by the "greeted" flag ──
+            if cur == "greeting" and not st.session_state["history"] and not st.session_state["greeted"]:
+                st.session_state["greeted"] = True
+                _send("hi")
+                st.rerun()
 
-            # ── Voice input (ALWAYS VISIBLE, NEVER DISABLED) ──
+            # ── Voice input ──
             st.markdown('<div class="section-label">Speak your request</div>', unsafe_allow_html=True)
-            st.caption("Supports: English, Hindi, Telugu, Tamil, Kannada, Bengali, Odia. Speak for 2-3 seconds.")
+            st.caption("Speak naturally in any language. Avoid Hindi if you mean another language — speak your own tongue and Google will detect it automatically.")
 
+            # Use audio_counter in the key so the widget resets after each clip is processed.
+            # This stops the same recording being transcribed on every rerun (the infinite-loop cause).
+            audio_key  = f"pakshi_audio_{st.session_state['audio_counter']}"
             audio_file = st.audio_input(
-                "Record your fabric request (or say 'one', 'two', 'three' to select)",
+                "Record your fabric request",
                 label_visibility="collapsed",
-                key="pakshi_audio",
+                key=audio_key,
             )
 
             if audio_file is not None:
                 with st.spinner("Transcribing..."):
                     text, err = _transcribe_audio(audio_file)
 
+                # Bump counter NOW so the widget resets on rerun (no re-processing)
+                st.session_state["audio_counter"] += 1
+
                 if err:
                     st.warning(err)
+                    st.rerun()
                 else:
-                    # Check if user said a number word (voice selection)
+                    text = text or ""
+                    text_lower = text.lower().strip()
+
+                    # Map spoken number words to digit strings
                     number_map = {
                         "one": "1", "two": "2", "three": "3",
                         "first": "1", "second": "2", "third": "3",
-                        "ona": "1", "rendu": "2", "moodu": "3",      # Telugu
-                        "ondru": "1", "irandu": "2", "moondru": "3", # Tamil
-                        "ondu": "1", "eradu": "2", "mooru": "3",     # Kannada
-                        "ek": "1", "do": "2", "teen": "3",           # Hindi
+                        "ona": "1", "rendu": "2", "moodu": "3",
+                        "ondru": "1", "irandu": "2", "moondru": "3",
+                        "ondu": "1", "eradu": "2", "mooru": "3",
+                        "ek": "1", "do": "2", "teen": "3",
                     }
-                    text_lower = text.lower().strip()
-                    if text_lower in number_map:
+
+                    if text_lower in number_map and cur == "retrieved":
                         st.success(f'Heard: "{text}" → Selecting {number_map[text_lower]}')
                         _send(number_map[text_lower])
+                    elif _is_correction(text) and cur == "retrieved":
+                        st.success(f'Heard: "{text}" → Starting fresh search')
+                        _send(text, force_new_search=True)
                     else:
                         st.success(f'Heard: "{text}"')
                         _send(text)
+
                     st.rerun()
 
             # ── Text input ──
             st.markdown('<div class="section-label" style="margin-top:0.8rem;">Or type</div>', unsafe_allow_html=True)
 
+            # Show a hint when swatches are displayed so the user knows they can correct
+            if cur == "retrieved":
+                st.markdown(
+                    '<div class="correction-banner">'
+                    'Type <b>1</b>, <b>2</b>, or <b>3</b> to select — or describe what you actually want '
+                    '(e.g. "Kanchipuram silk", "something in green") to search again.'
+                    '</div>',
+                    unsafe_allow_html=True,
+                )
+
             placeholders = {
                 "collecting": "e.g. Kanchipuram silk saree for wedding, under ₹5000",
-                "retrieved":  "Type 1, 2, or 3 to select a swatch...",
+                "retrieved":  "Type 1/2/3 to select, or describe what you want instead...",
             }
             prefill    = st.session_state.pop("prefill_text", "")
             user_input = st.text_input(
@@ -810,11 +916,19 @@ If the piece doesn't meet your expectation, click Reject Piece. It moves to One 
                 label_visibility="collapsed",
                 key=f"txt_{len(st.session_state['history'])}",
             )
+
             if st.button("Send", key="send_btn") and user_input.strip():
-                _send(user_input.strip())
+                txt = user_input.strip()
+
+                # In "retrieved" state: if the text is NOT a number selection
+                # and IS a correction or a fresh description → force new search
+                if cur == "retrieved" and not _is_number_selection(txt):
+                    _send(txt, force_new_search=True)
+                else:
+                    _send(txt)
                 st.rerun()
 
-            # Example chips — updated to show location-based queries
+            # Example chips
             if cur in ("greeting", "collecting") and len(st.session_state["history"]) <= 1:
                 st.markdown('<div style="margin-top:0.6rem;"></div>', unsafe_allow_html=True)
                 st.markdown('<div class="section-label">Try saying...</div>', unsafe_allow_html=True)
@@ -909,7 +1023,7 @@ Click Simulate New Order Broadcast to demo incoming orders in real time.
             if idx is None:
                 continue
 
-            location = order.get("weaver_location", "")
+            location  = order.get("weaver_location", "")
             feel_tags = "".join(
                 f'<span class="tag">{t.strip()}</span>'
                 for t in str(order.get("buyer_feel","")).split(",")[:4] if t.strip()
@@ -948,19 +1062,13 @@ Click Simulate New Order Broadcast to demo incoming orders in real time.
                     )
                     lang = "te"
                     note = order.get("buyer_note", "")
-                    if "tamil" in note.lower() or "ta" in note.lower():
-                        lang = "ta"
-                    elif "kannada" in note.lower() or "kn" in note.lower():
-                        lang = "kn"
-                    elif "hindi" in note.lower() or "hi" in note.lower():
-                        lang = "hi"
-                    elif "bengali" in note.lower() or "bn" in note.lower():
-                        lang = "bn"
-                    elif "odia" in note.lower() or "or" in note.lower():
-                        lang = "or"
-                    elif "english" in note.lower() or "en" in note.lower():
-                        lang = "en"
-                    
+                    if "tamil"   in note.lower(): lang = "ta"
+                    elif "kannada" in note.lower(): lang = "kn"
+                    elif "hindi"   in note.lower(): lang = "hi"
+                    elif "bengali" in note.lower(): lang = "bn"
+                    elif "odia"    in note.lower(): lang = "or"
+                    elif "english" in note.lower(): lang = "en"
+
                     ab = _tts_bytes(summary, lang=lang)
                     if ab:
                         _autoplay_audio(ab)
@@ -1035,17 +1143,17 @@ Click Simulate New Order Broadcast to demo incoming orders in real time.
     if st.button("Simulate New Order Broadcast"):
         weave = profile.get("weave_style", "Handloom") if profile else "Handloom"
         st.session_state["weaver_orders"].insert(0, {
-            "order_id":    f"PKS-{random.randint(2900, 2999)}",
-            "fabric":      random.choice(["Cotton-Silk", "Cotton", "Silk"]),
-            "weave_style": weave,
-            "color":       random.choice(["Sage green", "Mustard yellow", "Ivory with zari", "Teal"]),
-            "occasion":    random.choice(["Wedding", "Festival", "Casual"]),
-            "buyer_feel":  random.choice(["light, flowy, elegant", "royal, heavy, grand", "breathable, cool"]),
-            "price":       random.choice([900, 1200, 1500, 2000, 2500]),
-            "delivery_by": "July 25, 2026",
-            "status":      "pending",
-            "photo":       None,
-            "buyer_note":  "New broadcast from Pakshi agent",
+            "order_id":       f"PKS-{random.randint(2900, 2999)}",
+            "fabric":         random.choice(["Cotton-Silk", "Cotton", "Silk"]),
+            "weave_style":    weave,
+            "color":          random.choice(["Sage green", "Mustard yellow", "Ivory with zari", "Teal"]),
+            "occasion":       random.choice(["Wedding", "Festival", "Casual"]),
+            "buyer_feel":     random.choice(["light, flowy, elegant", "royal, heavy, grand", "breathable, cool"]),
+            "price":          random.choice([900, 1200, 1500, 2000, 2500]),
+            "delivery_by":    "July 25, 2026",
+            "status":         "pending",
+            "photo":          None,
+            "buyer_note":     "New broadcast from Pakshi agent",
             "weaver_location": profile.get("cluster", ""),
         })
         st.success("New order broadcast received!")
@@ -1104,8 +1212,7 @@ def _ooak_page() -> None:
                             <span class="tag" style="background:rgba(239,68,68,0.15);color:#ef4444;">rejected custom</span>
                         </div>
                         <div style="font-size:0.82rem;color:var(--text-primary);">
-                            Woven by <b>{item.get("weaver_name","—")}</b> ·
-                            {location}
+                            Woven by <b>{item.get("weaver_name","—")}</b> · {location}
                         </div>
                     </div>
                     <div style="text-align:right;flex-shrink:0;">
