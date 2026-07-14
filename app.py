@@ -494,7 +494,7 @@ def _init_buyer_state() -> None:
         "one_of_a_kind":   [],
         "buyer_orders":    [],
         "agent_thinking":  False,
-        "audio_key":       0,
+        "last_audio_hash": None,   # Tracks the last audio hash to prevent re-processing
     }
     for key, val in defaults.items():
         if key not in st.session_state:
@@ -954,105 +954,107 @@ It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss
                 _send_message("hi")
                 st.rerun()
 
-            # --- FIXED AUDIO INPUT ---
+            # --- FIXED AUDIO INPUT (Static Key + Hash Tracking) ---
             st.markdown(
                 '<div class="section-label">Speak your request</div>',
                 unsafe_allow_html=True,
             )
-            audio_key = st.session_state.get("audio_key", 0)
-            
-            try:
-                audio_file = st.audio_input(
-                    "Record your fabric request (speak clearly for 2-3 seconds)",
-                    label_visibility="collapsed",
-                    key=f"audio_input_{audio_key}",
-                )
-            except Exception:
-                st.warning("Microphone not available. Please type your request below.")
-                audio_file = None
+
+            # Static key ensures the widget doesn't reset on reruns
+            audio_file = st.audio_input(
+                "Record your fabric request (speak clearly for 2-3 seconds)",
+                label_visibility="collapsed",
+                key="audio_input_main",
+            )
 
             if audio_file is not None:
-                whisper_model, whisper_err = _load_whisper_model()
-                if whisper_err or whisper_model is None:
-                    st.warning(
-                        f"Voice transcription unavailable ({whisper_err}). "
-                        "Please type your request below."
-                    )
-                else:
-                    with st.spinner("Transcribing..."):
-                        tmp_path = None
-                        try:
-                            with tempfile.NamedTemporaryFile(
-                                delete=False, suffix=".wav"
-                            ) as tmp:
-                                tmp.write(audio_file.getbuffer())
-                                tmp_path = tmp.name
+                # Generate a unique hash for this audio file
+                audio_hash = hash(audio_file.getbuffer())
+                
+                # Only process if this is a NEW audio recording (not the same as before)
+                if st.session_state.get("last_audio_hash") != audio_hash:
+                    st.session_state["last_audio_hash"] = audio_hash
 
-                            # --- THE FIX: Validate audio before Whisper ---
-                            if not _audio_contains_sound(tmp_path):
-                                # Try to fix the WAV header
-                                if not _fix_wav_header(tmp_path):
-                                    st.warning(
-                                        "🔇 No audible sound detected. "
-                                        "Please hold the mic closer, speak clearly for 2-3 seconds, "
-                                        "or type your request below."
-                                    )
-                                    # Reset the audio key to clear the widget
-                                    st.session_state["audio_key"] = audio_key + 1
+                    whisper_model, whisper_err = _load_whisper_model()
+                    if whisper_err or whisper_model is None:
+                        st.warning(
+                            f"Voice transcription unavailable ({whisper_err}). "
+                            "Please type your request below."
+                        )
+                        st.session_state["last_audio_hash"] = None
+                    else:
+                        with st.spinner("Transcribing..."):
+                            tmp_path = None
+                            try:
+                                with tempfile.NamedTemporaryFile(
+                                    delete=False, suffix=".wav"
+                                ) as tmp:
+                                    tmp.write(audio_file.getbuffer())
+                                    tmp_path = tmp.name
+
+                                # --- Validate audio before Whisper ---
+                                if not _audio_contains_sound(tmp_path):
+                                    if not _fix_wav_header(tmp_path):
+                                        st.warning(
+                                            "🔇 No audible sound detected. "
+                                            "Please hold the mic closer, speak clearly for 2-3 seconds, "
+                                            "or type your request below."
+                                        )
+                                        st.session_state["last_audio_hash"] = None
+                                        st.rerun()
+                                        return
+
+                                # --- Now safe to call Whisper ---
+                                result = whisper_model.transcribe(
+                                    tmp_path,
+                                    language=_WHISPER_LANGUAGE,
+                                    **_WHISPER_OPTIONS,
+                                )
+                                transcribed = (result.get("text") or "").strip()
+
+                                if transcribed and len(transcribed) > 2:
+                                    # Check for hallucination
+                                    if transcribed.lower() in {"thank you", "thanks", "bye", "hello", "hi", "ok"}:
+                                        st.warning(
+                                            f'Transcribed: "{transcribed}" — this seems too short or unclear. '
+                                            "Please try again or type your request."
+                                        )
+                                        st.session_state["last_audio_hash"] = None
+                                        st.rerun()
+                                        return
+                                    
+                                    st.success(f"Heard: {transcribed}")
+                                    _send_message(transcribed)
+                                    st.session_state["last_audio_hash"] = None
                                     st.rerun()
-                                    return
-
-                            # --- Now safe to call Whisper ---
-                            result = whisper_model.transcribe(
-                                tmp_path,
-                                language=_WHISPER_LANGUAGE,
-                                **_WHISPER_OPTIONS,
-                            )
-                            transcribed = (result.get("text") or "").strip()
-
-                            if transcribed:
-                                # Quick validation: if transcription is garbage or too short
-                                if len(transcribed) < 3 or transcribed.lower() in {"thank you", "thanks", "bye", "hello"}:
+                                else:
                                     st.warning(
-                                        f'Transcribed: "{transcribed}" — this seems too short or unclear. '
-                                        "Please try again or type your request."
+                                        "Could not detect clear speech. "
+                                        "Please try again or type below."
                                     )
-                                    st.session_state["audio_key"] = audio_key + 1
+                                    st.session_state["last_audio_hash"] = None
                                     st.rerun()
-                                    return
-                                
-                                st.success(f"Heard: {transcribed}")
-                                _send_message(transcribed)
-                                st.session_state["audio_key"] = audio_key + 1
-                                st.rerun()
-                            else:
-                                st.warning(
-                                    "Could not detect speech. "
-                                    "Please try again or type below."
-                                )
-                                st.session_state["audio_key"] = audio_key + 1
-                                st.rerun()
 
-                        except Exception as exc:
-                            err_msg = str(exc)
-                            if "reshape" in err_msg:
-                                st.warning(
-                                    "🔇 The recording was silent or corrupted. "
-                                    "Please try speaking clearly for 2-3 seconds, or type your request below."
-                                )
-                            else:
-                                st.error(
-                                    f"Transcription error: {err_msg}. "
-                                    "Please type your request below."
-                                )
-                            st.session_state["audio_key"] = audio_key + 1
-                            st.rerun()
-                        finally:
-                            if tmp_path and os.path.exists(tmp_path):
-                                try:
-                                    os.unlink(tmp_path)
-                                except OSError:
-                                    pass
+                            except Exception as exc:
+                                err_msg = str(exc)
+                                if "reshape" in err_msg:
+                                    st.warning(
+                                        "🔇 The recording was silent or corrupted. "
+                                        "Please try speaking clearly for 2-3 seconds, or type your request below."
+                                    )
+                                else:
+                                    st.error(
+                                        f"Transcription error: {err_msg}. "
+                                        "Please type your request below."
+                                    )
+                                st.session_state["last_audio_hash"] = None
+                                st.rerun()
+                            finally:
+                                if tmp_path and os.path.exists(tmp_path):
+                                    try:
+                                        os.unlink(tmp_path)
+                                    except OSError:
+                                        pass
 
             st.markdown(
                 '<div class="section-label" style="margin-top:0.8rem;">Or type</div>',
