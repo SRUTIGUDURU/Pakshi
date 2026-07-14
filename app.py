@@ -363,7 +363,7 @@ def _load_weaver_profiles():
 def _load_whisper_model():
     try:
         import whisper
-        return whisper.load_model("small"), None
+        return whisper.load_model("base"), None
     except Exception as exc:
         return None, str(exc)
 
