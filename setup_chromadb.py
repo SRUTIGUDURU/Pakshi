@@ -1,7 +1,6 @@
 """
 Pakshi - ChromaDB Setup Script
-Loads fabric_swatches.json into ChromaDB using TF-IDF embeddings
-(fully offline, no model downloads needed).
+Loads fabric swatches into ChromaDB
 """
 
 import json
