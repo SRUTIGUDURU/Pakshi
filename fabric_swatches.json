@@ -8,11 +8,33 @@
       "color": "white",
       "color_family": "neutral",
       "pattern": "plain with gold zari border",
-      "occasion_tags": ["casual", "daily_wear", "work"],
-      "sensory_tags": ["light", "airy", "breathable", "soft"],
+      "occasion_tags": [
+        "casual",
+        "daily_wear",
+        "work"
+      ],
+      "sensory_tags": [
+        "light",
+        "airy",
+        "breathable",
+        "soft"
+      ],
       "price_inr": 650,
       "available": true,
-      "delivery_days": 6
+      "delivery_days": 6,
+      "description": "This handwoven Venkatagiri cotton saree is prized for its fine thread count and light drape. The plain with gold zari border is woven directly into the fabric — not printed. Lightweight and breathable, it keeps you cool through long days. Ideal for casual.",
+      "reviews": [
+        {
+          "user": "Meena R.",
+          "rating": 5,
+          "comment": "Exactly what I needed for daily wear. Soft and breathable all day."
+        },
+        {
+          "user": "Bharathi K.",
+          "rating": 5,
+          "comment": "Ordered for my daughter's college. She gets compliments daily."
+        }
+      ]
     },
     {
       "id": "S002",
@@ -22,11 +44,32 @@
       "color": "pale yellow",
       "color_family": "yellow",
       "pattern": "thin stripe",
-      "occasion_tags": ["casual", "daily_wear"],
-      "sensory_tags": ["light", "soft", "everyday", "cool"],
+      "occasion_tags": [
+        "casual",
+        "daily_wear"
+      ],
+      "sensory_tags": [
+        "light",
+        "soft",
+        "everyday",
+        "cool"
+      ],
       "price_inr": 420,
       "available": true,
-      "delivery_days": 4
+      "delivery_days": 4,
+      "description": "Woven in the Shantipur tradition of West Bengal, this Tant cotton saree is prized for its fine weave and light drape. The thin stripe adds subtle elegance. Tant cotton breathes extremely well — a favourite for daily wear in all seasons.",
+      "reviews": [
+        {
+          "user": "Sudha V.",
+          "rating": 5,
+          "comment": "Beautiful colour. Washed well and did not fade at all."
+        },
+        {
+          "user": "Lalitha T.",
+          "rating": 4,
+          "comment": "Colour is exactly as shown. Delivery was fast too."
+        }
+      ]
     },
     {
       "id": "S003",
@@ -36,11 +79,33 @@
       "color": "white with indigo print",
       "color_family": "blue",
       "pattern": "floral block print",
-      "occasion_tags": ["casual", "college", "work"],
-      "sensory_tags": ["light", "airy", "casual", "fresh"],
+      "occasion_tags": [
+        "casual",
+        "college",
+        "work"
+      ],
+      "sensory_tags": [
+        "light",
+        "airy",
+        "casual",
+        "fresh"
+      ],
       "price_inr": 550,
       "available": true,
-      "delivery_days": 5
+      "delivery_days": 5,
+      "description": "Hand block-printed in Sanganer, Jaipur, this cotton saree features a floral block print made using natural or vegetable dyes. Each print is slightly unique — a mark of genuine handcraft. Light and casual-ready.",
+      "reviews": [
+        {
+          "user": "Kavitha N.",
+          "rating": 4,
+          "comment": "Good quality cotton. Feels premium for the price."
+        },
+        {
+          "user": "Padma A.",
+          "rating": 5,
+          "comment": "Fine weave, lovely texture. Will order again."
+        }
+      ]
     },
     {
       "id": "S004",
@@ -50,11 +115,33 @@
       "color": "rust and cream",
       "color_family": "orange",
       "pattern": "geometric block print",
-      "occasion_tags": ["casual", "college", "work"],
-      "sensory_tags": ["light", "casual", "comfortable", "everyday"],
+      "occasion_tags": [
+        "casual",
+        "college",
+        "work"
+      ],
+      "sensory_tags": [
+        "light",
+        "casual",
+        "comfortable",
+        "everyday"
+      ],
       "price_inr": 620,
       "available": true,
-      "delivery_days": 6
+      "delivery_days": 6,
+      "description": "This cotton saree from Bagru, Rajasthan uses the traditional dabu resist printing method. The geometric block print is earthy and distinctive. Lightweight and light, each piece carries the character of natural dye craft.",
+      "reviews": [
+        {
+          "user": "Rekha P.",
+          "rating": 5,
+          "comment": "Wore this to office every week. Comfortable and looks neat."
+        },
+        {
+          "user": "Rohini B.",
+          "rating": 4,
+          "comment": "Good everyday saree. Simple and elegant."
+        }
+      ]
     },
     {
       "id": "S005",
@@ -64,11 +151,33 @@
       "color": "light green",
       "color_family": "green",
       "pattern": "plain with contrast border",
-      "occasion_tags": ["casual", "daily_wear", "festival"],
-      "sensory_tags": ["light", "soft", "breathable", "cool"],
+      "occasion_tags": [
+        "casual",
+        "daily_wear",
+        "festival"
+      ],
+      "sensory_tags": [
+        "light",
+        "soft",
+        "breathable",
+        "cool"
+      ],
       "price_inr": 480,
       "available": true,
-      "delivery_days": 5
+      "delivery_days": 5,
+      "description": "Woven in the Shantipur tradition of West Bengal, this Tant cotton saree is prized for its fine weave and light drape. The plain with contrast border adds subtle elegance. Tant cotton breathes extremely well — a favourite for daily wear in all seasons.",
+      "reviews": [
+        {
+          "user": "Annapurna D.",
+          "rating": 4,
+          "comment": "The border design is very pretty. Drapes well too."
+        },
+        {
+          "user": "Saritha C.",
+          "rating": 5,
+          "comment": "Exactly as described. The zari border is beautiful."
+        }
+      ]
     },
     {
       "id": "S006",
@@ -78,11 +187,33 @@
       "color": "cream",
       "color_family": "neutral",
       "pattern": "fine count plain",
-      "occasion_tags": ["casual", "daily_wear", "work"],
-      "sensory_tags": ["soft", "light", "breathable", "comfortable"],
+      "occasion_tags": [
+        "casual",
+        "daily_wear",
+        "work"
+      ],
+      "sensory_tags": [
+        "soft",
+        "light",
+        "breathable",
+        "comfortable"
+      ],
       "price_inr": 520,
       "available": true,
-      "delivery_days": 7
+      "delivery_days": 7,
+      "description": "Woven in the historically significant Chendamangalam cluster of Kerala, this cotton saree has a fine count plain that is quietly elegant. Fine thread count, soft texture, and understated beauty make it ideal for casual.",
+      "reviews": [
+        {
+          "user": "Sujata M.",
+          "rating": 5,
+          "comment": "My mother loved this saree. Perfect for casual puja days."
+        },
+        {
+          "user": "Nirmala J.",
+          "rating": 4,
+          "comment": "Very comfortable in humid weather. Recommend for South India."
+        }
+      ]
     },
     {
       "id": "S007",
@@ -92,11 +223,33 @@
       "color": "pastel pink",
       "color_family": "pink",
       "pattern": "plain",
-      "occasion_tags": ["casual", "daily_wear", "college"],
-      "sensory_tags": ["light", "soft", "cool", "comfortable"],
+      "occasion_tags": [
+        "casual",
+        "daily_wear",
+        "college"
+      ],
+      "sensory_tags": [
+        "light",
+        "soft",
+        "cool",
+        "comfortable"
+      ],
       "price_inr": 400,
       "available": true,
-      "delivery_days": 5
+      "delivery_days": 5,
+      "description": "A high-quality Coimbatore cotton saree with a plain. Coimbatore is known for producing India's finest cotton — and this piece shows why. Durable, light, and very comfortable for daily or casual use.",
+      "reviews": [
+        {
+          "user": "Geetha S.",
+          "rating": 4,
+          "comment": "Light and easy to manage. Great for summer."
+        },
+        {
+          "user": "Kamala E.",
+          "rating": 5,
+          "comment": "Weaver did amazing work. The pattern is crisp."
+        }
+      ]
     },
     {
       "id": "S008",
@@ -106,11 +259,33 @@
       "color": "teal",
       "color_family": "blue",
       "pattern": "plain with woven border",
-      "occasion_tags": ["casual", "work", "college"],
-      "sensory_tags": ["light", "breathable", "comfortable", "everyday"],
+      "occasion_tags": [
+        "casual",
+        "work",
+        "college"
+      ],
+      "sensory_tags": [
+        "light",
+        "breathable",
+        "comfortable",
+        "everyday"
+      ],
       "price_inr": 550,
       "available": true,
-      "delivery_days": 6
+      "delivery_days": 6,
+      "description": "This Salem cotton saree features a plain with woven border. Salem weaves are known for excellent colour retention and durability. A practical, light saree that holds up beautifully through regular wear.",
+      "reviews": [
+        {
+          "user": "Bharathi K.",
+          "rating": 5,
+          "comment": "Ordered for my daughter's college. She gets compliments daily."
+        },
+        {
+          "user": "Vasantha F.",
+          "rating": 4,
+          "comment": "Nice colour. Slightly lighter than expected but still lovely."
+        }
+      ]
     },
     {
       "id": "S009",
@@ -120,11 +295,32 @@
       "color": "bright red",
       "color_family": "red",
       "pattern": "mirror work embellishment",
-      "occasion_tags": ["festival", "casual_formal"],
-      "sensory_tags": ["light", "festive", "casual", "vibrant"],
+      "occasion_tags": [
+        "festival",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "light",
+        "festive",
+        "casual",
+        "vibrant"
+      ],
       "price_inr": 850,
       "available": true,
-      "delivery_days": 7
+      "delivery_days": 7,
+      "description": "From the vibrant Kutch cluster of Gujarat, this cotton saree features a mirror work embellishment that reflects the bold aesthetic of the region. Bright, light, and full of character — perfect for festival occasions.",
+      "reviews": [
+        {
+          "user": "Lalitha T.",
+          "rating": 4,
+          "comment": "Colour is exactly as shown. Delivery was fast too."
+        },
+        {
+          "user": "Meena R.",
+          "rating": 5,
+          "comment": "Exactly what I needed for daily wear. Soft and breathable all day."
+        }
+      ]
     },
     {
       "id": "S010",
@@ -134,11 +330,33 @@
       "color": "soft gold",
       "color_family": "yellow",
       "pattern": "zari border",
-      "occasion_tags": ["wedding", "festival", "casual_formal"],
-      "sensory_tags": ["light", "elegant", "comfortable", "wedding"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "light",
+        "elegant",
+        "comfortable",
+        "wedding"
+      ],
       "price_inr": 1100,
       "available": true,
-      "delivery_days": 8
+      "delivery_days": 8,
+      "description": "A classic Venkatagiri cotton saree featuring a zari border. The gold zari work is handwoven directly into the fabric — not printed or added on. Lightweight and light, this is a go-to for wedding occasions.",
+      "reviews": [
+        {
+          "user": "Padma A.",
+          "rating": 5,
+          "comment": "Fine weave, lovely texture. Will order again."
+        },
+        {
+          "user": "Sudha V.",
+          "rating": 5,
+          "comment": "Beautiful colour. Washed well and did not fade at all."
+        }
+      ]
     },
     {
       "id": "S011",
@@ -148,11 +366,33 @@
       "color": "cream with gold border",
       "color_family": "neutral",
       "pattern": "kasavu gold border",
-      "occasion_tags": ["festival", "wedding", "casual_formal"],
-      "sensory_tags": ["light", "elegant", "traditional", "comfortable"],
+      "occasion_tags": [
+        "festival",
+        "wedding",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "light",
+        "elegant",
+        "traditional",
+        "comfortable"
+      ],
       "price_inr": 900,
       "available": true,
-      "delivery_days": 8
+      "delivery_days": 8,
+      "description": "Classic Kerala kasavu featuring a kasavu gold border. Pure cotton with a handwoven gold border — the signature of Kerala's weaving tradition. Light and elegant for Onam, weddings, and formal occasions.",
+      "reviews": [
+        {
+          "user": "Rohini B.",
+          "rating": 4,
+          "comment": "Good everyday saree. Simple and elegant."
+        },
+        {
+          "user": "Kavitha N.",
+          "rating": 4,
+          "comment": "Good quality cotton. Feels premium for the price."
+        }
+      ]
     },
     {
       "id": "S012",
@@ -162,11 +402,32 @@
       "color": "white with red dot pattern",
       "color_family": "red",
       "pattern": "Tangaliya dot motif",
-      "occasion_tags": ["casual", "festival"],
-      "sensory_tags": ["light", "textured", "comfortable", "everyday"],
+      "occasion_tags": [
+        "casual",
+        "festival"
+      ],
+      "sensory_tags": [
+        "light",
+        "textured",
+        "comfortable",
+        "everyday"
+      ],
       "price_inr": 750,
       "available": true,
-      "delivery_days": 9
+      "delivery_days": 9,
+      "description": "A GI-tagged Tangaliya saree from Surendranagar, Gujarat, featuring a signature Tangaliya dot motif. The raised dot motif is created entirely on the loom — no embroidery. A rare and light fabric for discerning buyers.",
+      "reviews": [
+        {
+          "user": "Saritha C.",
+          "rating": 5,
+          "comment": "Exactly as described. The zari border is beautiful."
+        },
+        {
+          "user": "Rekha P.",
+          "rating": 5,
+          "comment": "Wore this to office every week. Comfortable and looks neat."
+        }
+      ]
     },
     {
       "id": "S013",
@@ -176,11 +437,33 @@
       "color": "white with pink floral",
       "color_family": "pink",
       "pattern": "rose block print",
-      "occasion_tags": ["casual", "college", "summer"],
-      "sensory_tags": ["light", "airy", "soft", "fresh"],
+      "occasion_tags": [
+        "casual",
+        "college",
+        "summer"
+      ],
+      "sensory_tags": [
+        "light",
+        "airy",
+        "soft",
+        "fresh"
+      ],
       "price_inr": 480,
       "available": true,
-      "delivery_days": 5
+      "delivery_days": 5,
+      "description": "Hand block-printed in Sanganer, Jaipur, this cotton saree features a rose block print made using natural or vegetable dyes. Each print is slightly unique — a mark of genuine handcraft. Light and casual-ready.",
+      "reviews": [
+        {
+          "user": "Nirmala J.",
+          "rating": 4,
+          "comment": "Very comfortable in humid weather. Recommend for South India."
+        },
+        {
+          "user": "Annapurna D.",
+          "rating": 4,
+          "comment": "The border design is very pretty. Drapes well too."
+        }
+      ]
     },
     {
       "id": "S014",
@@ -190,11 +473,33 @@
       "color": "lavender",
       "color_family": "purple",
       "pattern": "plain with thin border",
-      "occasion_tags": ["casual", "daily_wear", "work"],
-      "sensory_tags": ["soft", "light", "breathable", "comfortable"],
+      "occasion_tags": [
+        "casual",
+        "daily_wear",
+        "work"
+      ],
+      "sensory_tags": [
+        "soft",
+        "light",
+        "breathable",
+        "comfortable"
+      ],
       "price_inr": 580,
       "available": true,
-      "delivery_days": 6
+      "delivery_days": 6,
+      "description": "This handwoven Venkatagiri cotton saree is prized for its fine thread count and soft drape. The plain with thin border is woven directly into the fabric — not printed. Lightweight and breathable, it keeps you cool through long days. Ideal for casual.",
+      "reviews": [
+        {
+          "user": "Kamala E.",
+          "rating": 5,
+          "comment": "Weaver did amazing work. The pattern is crisp."
+        },
+        {
+          "user": "Sujata M.",
+          "rating": 5,
+          "comment": "My mother loved this saree. Perfect for casual puja days."
+        }
+      ]
     },
     {
       "id": "S015",
@@ -204,11 +509,33 @@
       "color": "sky blue",
       "color_family": "blue",
       "pattern": "plain",
-      "occasion_tags": ["casual", "summer", "daily_wear"],
-      "sensory_tags": ["light", "cool", "airy", "everyday"],
+      "occasion_tags": [
+        "casual",
+        "summer",
+        "daily_wear"
+      ],
+      "sensory_tags": [
+        "light",
+        "cool",
+        "airy",
+        "everyday"
+      ],
       "price_inr": 380,
       "available": true,
-      "delivery_days": 4
+      "delivery_days": 4,
+      "description": "Woven in the Shantipur tradition of West Bengal, this Tant cotton saree is prized for its fine weave and light drape. The plain adds subtle elegance. Tant cotton breathes extremely well — a favourite for daily wear in all seasons.",
+      "reviews": [
+        {
+          "user": "Vasantha F.",
+          "rating": 4,
+          "comment": "Nice colour. Slightly lighter than expected but still lovely."
+        },
+        {
+          "user": "Geetha S.",
+          "rating": 4,
+          "comment": "Light and easy to manage. Great for summer."
+        }
+      ]
     },
     {
       "id": "S016",
@@ -218,11 +545,32 @@
       "color": "red and black",
       "color_family": "red",
       "pattern": "traditional shankha chakra motif",
-      "occasion_tags": ["festival", "casual_formal"],
-      "sensory_tags": ["comfortable", "traditional", "festive", "everyday"],
+      "occasion_tags": [
+        "festival",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "comfortable",
+        "traditional",
+        "festive",
+        "everyday"
+      ],
       "price_inr": 920,
       "available": true,
-      "delivery_days": 10
+      "delivery_days": 10,
+      "description": "Cotton Sambalpuri ikat featuring a traditional shankha chakra motif. The traditional motifs from Sambalpur are achieved through resist-dyeing before weaving. Earthy and comfortable, an excellent choice for festival wear.",
+      "reviews": [
+        {
+          "user": "Meena R.",
+          "rating": 5,
+          "comment": "Exactly what I needed for daily wear. Soft and breathable all day."
+        },
+        {
+          "user": "Bharathi K.",
+          "rating": 5,
+          "comment": "Ordered for my daughter's college. She gets compliments daily."
+        }
+      ]
     },
     {
       "id": "S017",
@@ -232,11 +580,33 @@
       "color": "indigo and white",
       "color_family": "blue",
       "pattern": "dabu resist print",
-      "occasion_tags": ["casual", "work", "college"],
-      "sensory_tags": ["light", "casual", "everyday", "cool"],
+      "occasion_tags": [
+        "casual",
+        "work",
+        "college"
+      ],
+      "sensory_tags": [
+        "light",
+        "casual",
+        "everyday",
+        "cool"
+      ],
       "price_inr": 680,
       "available": true,
-      "delivery_days": 6
+      "delivery_days": 6,
+      "description": "This cotton saree from Bagru, Rajasthan uses the traditional dabu resist printing method. The dabu resist print is earthy and distinctive. Lightweight and light, each piece carries the character of natural dye craft.",
+      "reviews": [
+        {
+          "user": "Sudha V.",
+          "rating": 5,
+          "comment": "Beautiful colour. Washed well and did not fade at all."
+        },
+        {
+          "user": "Lalitha T.",
+          "rating": 4,
+          "comment": "Colour is exactly as shown. Delivery was fast too."
+        }
+      ]
     },
     {
       "id": "S018",
@@ -246,11 +616,32 @@
       "color": "off-white",
       "color_family": "neutral",
       "pattern": "plain weave fine count",
-      "occasion_tags": ["casual", "daily_wear"],
-      "sensory_tags": ["soft", "light", "breathable", "simple"],
+      "occasion_tags": [
+        "casual",
+        "daily_wear"
+      ],
+      "sensory_tags": [
+        "soft",
+        "light",
+        "breathable",
+        "simple"
+      ],
       "price_inr": 490,
       "available": true,
-      "delivery_days": 7
+      "delivery_days": 7,
+      "description": "Woven in the historically significant Chendamangalam cluster of Kerala, this cotton saree has a plain weave fine count that is quietly elegant. Fine thread count, soft texture, and understated beauty make it ideal for casual.",
+      "reviews": [
+        {
+          "user": "Kavitha N.",
+          "rating": 4,
+          "comment": "Good quality cotton. Feels premium for the price."
+        },
+        {
+          "user": "Padma A.",
+          "rating": 5,
+          "comment": "Fine weave, lovely texture. Will order again."
+        }
+      ]
     },
     {
       "id": "S019",
@@ -260,11 +651,33 @@
       "color": "turquoise",
       "color_family": "blue",
       "pattern": "geometric embroidery border",
-      "occasion_tags": ["festival", "casual_formal", "casual"],
-      "sensory_tags": ["light", "festive", "vibrant", "comfortable"],
+      "occasion_tags": [
+        "festival",
+        "casual_formal",
+        "casual"
+      ],
+      "sensory_tags": [
+        "light",
+        "festive",
+        "vibrant",
+        "comfortable"
+      ],
       "price_inr": 780,
       "available": true,
-      "delivery_days": 7
+      "delivery_days": 7,
+      "description": "From the vibrant Kutch cluster of Gujarat, this cotton saree features a geometric embroidery border that reflects the bold aesthetic of the region. Bright, light, and full of character — perfect for festival occasions.",
+      "reviews": [
+        {
+          "user": "Rekha P.",
+          "rating": 5,
+          "comment": "Wore this to office every week. Comfortable and looks neat."
+        },
+        {
+          "user": "Rohini B.",
+          "rating": 4,
+          "comment": "Good everyday saree. Simple and elegant."
+        }
+      ]
     },
     {
       "id": "S020",
@@ -274,11 +687,33 @@
       "color": "mustard yellow",
       "color_family": "yellow",
       "pattern": "thin stripe with contrast border",
-      "occasion_tags": ["casual", "festival", "daily_wear"],
-      "sensory_tags": ["light", "soft", "breathable", "everyday"],
+      "occasion_tags": [
+        "casual",
+        "festival",
+        "daily_wear"
+      ],
+      "sensory_tags": [
+        "light",
+        "soft",
+        "breathable",
+        "everyday"
+      ],
       "price_inr": 450,
       "available": true,
-      "delivery_days": 5
+      "delivery_days": 5,
+      "description": "Woven in the Shantipur tradition of West Bengal, this Tant cotton saree is prized for its fine weave and light drape. The thin stripe with contrast border adds subtle elegance. Tant cotton breathes extremely well — a favourite for daily wear in all seasons.",
+      "reviews": [
+        {
+          "user": "Annapurna D.",
+          "rating": 4,
+          "comment": "The border design is very pretty. Drapes well too."
+        },
+        {
+          "user": "Saritha C.",
+          "rating": 5,
+          "comment": "Exactly as described. The zari border is beautiful."
+        }
+      ]
     },
     {
       "id": "S021",
@@ -288,11 +723,34 @@
       "color": "mint green",
       "color_family": "green",
       "pattern": "plain square weave",
-      "occasion_tags": ["summer_wedding", "semi_formal", "festival"],
-      "sensory_tags": ["airy", "flowy", "light but rich", "summer wedding", "breathable yet elegant"],
+      "occasion_tags": [
+        "summer_wedding",
+        "semi_formal",
+        "festival"
+      ],
+      "sensory_tags": [
+        "airy",
+        "flowy",
+        "light but rich",
+        "summer wedding",
+        "breathable yet elegant"
+      ],
       "price_inr": 1100,
       "available": true,
-      "delivery_days": 9
+      "delivery_days": 9,
+      "description": "This Kota Doria saree from Rajasthan features a plain square weave. The hallmark square weave structure gives it an unmistakable texture that is airy, sheer, and incredibly elegant. A top choice for summer weddings.",
+      "reviews": [
+        {
+          "user": "Sunita B.",
+          "rating": 5,
+          "comment": "Ordered for my daughter's engagement. She looked stunning."
+        },
+        {
+          "user": "Falguni BB.",
+          "rating": 4,
+          "comment": "Nice soft feel. The colour matches the photo perfectly."
+        }
+      ]
     },
     {
       "id": "S022",
@@ -302,11 +760,33 @@
       "color": "peach",
       "color_family": "orange",
       "pattern": "plain with gold border",
-      "occasion_tags": ["summer_wedding", "semi_formal", "wedding"],
-      "sensory_tags": ["flowy", "light but rich", "breathable yet elegant", "comfortable formal"],
+      "occasion_tags": [
+        "summer_wedding",
+        "semi_formal",
+        "wedding"
+      ],
+      "sensory_tags": [
+        "flowy",
+        "light but rich",
+        "breathable yet elegant",
+        "comfortable formal"
+      ],
       "price_inr": 950,
       "available": true,
-      "delivery_days": 8
+      "delivery_days": 8,
+      "description": "This Kota Doria saree from Rajasthan features a plain with gold border. The hallmark square weave structure gives it an unmistakable texture that is flowy, sheer, and incredibly elegant. A top choice for summer weddings.",
+      "reviews": [
+        {
+          "user": "Mamta P.",
+          "rating": 4,
+          "comment": "Good quality. The border design is unique and handloom feel is real."
+        },
+        {
+          "user": "Girija CC.",
+          "rating": 5,
+          "comment": "Ordered twice already. This weaver does excellent work."
+        }
+      ]
     },
     {
       "id": "S023",
@@ -316,11 +796,34 @@
       "color": "pale gold",
       "color_family": "yellow",
       "pattern": "butis with gold motif",
-      "occasion_tags": ["wedding", "festival", "semi_formal"],
-      "sensory_tags": ["flowy", "elegant", "semi-formal", "versatile", "light but rich"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "flowy",
+        "elegant",
+        "semi-formal",
+        "versatile",
+        "light but rich"
+      ],
       "price_inr": 2200,
       "available": true,
-      "delivery_days": 14
+      "delivery_days": 14,
+      "description": "A signature Chanderi saree featuring a butis with gold motif. Chanderi fabric is celebrated for its sheer, flowy quality and subtle sheen — it catches light beautifully. The gold motifs are handwoven, not printed. A timeless piece for wedding.",
+      "reviews": [
+        {
+          "user": "Asha W.",
+          "rating": 5,
+          "comment": "Semi-formal and beautiful. Easy to manage for long events."
+        },
+        {
+          "user": "Hina DD.",
+          "rating": 4,
+          "comment": "Good for both day and evening events. Versatile pick."
+        }
+      ]
     },
     {
       "id": "S024",
@@ -330,11 +833,33 @@
       "color": "dusty rose",
       "color_family": "pink",
       "pattern": "plain with small butis",
-      "occasion_tags": ["summer_wedding", "semi_formal", "festival"],
-      "sensory_tags": ["flowy", "light but rich", "breathable yet elegant", "soft sheen"],
+      "occasion_tags": [
+        "summer_wedding",
+        "semi_formal",
+        "festival"
+      ],
+      "sensory_tags": [
+        "flowy",
+        "light but rich",
+        "breathable yet elegant",
+        "soft sheen"
+      ],
       "price_inr": 1600,
       "available": true,
-      "delivery_days": 11
+      "delivery_days": 11,
+      "description": "A signature Chanderi saree featuring a plain with small butis. Chanderi fabric is celebrated for its sheer, flowy quality and subtle sheen — it catches light beautifully. The gold motifs are handwoven, not printed. A timeless piece for summer wedding.",
+      "reviews": [
+        {
+          "user": "Bindiya X.",
+          "rating": 4,
+          "comment": "Lovely fabric. Slightly sheer but very elegant for evening."
+        },
+        {
+          "user": "Priya S.",
+          "rating": 5,
+          "comment": "Perfect blend — light enough for summer but rich enough for weddings."
+        }
+      ]
     },
     {
       "id": "S025",
@@ -344,11 +869,33 @@
       "color": "purple with silver border",
       "color_family": "purple",
       "pattern": "reversible border",
-      "occasion_tags": ["wedding", "festival", "semi_formal"],
-      "sensory_tags": ["versatile", "elegant", "comfortable formal", "flowy"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "versatile",
+        "elegant",
+        "comfortable formal",
+        "flowy"
+      ],
       "price_inr": 1800,
       "available": true,
-      "delivery_days": 10
+      "delivery_days": 10,
+      "description": "This Maheshwari saree from Khargone, Madhya Pradesh features a reversible border. Maheshwari weaves are known for their reversible border and fine texture. Versatile and wedding-appropriate, a versatile wardrobe staple.",
+      "reviews": [
+        {
+          "user": "Chanda Y.",
+          "rating": 5,
+          "comment": "The ikat pattern is stunning. Cannot believe this is custom-made."
+        },
+        {
+          "user": "Shreya D.",
+          "rating": 5,
+          "comment": "The drape is lovely. Wore this for an evening wedding. Perfect."
+        }
+      ]
     },
     {
       "id": "S026",
@@ -358,11 +905,33 @@
       "color": "teal and gold",
       "color_family": "blue",
       "pattern": "geometric ikat",
-      "occasion_tags": ["wedding", "festival", "semi_formal"],
-      "sensory_tags": ["elegant", "versatile", "semi-formal", "flowy"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "elegant",
+        "versatile",
+        "semi-formal",
+        "flowy"
+      ],
       "price_inr": 1400,
       "available": true,
-      "delivery_days": 10
+      "delivery_days": 10,
+      "description": "A handwoven Pochampally Ikat saree featuring a geometric ikat. The double ikat technique means both warp and weft threads are resist-dyed before weaving — creating the distinctive blurred-edge pattern. A GI-tagged craft from Telangana. Elegant and striking for wedding.",
+      "reviews": [
+        {
+          "user": "Damini Z.",
+          "rating": 4,
+          "comment": "Great blend. Breathable yet looks festive. Recommend for summer weddings."
+        },
+        {
+          "user": "Pooja K.",
+          "rating": 4,
+          "comment": "Good weight. Not too heavy, not too light. Just right."
+        }
+      ]
     },
     {
       "id": "S027",
@@ -372,11 +941,32 @@
       "color": "red with white border",
       "color_family": "red",
       "pattern": "Ilkal traditional border",
-      "occasion_tags": ["wedding", "festival"],
-      "sensory_tags": ["traditional", "festive", "elegant", "versatile"],
+      "occasion_tags": [
+        "wedding",
+        "festival"
+      ],
+      "sensory_tags": [
+        "traditional",
+        "festive",
+        "elegant",
+        "versatile"
+      ],
       "price_inr": 1200,
       "available": true,
-      "delivery_days": 9
+      "delivery_days": 9,
+      "description": "This Ilkal weave from Karnataka features a Ilkal traditional border. The signature contrasting border is woven separately and joined — a technique unique to Ilkal. Traditional and perfect for wedding.",
+      "reviews": [
+        {
+          "user": "Esha AA.",
+          "rating": 5,
+          "comment": "Chanderi quality at a fair price. The sheen is gorgeous."
+        },
+        {
+          "user": "Neha G.",
+          "rating": 5,
+          "comment": "Beautiful colour. The cotton-silk mix is exactly what I wanted."
+        }
+      ]
     },
     {
       "id": "S028",
@@ -386,11 +976,32 @@
       "color": "orange and black",
       "color_family": "orange",
       "pattern": "ikat geometric",
-      "occasion_tags": ["festival", "semi_formal"],
-      "sensory_tags": ["versatile", "festive", "elegant", "comfortable formal"],
+      "occasion_tags": [
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "versatile",
+        "festive",
+        "elegant",
+        "comfortable formal"
+      ],
       "price_inr": 1300,
       "available": true,
-      "delivery_days": 10
+      "delivery_days": 10,
+      "description": "A Nuapatna ikat saree from Cuttack, Odisha featuring a ikat geometric. Nuapatna is known for intricate temple and geometric motifs achieved through tie-dye ikat. The versatile fabric and vibrant colours make it ideal for festival.",
+      "reviews": [
+        {
+          "user": "Falguni BB.",
+          "rating": 4,
+          "comment": "Nice soft feel. The colour matches the photo perfectly."
+        },
+        {
+          "user": "Ritu V.",
+          "rating": 4,
+          "comment": "Flowy and elegant. Got many compliments at the festival."
+        }
+      ]
     },
     {
       "id": "S029",
@@ -400,11 +1011,33 @@
       "color": "cream with gold kasavu",
       "color_family": "neutral",
       "pattern": "kasavu border",
-      "occasion_tags": ["wedding", "festival", "semi_formal"],
-      "sensory_tags": ["elegant", "traditional", "comfortable formal", "light but rich"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "elegant",
+        "traditional",
+        "comfortable formal",
+        "light but rich"
+      ],
       "price_inr": 1800,
       "available": true,
-      "delivery_days": 11
+      "delivery_days": 11,
+      "description": "A cotton-silk Kerala kasavu featuring a kasavu border. The silk content gives the kasavu border extra sheen while keeping the fabric elegant. Perfect for Onam and weddings.",
+      "reviews": [
+        {
+          "user": "Girija CC.",
+          "rating": 5,
+          "comment": "Ordered twice already. This weaver does excellent work."
+        },
+        {
+          "user": "Sunita B.",
+          "rating": 5,
+          "comment": "Ordered for my daughter's engagement. She looked stunning."
+        }
+      ]
     },
     {
       "id": "S030",
@@ -414,11 +1047,32 @@
       "color": "lilac",
       "color_family": "purple",
       "pattern": "plain with thin gold border",
-      "occasion_tags": ["summer_wedding", "semi_formal"],
-      "sensory_tags": ["flowy", "light but rich", "breathable yet elegant", "soft sheen"],
+      "occasion_tags": [
+        "summer_wedding",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "flowy",
+        "light but rich",
+        "breathable yet elegant",
+        "soft sheen"
+      ],
       "price_inr": 1500,
       "available": true,
-      "delivery_days": 12
+      "delivery_days": 12,
+      "description": "A Kora cotton-silk saree featuring a plain with thin gold border. Kora fabric has a distinctive raw texture that is uniquely flowy. The cotton-silk blend makes it breathable yet elegant — perfect for summer events.",
+      "reviews": [
+        {
+          "user": "Hina DD.",
+          "rating": 4,
+          "comment": "Good for both day and evening events. Versatile pick."
+        },
+        {
+          "user": "Mamta P.",
+          "rating": 4,
+          "comment": "Good quality. The border design is unique and handloom feel is real."
+        }
+      ]
     },
     {
       "id": "S031",
@@ -428,11 +1082,33 @@
       "color": "pale blue",
       "color_family": "blue",
       "pattern": "square weave plain",
-      "occasion_tags": ["summer_wedding", "semi_formal", "casual_formal"],
-      "sensory_tags": ["airy", "flowy", "summer wedding", "breathable yet elegant"],
+      "occasion_tags": [
+        "summer_wedding",
+        "semi_formal",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "airy",
+        "flowy",
+        "summer wedding",
+        "breathable yet elegant"
+      ],
       "price_inr": 980,
       "available": true,
-      "delivery_days": 9
+      "delivery_days": 9,
+      "description": "This Kota Doria saree from Rajasthan features a square weave plain. The hallmark square weave structure gives it an unmistakable texture that is airy, sheer, and incredibly elegant. A top choice for summer weddings.",
+      "reviews": [
+        {
+          "user": "Priya S.",
+          "rating": 5,
+          "comment": "Perfect blend — light enough for summer but rich enough for weddings."
+        },
+        {
+          "user": "Asha W.",
+          "rating": 5,
+          "comment": "Semi-formal and beautiful. Easy to manage for long events."
+        }
+      ]
     },
     {
       "id": "S032",
@@ -442,11 +1118,32 @@
       "color": "dark green with gold border",
       "color_family": "green",
       "pattern": "Paithani style border",
-      "occasion_tags": ["wedding", "festival"],
-      "sensory_tags": ["elegant", "festive", "semi-formal", "versatile"],
+      "occasion_tags": [
+        "wedding",
+        "festival"
+      ],
+      "sensory_tags": [
+        "elegant",
+        "festive",
+        "semi-formal",
+        "versatile"
+      ],
       "price_inr": 2000,
       "available": true,
-      "delivery_days": 11
+      "delivery_days": 11,
+      "description": "A cotton-silk Paithani-style saree from Yeola featuring a Paithani style border. The cotton-silk blend gives a elegant drape while the Paithani border retains its characteristic sheen. Ideal for festive wedding.",
+      "reviews": [
+        {
+          "user": "Shreya D.",
+          "rating": 5,
+          "comment": "The drape is lovely. Wore this for an evening wedding. Perfect."
+        },
+        {
+          "user": "Bindiya X.",
+          "rating": 4,
+          "comment": "Lovely fabric. Slightly sheer but very elegant for evening."
+        }
+      ]
     },
     {
       "id": "S033",
@@ -456,11 +1153,33 @@
       "color": "coral",
       "color_family": "orange",
       "pattern": "plain with subtle sheen",
-      "occasion_tags": ["semi_formal", "festival", "casual_formal"],
-      "sensory_tags": ["soft sheen", "elegant", "comfortable formal", "flowy"],
+      "occasion_tags": [
+        "semi_formal",
+        "festival",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "soft sheen",
+        "elegant",
+        "comfortable formal",
+        "flowy"
+      ],
       "price_inr": 2200,
       "available": true,
-      "delivery_days": 12
+      "delivery_days": 12,
+      "description": "A Mysore silk blend saree featuring a plain with subtle sheen. Softer and more soft sheen than pure silk, this blend retains Mysore's signature sheen. A graceful choice for semi formal occasions.",
+      "reviews": [
+        {
+          "user": "Pooja K.",
+          "rating": 4,
+          "comment": "Good weight. Not too heavy, not too light. Just right."
+        },
+        {
+          "user": "Chanda Y.",
+          "rating": 5,
+          "comment": "The ikat pattern is stunning. Cannot believe this is custom-made."
+        }
+      ]
     },
     {
       "id": "S034",
@@ -470,11 +1189,32 @@
       "color": "maroon with silver border",
       "color_family": "red",
       "pattern": "Ilkal border",
-      "occasion_tags": ["wedding", "festival"],
-      "sensory_tags": ["traditional", "versatile", "festive", "elegant"],
+      "occasion_tags": [
+        "wedding",
+        "festival"
+      ],
+      "sensory_tags": [
+        "traditional",
+        "versatile",
+        "festive",
+        "elegant"
+      ],
       "price_inr": 1100,
       "available": true,
-      "delivery_days": 7
+      "delivery_days": 7,
+      "description": "This Ilkal weave from Karnataka features a Ilkal border. The signature contrasting border is woven separately and joined — a technique unique to Ilkal. Traditional and perfect for wedding.",
+      "reviews": [
+        {
+          "user": "Neha G.",
+          "rating": 5,
+          "comment": "Beautiful colour. The cotton-silk mix is exactly what I wanted."
+        },
+        {
+          "user": "Damini Z.",
+          "rating": 4,
+          "comment": "Great blend. Breathable yet looks festive. Recommend for summer weddings."
+        }
+      ]
     },
     {
       "id": "S035",
@@ -484,11 +1224,32 @@
       "color": "sage green",
       "color_family": "green",
       "pattern": "plain square weave",
-      "occasion_tags": ["summer_wedding", "semi_formal"],
-      "sensory_tags": ["airy", "flowy", "light but rich", "summer wedding"],
+      "occasion_tags": [
+        "summer_wedding",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "airy",
+        "flowy",
+        "light but rich",
+        "summer wedding"
+      ],
       "price_inr": 880,
       "available": true,
-      "delivery_days": 8
+      "delivery_days": 8,
+      "description": "This Kota Doria saree from Rajasthan features a plain square weave. The hallmark square weave structure gives it an unmistakable texture that is airy, sheer, and incredibly elegant. A top choice for summer weddings.",
+      "reviews": [
+        {
+          "user": "Ritu V.",
+          "rating": 4,
+          "comment": "Flowy and elegant. Got many compliments at the festival."
+        },
+        {
+          "user": "Esha AA.",
+          "rating": 5,
+          "comment": "Chanderi quality at a fair price. The sheen is gorgeous."
+        }
+      ]
     },
     {
       "id": "S036",
@@ -498,11 +1259,33 @@
       "color": "ivory",
       "color_family": "neutral",
       "pattern": "small gold butis",
-      "occasion_tags": ["wedding", "semi_formal", "festival"],
-      "sensory_tags": ["flowy", "elegant", "soft sheen", "versatile"],
+      "occasion_tags": [
+        "wedding",
+        "semi_formal",
+        "festival"
+      ],
+      "sensory_tags": [
+        "flowy",
+        "elegant",
+        "soft sheen",
+        "versatile"
+      ],
       "price_inr": 1800,
       "available": true,
-      "delivery_days": 11
+      "delivery_days": 11,
+      "description": "A signature Chanderi saree featuring a small gold butis. Chanderi fabric is celebrated for its sheer, flowy quality and subtle sheen — it catches light beautifully. The gold motifs are handwoven, not printed. A timeless piece for wedding.",
+      "reviews": [
+        {
+          "user": "Sunita B.",
+          "rating": 5,
+          "comment": "Ordered for my daughter's engagement. She looked stunning."
+        },
+        {
+          "user": "Falguni BB.",
+          "rating": 4,
+          "comment": "Nice soft feel. The colour matches the photo perfectly."
+        }
+      ]
     },
     {
       "id": "S037",
@@ -512,11 +1295,33 @@
       "color": "navy blue",
       "color_family": "blue",
       "pattern": "plain with contrast border",
-      "occasion_tags": ["work", "semi_formal", "casual_formal"],
-      "sensory_tags": ["comfortable formal", "versatile", "elegant", "light but rich"],
+      "occasion_tags": [
+        "work",
+        "semi_formal",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "comfortable formal",
+        "versatile",
+        "elegant",
+        "light but rich"
+      ],
       "price_inr": 1200,
       "available": true,
-      "delivery_days": 6
+      "delivery_days": 6,
+      "description": "A Salem cotton-silk blend featuring a plain with contrast border. Salem's weaves are known for excellent colour retention and durability. Comfortable formal and practical for regular work wear.",
+      "reviews": [
+        {
+          "user": "Mamta P.",
+          "rating": 4,
+          "comment": "Good quality. The border design is unique and handloom feel is real."
+        },
+        {
+          "user": "Girija CC.",
+          "rating": 5,
+          "comment": "Ordered twice already. This weaver does excellent work."
+        }
+      ]
     },
     {
       "id": "S038",
@@ -526,11 +1331,32 @@
       "color": "yellow and red",
       "color_family": "yellow",
       "pattern": "phula motif ikat",
-      "occasion_tags": ["festival", "semi_formal"],
-      "sensory_tags": ["festive", "versatile", "comfortable formal", "traditional"],
+      "occasion_tags": [
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "festive",
+        "versatile",
+        "comfortable formal",
+        "traditional"
+      ],
       "price_inr": 1400,
       "available": true,
-      "delivery_days": 10
+      "delivery_days": 10,
+      "description": "A Sambalpuri ikat saree from Sambalpur, Odisha featuring a phula motif ikat. Traditional shankha, chakra, and phula motifs are woven in — not printed. Each piece takes days to complete. Festive and culturally significant.",
+      "reviews": [
+        {
+          "user": "Asha W.",
+          "rating": 5,
+          "comment": "Semi-formal and beautiful. Easy to manage for long events."
+        },
+        {
+          "user": "Hina DD.",
+          "rating": 4,
+          "comment": "Good for both day and evening events. Versatile pick."
+        }
+      ]
     },
     {
       "id": "S039",
@@ -540,11 +1366,33 @@
       "color": "teal with gold border",
       "color_family": "blue",
       "pattern": "reversible stripe border",
-      "occasion_tags": ["wedding", "festival", "semi_formal"],
-      "sensory_tags": ["versatile", "elegant", "comfortable formal", "flowy"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "versatile",
+        "elegant",
+        "comfortable formal",
+        "flowy"
+      ],
       "price_inr": 2000,
       "available": true,
-      "delivery_days": 10
+      "delivery_days": 10,
+      "description": "This Maheshwari saree from Khargone, Madhya Pradesh features a reversible stripe border. Maheshwari weaves are known for their reversible border and fine texture. Versatile and wedding-appropriate, a versatile wardrobe staple.",
+      "reviews": [
+        {
+          "user": "Bindiya X.",
+          "rating": 4,
+          "comment": "Lovely fabric. Slightly sheer but very elegant for evening."
+        },
+        {
+          "user": "Priya S.",
+          "rating": 5,
+          "comment": "Perfect blend — light enough for summer but rich enough for weddings."
+        }
+      ]
     },
     {
       "id": "S040",
@@ -554,11 +1402,33 @@
       "color": "pale pink",
       "color_family": "pink",
       "pattern": "plain",
-      "occasion_tags": ["summer_wedding", "semi_formal", "casual_formal"],
-      "sensory_tags": ["flowy", "breathable yet elegant", "light but rich", "soft sheen"],
+      "occasion_tags": [
+        "summer_wedding",
+        "semi_formal",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "flowy",
+        "breathable yet elegant",
+        "light but rich",
+        "soft sheen"
+      ],
       "price_inr": 1350,
       "available": true,
-      "delivery_days": 12
+      "delivery_days": 12,
+      "description": "A Kora cotton-silk saree featuring a plain. Kora fabric has a distinctive raw texture that is uniquely flowy. The cotton-silk blend makes it breathable yet elegant — perfect for summer events.",
+      "reviews": [
+        {
+          "user": "Chanda Y.",
+          "rating": 5,
+          "comment": "The ikat pattern is stunning. Cannot believe this is custom-made."
+        },
+        {
+          "user": "Shreya D.",
+          "rating": 5,
+          "comment": "The drape is lovely. Wore this for an evening wedding. Perfect."
+        }
+      ]
     },
     {
       "id": "S041",
@@ -568,11 +1438,34 @@
       "color": "deep red with gold zari",
       "color_family": "red",
       "pattern": "temple border with peacock pallu",
-      "occasion_tags": ["wedding", "ceremony", "reception"],
-      "sensory_tags": ["rich", "royal", "grand", "luxurious", "heavy"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "reception"
+      ],
+      "sensory_tags": [
+        "rich",
+        "royal",
+        "grand",
+        "luxurious",
+        "heavy"
+      ],
       "price_inr": 8500,
       "available": true,
-      "delivery_days": 21
+      "delivery_days": 21,
+      "description": "A pure Kanjivaram silk saree featuring a temple border with peacock pallu. Kanjivaram silk is the gold standard of Indian wedding sarees — thick, lustrous, and built for a lifetime. The temple border and rich pallu are woven in pure zari. A piece you will pass down.",
+      "reviews": [
+        {
+          "user": "Hema B.",
+          "rating": 4,
+          "comment": "Luxurious feel. Would make a great gift too."
+        },
+        {
+          "user": "Priyanka M.",
+          "rating": 4,
+          "comment": "Rich fabric. Drapes beautifully for formal occasions."
+        }
+      ]
     },
     {
       "id": "S042",
@@ -582,11 +1475,34 @@
       "color": "green with contrast pallu",
       "color_family": "green",
       "pattern": "checks with zari border",
-      "occasion_tags": ["wedding", "festival", "ceremony"],
-      "sensory_tags": ["rich", "royal", "elegant", "formal", "glossy"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "rich",
+        "royal",
+        "elegant",
+        "formal",
+        "glossy"
+      ],
       "price_inr": 6000,
       "available": true,
-      "delivery_days": 16
+      "delivery_days": 16,
+      "description": "A pure Kanjivaram silk saree featuring a checks with zari border. Kanjivaram silk is the gold standard of Indian wedding sarees — thick, lustrous, and built for a lifetime. The temple border and rich pallu are woven in pure zari. A piece you will pass down.",
+      "reviews": [
+        {
+          "user": "Nandini A.",
+          "rating": 5,
+          "comment": "Pure silk smell, beautiful sheen. Very authentic."
+        },
+        {
+          "user": "Swathi L.",
+          "rating": 5,
+          "comment": "Exactly like Kanjivaram quality but more affordable. Loved it."
+        }
+      ]
     },
     {
       "id": "S043",
@@ -596,11 +1512,34 @@
       "color": "teal and maroon geometric",
       "color_family": "blue",
       "pattern": "double ikat geometric",
-      "occasion_tags": ["wedding", "festival", "formal"],
-      "sensory_tags": ["rich", "elegant", "glossy", "formal", "stiff"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "formal"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "glossy",
+        "formal",
+        "stiff"
+      ],
       "price_inr": 4500,
       "available": true,
-      "delivery_days": 14
+      "delivery_days": 14,
+      "description": "Pure silk Pochampally Ikat featuring a double ikat geometric. The geometric precision of Pochampally's double ikat on silk produces a saree that is both rich and deeply luxurious. A collector's piece from Telangana.",
+      "reviews": [
+        {
+          "user": "Revathi G.",
+          "rating": 4,
+          "comment": "Traditional and elegant. Perfect for ceremonies."
+        },
+        {
+          "user": "Divya N.",
+          "rating": 5,
+          "comment": "The colour is deep and vibrant. Perfect for reception."
+        }
+      ]
     },
     {
       "id": "S044",
@@ -610,11 +1549,34 @@
       "color": "navy and gold",
       "color_family": "blue",
       "pattern": "fine ikat with gold thread",
-      "occasion_tags": ["wedding", "ceremony", "reception"],
-      "sensory_tags": ["luxurious", "royal", "grand", "rich", "formal"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "reception"
+      ],
+      "sensory_tags": [
+        "luxurious",
+        "royal",
+        "grand",
+        "rich",
+        "formal"
+      ],
       "price_inr": 7500,
       "available": true,
-      "delivery_days": 21
+      "delivery_days": 21,
+      "description": "Pure silk Pochampally Ikat featuring a fine ikat with gold thread. The geometric precision of Pochampally's double ikat on silk produces a saree that is both luxurious and deeply luxurious. A collector's piece from Telangana.",
+      "reviews": [
+        {
+          "user": "Kamakshi H.",
+          "rating": 5,
+          "comment": "The weave is very fine. Genuinely handloom quality."
+        },
+        {
+          "user": "Archana P.",
+          "rating": 4,
+          "comment": "Heavy but very elegant. My mother-in-law approved."
+        }
+      ]
     },
     {
       "id": "S045",
@@ -624,11 +1586,34 @@
       "color": "ivory with gold brocade",
       "color_family": "neutral",
       "pattern": "floral brocade",
-      "occasion_tags": ["wedding", "ceremony", "reception"],
-      "sensory_tags": ["luxurious", "grand", "royal", "rich", "elegant"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "reception"
+      ],
+      "sensory_tags": [
+        "luxurious",
+        "grand",
+        "royal",
+        "rich",
+        "elegant"
+      ],
       "price_inr": 9000,
       "available": true,
-      "delivery_days": 20
+      "delivery_days": 20,
+      "description": "A Banarasi saree from Varanasi featuring a floral brocade. Banarasi brocade is India's most celebrated wedding fabric — the gold jaal or floral motifs are woven with real zari thread. Luxurious and deeply luxurious. A heritage piece.",
+      "reviews": [
+        {
+          "user": "Jayalakshmi I.",
+          "rating": 5,
+          "comment": "Best silk saree I have bought online. Stunning piece."
+        },
+        {
+          "user": "Sindhu T.",
+          "rating": 5,
+          "comment": "The pallu is gorgeous. Felt like a queen wearing this."
+        }
+      ]
     },
     {
       "id": "S046",
@@ -638,11 +1623,34 @@
       "color": "pink with silver zari",
       "color_family": "pink",
       "pattern": "floral jaal",
-      "occasion_tags": ["wedding", "reception", "festival"],
-      "sensory_tags": ["rich", "elegant", "glossy", "formal", "luxurious"],
+      "occasion_tags": [
+        "wedding",
+        "reception",
+        "festival"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "glossy",
+        "formal",
+        "luxurious"
+      ],
       "price_inr": 5500,
       "available": true,
-      "delivery_days": 15
+      "delivery_days": 15,
+      "description": "A Banarasi saree from Varanasi featuring a floral jaal. Banarasi brocade is India's most celebrated wedding fabric — the gold jaal or floral motifs are woven with real zari thread. Rich and deeply luxurious. A heritage piece.",
+      "reviews": [
+        {
+          "user": "Ananya R.",
+          "rating": 5,
+          "comment": "Wore this for my sister's wedding. Got so many compliments."
+        },
+        {
+          "user": "Madhavi V.",
+          "rating": 4,
+          "comment": "Good silk quality. Slight colour variation from photo but still beautiful."
+        }
+      ]
     },
     {
       "id": "S047",
@@ -652,11 +1660,34 @@
       "color": "royal blue with contrast border",
       "color_family": "blue",
       "pattern": "heavy contrast border and pallu",
-      "occasion_tags": ["wedding", "ceremony", "festival"],
-      "sensory_tags": ["rich", "royal", "grand", "stiff", "heavy"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "festival"
+      ],
+      "sensory_tags": [
+        "rich",
+        "royal",
+        "grand",
+        "stiff",
+        "heavy"
+      ],
       "price_inr": 6500,
       "available": true,
-      "delivery_days": 18
+      "delivery_days": 18,
+      "description": "A Dharmavaram silk saree from Andhra Pradesh featuring a heavy contrast border and pallu. Dharmavaram is celebrated for its heavy contrast border and rich pallu — a staple of South Indian weddings. Rich and magnificent.",
+      "reviews": [
+        {
+          "user": "Deepika S.",
+          "rating": 5,
+          "comment": "The zari work is breathtaking. Worth every rupee."
+        },
+        {
+          "user": "Sridevi K.",
+          "rating": 5,
+          "comment": "Ordered for Diwali. Weaver's craftsmanship is outstanding."
+        }
+      ]
     },
     {
       "id": "S048",
@@ -666,11 +1697,34 @@
       "color": "soft gold",
       "color_family": "yellow",
       "pattern": "fine jamdani floral",
-      "occasion_tags": ["wedding", "ceremony", "formal"],
-      "sensory_tags": ["luxurious", "elegant", "royal", "rich", "glossy"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "formal"
+      ],
+      "sensory_tags": [
+        "luxurious",
+        "elegant",
+        "royal",
+        "rich",
+        "glossy"
+      ],
       "price_inr": 9500,
       "available": true,
-      "delivery_days": 22
+      "delivery_days": 22,
+      "description": "An Uppada Jamdani silk saree from East Godavari, Andhra Pradesh featuring a fine jamdani floral. Uppada Jamdani uses an extra weft technique to create floral patterns that appear to float on the fabric. Rare, luxurious, and exquisite.",
+      "reviews": [
+        {
+          "user": "Priyanka M.",
+          "rating": 4,
+          "comment": "Rich fabric. Drapes beautifully for formal occasions."
+        },
+        {
+          "user": "Usha C.",
+          "rating": 5,
+          "comment": "Arrived on time. The zari border is exactly as described."
+        }
+      ]
     },
     {
       "id": "S049",
@@ -680,11 +1734,34 @@
       "color": "deep purple",
       "color_family": "purple",
       "pattern": "plain with gold border",
-      "occasion_tags": ["wedding", "formal", "ceremony"],
-      "sensory_tags": ["rich", "elegant", "glossy", "royal", "luxurious"],
+      "occasion_tags": [
+        "wedding",
+        "formal",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "glossy",
+        "royal",
+        "luxurious"
+      ],
       "price_inr": 5000,
       "available": true,
-      "delivery_days": 17
+      "delivery_days": 17,
+      "description": "A Mysore silk saree featuring a plain with gold border. Mysore silk is prized for its softer hand compared to Kanjivaram — rich with a gorgeous natural sheen. The GI-tagged Mysore silk is a landmark of Karnataka's weaving heritage.",
+      "reviews": [
+        {
+          "user": "Swathi L.",
+          "rating": 5,
+          "comment": "Exactly like Kanjivaram quality but more affordable. Loved it."
+        },
+        {
+          "user": "Hema B.",
+          "rating": 4,
+          "comment": "Luxurious feel. Would make a great gift too."
+        }
+      ]
     },
     {
       "id": "S050",
@@ -694,11 +1771,34 @@
       "color": "vermillion red",
       "color_family": "red",
       "pattern": "fine thread plain with border",
-      "occasion_tags": ["wedding", "ceremony", "festival"],
-      "sensory_tags": ["rich", "royal", "elegant", "luxurious", "glossy"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "festival"
+      ],
+      "sensory_tags": [
+        "rich",
+        "royal",
+        "elegant",
+        "luxurious",
+        "glossy"
+      ],
       "price_inr": 7000,
       "available": true,
-      "delivery_days": 22
+      "delivery_days": 22,
+      "description": "A Molakalmuru silk saree from Chitradurga, Karnataka featuring a fine thread plain with border. Molakalmuru is known for its fine thread count and subtle colour gradients. Richer than Mysore silk and deeply rich — a collector's choice.",
+      "reviews": [
+        {
+          "user": "Divya N.",
+          "rating": 5,
+          "comment": "The colour is deep and vibrant. Perfect for reception."
+        },
+        {
+          "user": "Nandini A.",
+          "rating": 5,
+          "comment": "Pure silk smell, beautiful sheen. Very authentic."
+        }
+      ]
     },
     {
       "id": "S051",
@@ -708,11 +1808,34 @@
       "color": "jade green",
       "color_family": "green",
       "pattern": "subtle colour gradient",
-      "occasion_tags": ["wedding", "formal", "festival"],
-      "sensory_tags": ["rich", "elegant", "glossy", "royal", "stiff"],
+      "occasion_tags": [
+        "wedding",
+        "formal",
+        "festival"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "glossy",
+        "royal",
+        "stiff"
+      ],
       "price_inr": 6000,
       "available": true,
-      "delivery_days": 18
+      "delivery_days": 18,
+      "description": "A Molakalmuru silk saree from Chitradurga, Karnataka featuring a subtle colour gradient. Molakalmuru is known for its fine thread count and subtle colour gradients. Richer than Mysore silk and deeply rich — a collector's choice.",
+      "reviews": [
+        {
+          "user": "Archana P.",
+          "rating": 4,
+          "comment": "Heavy but very elegant. My mother-in-law approved."
+        },
+        {
+          "user": "Revathi G.",
+          "rating": 4,
+          "comment": "Traditional and elegant. Perfect for ceremonies."
+        }
+      ]
     },
     {
       "id": "S052",
@@ -722,11 +1845,34 @@
       "color": "natural beige",
       "color_family": "neutral",
       "pattern": "plain tussar texture",
-      "occasion_tags": ["formal", "semi_formal", "festival"],
-      "sensory_tags": ["rich", "textured", "elegant", "formal", "earthy"],
+      "occasion_tags": [
+        "formal",
+        "semi_formal",
+        "festival"
+      ],
+      "sensory_tags": [
+        "rich",
+        "textured",
+        "elegant",
+        "formal",
+        "earthy"
+      ],
       "price_inr": 3500,
       "available": true,
-      "delivery_days": 13
+      "delivery_days": 13,
+      "description": "Pure Bhagalpuri Tussar silk featuring a plain tussar texture. Tussar is a wild silk with a natural golden undertone and rich texture. Rich and unique — no two Tussar sarees look identical.",
+      "reviews": [
+        {
+          "user": "Sindhu T.",
+          "rating": 5,
+          "comment": "The pallu is gorgeous. Felt like a queen wearing this."
+        },
+        {
+          "user": "Kamakshi H.",
+          "rating": 5,
+          "comment": "The weave is very fine. Genuinely handloom quality."
+        }
+      ]
     },
     {
       "id": "S053",
@@ -736,11 +1882,34 @@
       "color": "natural with natural dye print",
       "color_family": "neutral",
       "pattern": "natural dye block print on tussar",
-      "occasion_tags": ["formal", "festival", "semi_formal"],
-      "sensory_tags": ["rich", "textured", "earthy", "elegant", "formal"],
+      "occasion_tags": [
+        "formal",
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "rich",
+        "textured",
+        "earthy",
+        "elegant",
+        "formal"
+      ],
       "price_inr": 5000,
       "available": true,
-      "delivery_days": 17
+      "delivery_days": 17,
+      "description": "Pure Bhagalpuri Tussar silk featuring a natural dye block print on tussar. Tussar is a wild silk with a natural golden undertone and rich texture. Rich and unique — no two Tussar sarees look identical.",
+      "reviews": [
+        {
+          "user": "Madhavi V.",
+          "rating": 4,
+          "comment": "Good silk quality. Slight colour variation from photo but still beautiful."
+        },
+        {
+          "user": "Jayalakshmi I.",
+          "rating": 5,
+          "comment": "Best silk saree I have bought online. Stunning piece."
+        }
+      ]
     },
     {
       "id": "S054",
@@ -750,11 +1919,34 @@
       "color": "champagne",
       "color_family": "neutral",
       "pattern": "plain fine thread",
-      "occasion_tags": ["wedding", "formal", "reception"],
-      "sensory_tags": ["rich", "elegant", "glossy", "luxurious", "formal"],
+      "occasion_tags": [
+        "wedding",
+        "formal",
+        "reception"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "glossy",
+        "luxurious",
+        "formal"
+      ],
       "price_inr": 4000,
       "available": true,
-      "delivery_days": 15
+      "delivery_days": 15,
+      "description": "A Murshidabad silk saree from West Bengal featuring a plain fine thread. Murshidabad produces a finer, lighter silk than Banarasi — known for its subtle sheen and rich quality. Elegant for wedding.",
+      "reviews": [
+        {
+          "user": "Sridevi K.",
+          "rating": 5,
+          "comment": "Ordered for Diwali. Weaver's craftsmanship is outstanding."
+        },
+        {
+          "user": "Ananya R.",
+          "rating": 5,
+          "comment": "Wore this for my sister's wedding. Got so many compliments."
+        }
+      ]
     },
     {
       "id": "S055",
@@ -764,11 +1956,34 @@
       "color": "maroon with narrative motifs",
       "color_family": "red",
       "pattern": "baluchari narrative weaving",
-      "occasion_tags": ["wedding", "ceremony", "festival"],
-      "sensory_tags": ["rich", "royal", "grand", "elegant", "luxurious"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "festival"
+      ],
+      "sensory_tags": [
+        "rich",
+        "royal",
+        "grand",
+        "elegant",
+        "luxurious"
+      ],
       "price_inr": 5500,
       "available": true,
-      "delivery_days": 14
+      "delivery_days": 14,
+      "description": "A Bishnupuri Baluchari saree featuring a baluchari narrative weaving. The Baluchari weaving tradition depicts scenes from epics and mythology directly in the fabric. Rich, rich, and a genuine collector's piece.",
+      "reviews": [
+        {
+          "user": "Usha C.",
+          "rating": 5,
+          "comment": "Arrived on time. The zari border is exactly as described."
+        },
+        {
+          "user": "Deepika S.",
+          "rating": 5,
+          "comment": "The zari work is breathtaking. Worth every rupee."
+        }
+      ]
     },
     {
       "id": "S056",
@@ -778,11 +1993,34 @@
       "color": "red and black ikat",
       "color_family": "red",
       "pattern": "traditional shankha motif",
-      "occasion_tags": ["wedding", "festival", "ceremony"],
-      "sensory_tags": ["rich", "royal", "traditional", "festive", "formal"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "rich",
+        "royal",
+        "traditional",
+        "festive",
+        "formal"
+      ],
       "price_inr": 5000,
       "available": true,
-      "delivery_days": 17
+      "delivery_days": 17,
+      "description": "A pure silk Sambalpuri saree featuring a traditional shankha motif. Silk Sambalpuri is reserved for festivals and weddings — the motifs carry deep cultural meaning. Rich, rich, and built to last generations.",
+      "reviews": [
+        {
+          "user": "Hema B.",
+          "rating": 4,
+          "comment": "Luxurious feel. Would make a great gift too."
+        },
+        {
+          "user": "Priyanka M.",
+          "rating": 4,
+          "comment": "Rich fabric. Drapes beautifully for formal occasions."
+        }
+      ]
     },
     {
       "id": "S057",
@@ -792,11 +2030,34 @@
       "color": "magenta with gold border",
       "color_family": "pink",
       "pattern": "plain with contrast border",
-      "occasion_tags": ["wedding", "festival", "formal"],
-      "sensory_tags": ["rich", "elegant", "royal", "glossy", "formal"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "formal"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "royal",
+        "glossy",
+        "formal"
+      ],
       "price_inr": 3500,
       "available": true,
-      "delivery_days": 16
+      "delivery_days": 16,
+      "description": "An Arni silk saree from Tirupattur, Tamil Nadu featuring a plain with contrast border. Arni silk offers Kanjivaram-style richness at a more accessible price. The rich weave and vibrant colours make it ideal for wedding.",
+      "reviews": [
+        {
+          "user": "Nandini A.",
+          "rating": 5,
+          "comment": "Pure silk smell, beautiful sheen. Very authentic."
+        },
+        {
+          "user": "Swathi L.",
+          "rating": 5,
+          "comment": "Exactly like Kanjivaram quality but more affordable. Loved it."
+        }
+      ]
     },
     {
       "id": "S058",
@@ -806,11 +2067,33 @@
       "color": "navy blue with gold",
       "color_family": "blue",
       "pattern": "temple border",
-      "occasion_tags": ["wedding", "ceremony"],
-      "sensory_tags": ["rich", "royal", "grand", "luxurious", "stiff"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "rich",
+        "royal",
+        "grand",
+        "luxurious",
+        "stiff"
+      ],
       "price_inr": 11000,
       "available": true,
-      "delivery_days": 21
+      "delivery_days": 21,
+      "description": "A pure Kanjivaram silk saree featuring a temple border. Kanjivaram silk is the gold standard of Indian wedding sarees — thick, lustrous, and built for a lifetime. The temple border and rich pallu are woven in pure zari. A piece you will pass down.",
+      "reviews": [
+        {
+          "user": "Revathi G.",
+          "rating": 4,
+          "comment": "Traditional and elegant. Perfect for ceremonies."
+        },
+        {
+          "user": "Divya N.",
+          "rating": 5,
+          "comment": "The colour is deep and vibrant. Perfect for reception."
+        }
+      ]
     },
     {
       "id": "S059",
@@ -820,11 +2103,34 @@
       "color": "deep green with peacock pallu",
       "color_family": "green",
       "pattern": "peacock motif pallu",
-      "occasion_tags": ["wedding", "ceremony", "reception"],
-      "sensory_tags": ["luxurious", "grand", "royal", "rich", "heavy"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "reception"
+      ],
+      "sensory_tags": [
+        "luxurious",
+        "grand",
+        "royal",
+        "rich",
+        "heavy"
+      ],
       "price_inr": 12000,
       "available": true,
-      "delivery_days": 25
+      "delivery_days": 25,
+      "description": "A premium Paithani saree featuring a peacock motif pallu. The distinctive oblique weft technique gives Paithani its characteristic shimmer. Grand, luxurious, and appropriate for the most significant occasions.",
+      "reviews": [
+        {
+          "user": "Kamakshi H.",
+          "rating": 5,
+          "comment": "The weave is very fine. Genuinely handloom quality."
+        },
+        {
+          "user": "Archana P.",
+          "rating": 4,
+          "comment": "Heavy but very elegant. My mother-in-law approved."
+        }
+      ]
     },
     {
       "id": "S060",
@@ -834,11 +2140,34 @@
       "color": "deep maroon",
       "color_family": "red",
       "pattern": "contrast border and pallu",
-      "occasion_tags": ["wedding", "ceremony", "festival"],
-      "sensory_tags": ["rich", "stiff", "grand", "royal", "heavy"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "festival"
+      ],
+      "sensory_tags": [
+        "rich",
+        "stiff",
+        "grand",
+        "royal",
+        "heavy"
+      ],
       "price_inr": 5500,
       "available": true,
-      "delivery_days": 18
+      "delivery_days": 18,
+      "description": "A Dharmavaram silk saree from Andhra Pradesh featuring a contrast border and pallu. Dharmavaram is celebrated for its heavy contrast border and rich pallu — a staple of South Indian weddings. Rich and magnificent.",
+      "reviews": [
+        {
+          "user": "Jayalakshmi I.",
+          "rating": 5,
+          "comment": "Best silk saree I have bought online. Stunning piece."
+        },
+        {
+          "user": "Sindhu T.",
+          "rating": 5,
+          "comment": "The pallu is gorgeous. Felt like a queen wearing this."
+        }
+      ]
     },
     {
       "id": "S061",
@@ -848,11 +2177,34 @@
       "color": "gold with red border",
       "color_family": "yellow",
       "pattern": "traditional contrast border",
-      "occasion_tags": ["wedding", "festival", "ceremony"],
-      "sensory_tags": ["rich", "elegant", "royal", "glossy", "formal"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "royal",
+        "glossy",
+        "formal"
+      ],
       "price_inr": 4500,
       "available": true,
-      "delivery_days": 14
+      "delivery_days": 14,
+      "description": "A Dharmavaram silk saree from Andhra Pradesh featuring a traditional contrast border. Dharmavaram is celebrated for its heavy contrast border and rich pallu — a staple of South Indian weddings. Rich and magnificent.",
+      "reviews": [
+        {
+          "user": "Ananya R.",
+          "rating": 5,
+          "comment": "Wore this for my sister's wedding. Got so many compliments."
+        },
+        {
+          "user": "Madhavi V.",
+          "rating": 4,
+          "comment": "Good silk quality. Slight colour variation from photo but still beautiful."
+        }
+      ]
     },
     {
       "id": "S062",
@@ -862,11 +2214,34 @@
       "color": "blue and white",
       "color_family": "blue",
       "pattern": "temple motif ikat",
-      "occasion_tags": ["wedding", "festival", "formal"],
-      "sensory_tags": ["rich", "elegant", "royal", "glossy", "formal"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "formal"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "royal",
+        "glossy",
+        "formal"
+      ],
       "price_inr": 4000,
       "available": true,
-      "delivery_days": 13
+      "delivery_days": 13,
+      "description": "A handwoven Nuapatna Ikat Silk saree featuring a temple motif ikat. Crafted by a skilled artisan from a traditional weaving cluster, this saree is rich and ideal for wedding occasions. Woven to order — no two pieces are identical.",
+      "reviews": [
+        {
+          "user": "Deepika S.",
+          "rating": 5,
+          "comment": "The zari work is breathtaking. Worth every rupee."
+        },
+        {
+          "user": "Sridevi K.",
+          "rating": 5,
+          "comment": "Ordered for Diwali. Weaver's craftsmanship is outstanding."
+        }
+      ]
     },
     {
       "id": "S063",
@@ -876,11 +2251,34 @@
       "color": "deep red with gold brocade",
       "color_family": "red",
       "pattern": "heavy brocade jaal",
-      "occasion_tags": ["wedding", "ceremony", "reception"],
-      "sensory_tags": ["luxurious", "grand", "royal", "heavy", "rich"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "reception"
+      ],
+      "sensory_tags": [
+        "luxurious",
+        "grand",
+        "royal",
+        "heavy",
+        "rich"
+      ],
       "price_inr": 12000,
       "available": true,
-      "delivery_days": 20
+      "delivery_days": 20,
+      "description": "A Banarasi saree from Varanasi featuring a heavy brocade jaal. Banarasi brocade is India's most celebrated wedding fabric — the gold jaal or floral motifs are woven with real zari thread. Luxurious and deeply luxurious. A heritage piece.",
+      "reviews": [
+        {
+          "user": "Priyanka M.",
+          "rating": 4,
+          "comment": "Rich fabric. Drapes beautifully for formal occasions."
+        },
+        {
+          "user": "Usha C.",
+          "rating": 5,
+          "comment": "Arrived on time. The zari border is exactly as described."
+        }
+      ]
     },
     {
       "id": "S064",
@@ -890,11 +2288,34 @@
       "color": "purple with gold border",
       "color_family": "purple",
       "pattern": "Paithani lotus border",
-      "occasion_tags": ["wedding", "festival", "ceremony"],
-      "sensory_tags": ["elegant", "royal", "rich", "formal", "grand"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "elegant",
+        "royal",
+        "rich",
+        "formal",
+        "grand"
+      ],
       "price_inr": 5500,
       "available": true,
-      "delivery_days": 18
+      "delivery_days": 18,
+      "description": "A Yeola-style Paithani saree from Nashik featuring a Paithani lotus border. Yeola produces Paithani at a more accessible price without compromising on the signature oblique weave. Elegant and beautiful for wedding.",
+      "reviews": [
+        {
+          "user": "Swathi L.",
+          "rating": 5,
+          "comment": "Exactly like Kanjivaram quality but more affordable. Loved it."
+        },
+        {
+          "user": "Hema B.",
+          "rating": 4,
+          "comment": "Luxurious feel. Would make a great gift too."
+        }
+      ]
     },
     {
       "id": "S065",
@@ -904,11 +2325,33 @@
       "color": "red and green double ikat",
       "color_family": "red",
       "pattern": "double ikat geometric",
-      "occasion_tags": ["wedding", "ceremony"],
-      "sensory_tags": ["luxurious", "royal", "grand", "rich", "heavy"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "luxurious",
+        "royal",
+        "grand",
+        "rich",
+        "heavy"
+      ],
       "price_inr": 18000,
       "available": true,
-      "delivery_days": 30
+      "delivery_days": 30,
+      "description": "A rare Patola silk saree from Patan, Gujarat featuring a double ikat geometric. Patola is India's most technically demanding weave — the double ikat technique means every single thread is dyed before weaving. A genuine heirloom.",
+      "reviews": [
+        {
+          "user": "Divya N.",
+          "rating": 5,
+          "comment": "The colour is deep and vibrant. Perfect for reception."
+        },
+        {
+          "user": "Nandini A.",
+          "rating": 5,
+          "comment": "Pure silk smell, beautiful sheen. Very authentic."
+        }
+      ]
     },
     {
       "id": "S066",
@@ -918,11 +2361,34 @@
       "color": "royal blue",
       "color_family": "blue",
       "pattern": "plain with gold border",
-      "occasion_tags": ["wedding", "formal", "ceremony"],
-      "sensory_tags": ["rich", "elegant", "glossy", "luxurious", "royal"],
+      "occasion_tags": [
+        "wedding",
+        "formal",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "glossy",
+        "luxurious",
+        "royal"
+      ],
       "price_inr": 4500,
       "available": true,
-      "delivery_days": 17
+      "delivery_days": 17,
+      "description": "A Mysore silk saree featuring a plain with gold border. Mysore silk is prized for its softer hand compared to Kanjivaram — rich with a gorgeous natural sheen. The GI-tagged Mysore silk is a landmark of Karnataka's weaving heritage.",
+      "reviews": [
+        {
+          "user": "Archana P.",
+          "rating": 4,
+          "comment": "Heavy but very elegant. My mother-in-law approved."
+        },
+        {
+          "user": "Revathi G.",
+          "rating": 4,
+          "comment": "Traditional and elegant. Perfect for ceremonies."
+        }
+      ]
     },
     {
       "id": "S067",
@@ -932,11 +2398,34 @@
       "color": "orange and purple",
       "color_family": "orange",
       "pattern": "chevron ikat",
-      "occasion_tags": ["festival", "wedding", "formal"],
-      "sensory_tags": ["rich", "elegant", "royal", "glossy", "stiff"],
+      "occasion_tags": [
+        "festival",
+        "wedding",
+        "formal"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "royal",
+        "glossy",
+        "stiff"
+      ],
       "price_inr": 3800,
       "available": true,
-      "delivery_days": 14
+      "delivery_days": 14,
+      "description": "Pure silk Pochampally Ikat featuring a chevron ikat. The geometric precision of Pochampally's double ikat on silk produces a saree that is both rich and deeply luxurious. A collector's piece from Telangana.",
+      "reviews": [
+        {
+          "user": "Sindhu T.",
+          "rating": 5,
+          "comment": "The pallu is gorgeous. Felt like a queen wearing this."
+        },
+        {
+          "user": "Kamakshi H.",
+          "rating": 5,
+          "comment": "The weave is very fine. Genuinely handloom quality."
+        }
+      ]
     },
     {
       "id": "S068",
@@ -946,11 +2435,34 @@
       "color": "black and gold",
       "color_family": "neutral",
       "pattern": "fine gold thread ikat",
-      "occasion_tags": ["wedding", "ceremony", "formal"],
-      "sensory_tags": ["luxurious", "grand", "royal", "elegant", "formal"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "formal"
+      ],
+      "sensory_tags": [
+        "luxurious",
+        "grand",
+        "royal",
+        "elegant",
+        "formal"
+      ],
       "price_inr": 9000,
       "available": true,
-      "delivery_days": 21
+      "delivery_days": 21,
+      "description": "Pure silk Pochampally Ikat featuring a fine gold thread ikat. The geometric precision of Pochampally's double ikat on silk produces a saree that is both luxurious and deeply luxurious. A collector's piece from Telangana.",
+      "reviews": [
+        {
+          "user": "Madhavi V.",
+          "rating": 4,
+          "comment": "Good silk quality. Slight colour variation from photo but still beautiful."
+        },
+        {
+          "user": "Jayalakshmi I.",
+          "rating": 5,
+          "comment": "Best silk saree I have bought online. Stunning piece."
+        }
+      ]
     },
     {
       "id": "S069",
@@ -960,11 +2472,34 @@
       "color": "saffron",
       "color_family": "orange",
       "pattern": "plain with contrast border",
-      "occasion_tags": ["wedding", "festival", "ceremony"],
-      "sensory_tags": ["rich", "elegant", "royal", "glossy", "formal"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "royal",
+        "glossy",
+        "formal"
+      ],
       "price_inr": 3200,
       "available": true,
-      "delivery_days": 16
+      "delivery_days": 16,
+      "description": "An Arni silk saree from Tirupattur, Tamil Nadu featuring a plain with contrast border. Arni silk offers Kanjivaram-style richness at a more accessible price. The rich weave and vibrant colours make it ideal for wedding.",
+      "reviews": [
+        {
+          "user": "Sridevi K.",
+          "rating": 5,
+          "comment": "Ordered for Diwali. Weaver's craftsmanship is outstanding."
+        },
+        {
+          "user": "Ananya R.",
+          "rating": 5,
+          "comment": "Wore this for my sister's wedding. Got so many compliments."
+        }
+      ]
     },
     {
       "id": "S070",
@@ -974,11 +2509,34 @@
       "color": "peacock blue",
       "color_family": "blue",
       "pattern": "colour gradient fine thread",
-      "occasion_tags": ["wedding", "formal", "ceremony"],
-      "sensory_tags": ["rich", "elegant", "royal", "stiff", "glossy"],
+      "occasion_tags": [
+        "wedding",
+        "formal",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "royal",
+        "stiff",
+        "glossy"
+      ],
       "price_inr": 5500,
       "available": true,
-      "delivery_days": 18
+      "delivery_days": 18,
+      "description": "A Molakalmuru silk saree from Chitradurga, Karnataka featuring a colour gradient fine thread. Molakalmuru is known for its fine thread count and subtle colour gradients. Richer than Mysore silk and deeply rich — a collector's choice.",
+      "reviews": [
+        {
+          "user": "Usha C.",
+          "rating": 5,
+          "comment": "Arrived on time. The zari border is exactly as described."
+        },
+        {
+          "user": "Deepika S.",
+          "rating": 5,
+          "comment": "The zari work is breathtaking. Worth every rupee."
+        }
+      ]
     },
     {
       "id": "S071",
@@ -988,11 +2546,34 @@
       "color": "deep teal with gold zari",
       "color_family": "blue",
       "pattern": "reversible zari border",
-      "occasion_tags": ["wedding", "festival", "ceremony"],
-      "sensory_tags": ["rich", "elegant", "royal", "glossy", "formal"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "royal",
+        "glossy",
+        "formal"
+      ],
       "price_inr": 4500,
       "available": true,
-      "delivery_days": 16
+      "delivery_days": 16,
+      "description": "A handwoven Maheshwari Silk saree featuring a reversible zari border. Crafted by a skilled artisan from a traditional weaving cluster, this saree is rich and ideal for wedding occasions. Woven to order — no two pieces are identical.",
+      "reviews": [
+        {
+          "user": "Hema B.",
+          "rating": 4,
+          "comment": "Luxurious feel. Would make a great gift too."
+        },
+        {
+          "user": "Priyanka M.",
+          "rating": 4,
+          "comment": "Rich fabric. Drapes beautifully for formal occasions."
+        }
+      ]
     },
     {
       "id": "S072",
@@ -1002,11 +2583,34 @@
       "color": "wine red",
       "color_family": "red",
       "pattern": "fine stripe with zari",
-      "occasion_tags": ["wedding", "formal", "reception"],
-      "sensory_tags": ["rich", "grand", "elegant", "stiff", "luxurious"],
+      "occasion_tags": [
+        "wedding",
+        "formal",
+        "reception"
+      ],
+      "sensory_tags": [
+        "rich",
+        "grand",
+        "elegant",
+        "stiff",
+        "luxurious"
+      ],
       "price_inr": 5800,
       "available": true,
-      "delivery_days": 16
+      "delivery_days": 16,
+      "description": "A handwoven Maheshwari Silk saree featuring a fine stripe with zari. Crafted by a skilled artisan from a traditional weaving cluster, this saree is rich and ideal for wedding occasions. Woven to order — no two pieces are identical.",
+      "reviews": [
+        {
+          "user": "Nandini A.",
+          "rating": 5,
+          "comment": "Pure silk smell, beautiful sheen. Very authentic."
+        },
+        {
+          "user": "Swathi L.",
+          "rating": 5,
+          "comment": "Exactly like Kanjivaram quality but more affordable. Loved it."
+        }
+      ]
     },
     {
       "id": "S073",
@@ -1016,11 +2620,34 @@
       "color": "pale gold",
       "color_family": "yellow",
       "pattern": "fine thread plain",
-      "occasion_tags": ["wedding", "reception", "formal"],
-      "sensory_tags": ["elegant", "glossy", "rich", "formal", "luxurious"],
+      "occasion_tags": [
+        "wedding",
+        "reception",
+        "formal"
+      ],
+      "sensory_tags": [
+        "elegant",
+        "glossy",
+        "rich",
+        "formal",
+        "luxurious"
+      ],
       "price_inr": 5000,
       "available": true,
-      "delivery_days": 15
+      "delivery_days": 15,
+      "description": "A Murshidabad silk saree from West Bengal featuring a fine thread plain. Murshidabad produces a finer, lighter silk than Banarasi — known for its subtle sheen and elegant quality. Elegant for wedding.",
+      "reviews": [
+        {
+          "user": "Revathi G.",
+          "rating": 4,
+          "comment": "Traditional and elegant. Perfect for ceremonies."
+        },
+        {
+          "user": "Divya N.",
+          "rating": 5,
+          "comment": "The colour is deep and vibrant. Perfect for reception."
+        }
+      ]
     },
     {
       "id": "S074",
@@ -1030,11 +2657,34 @@
       "color": "deep blue with narrative pallu",
       "color_family": "blue",
       "pattern": "mythological narrative motif",
-      "occasion_tags": ["wedding", "ceremony", "festival"],
-      "sensory_tags": ["rich", "grand", "royal", "luxurious", "elegant"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "festival"
+      ],
+      "sensory_tags": [
+        "rich",
+        "grand",
+        "royal",
+        "luxurious",
+        "elegant"
+      ],
       "price_inr": 6500,
       "available": true,
-      "delivery_days": 14
+      "delivery_days": 14,
+      "description": "A Bishnupuri Baluchari saree featuring a mythological narrative motif. The Baluchari weaving tradition depicts scenes from epics and mythology directly in the fabric. Rich, rich, and a genuine collector's piece.",
+      "reviews": [
+        {
+          "user": "Kamakshi H.",
+          "rating": 5,
+          "comment": "The weave is very fine. Genuinely handloom quality."
+        },
+        {
+          "user": "Archana P.",
+          "rating": 4,
+          "comment": "Heavy but very elegant. My mother-in-law approved."
+        }
+      ]
     },
     {
       "id": "S075",
@@ -1044,11 +2694,33 @@
       "color": "yellow and black",
       "color_family": "yellow",
       "pattern": "chakra motif",
-      "occasion_tags": ["wedding", "festival"],
-      "sensory_tags": ["rich", "festive", "royal", "formal", "traditional"],
+      "occasion_tags": [
+        "wedding",
+        "festival"
+      ],
+      "sensory_tags": [
+        "rich",
+        "festive",
+        "royal",
+        "formal",
+        "traditional"
+      ],
       "price_inr": 4500,
       "available": true,
-      "delivery_days": 17
+      "delivery_days": 17,
+      "description": "A pure silk Sambalpuri saree featuring a chakra motif. Silk Sambalpuri is reserved for festivals and weddings — the motifs carry deep cultural meaning. Rich, rich, and built to last generations.",
+      "reviews": [
+        {
+          "user": "Jayalakshmi I.",
+          "rating": 5,
+          "comment": "Best silk saree I have bought online. Stunning piece."
+        },
+        {
+          "user": "Sindhu T.",
+          "rating": 5,
+          "comment": "The pallu is gorgeous. Felt like a queen wearing this."
+        }
+      ]
     },
     {
       "id": "S076",
@@ -1058,11 +2730,33 @@
       "color": "blue and white",
       "color_family": "blue",
       "pattern": "simple geometric ikat",
-      "occasion_tags": ["semi_formal", "casual_formal", "festival"],
-      "sensory_tags": ["versatile", "comfortable formal", "elegant", "flowy"],
+      "occasion_tags": [
+        "semi_formal",
+        "casual_formal",
+        "festival"
+      ],
+      "sensory_tags": [
+        "versatile",
+        "comfortable formal",
+        "elegant",
+        "flowy"
+      ],
       "price_inr": 1100,
       "available": true,
-      "delivery_days": 10
+      "delivery_days": 10,
+      "description": "A handwoven Pochampally Ikat saree featuring a simple geometric ikat. The double ikat technique means both warp and weft threads are resist-dyed before weaving — creating the distinctive blurred-edge pattern. A GI-tagged craft from Telangana. Versatile and striking for semi formal.",
+      "reviews": [
+        {
+          "user": "Priya S.",
+          "rating": 5,
+          "comment": "Perfect blend — light enough for summer but rich enough for weddings."
+        },
+        {
+          "user": "Asha W.",
+          "rating": 5,
+          "comment": "Semi-formal and beautiful. Easy to manage for long events."
+        }
+      ]
     },
     {
       "id": "S077",
@@ -1072,11 +2766,33 @@
       "color": "sky blue with gold motif",
       "color_family": "blue",
       "pattern": "scattered gold butis",
-      "occasion_tags": ["wedding", "semi_formal", "festival"],
-      "sensory_tags": ["flowy", "light but rich", "breathable yet elegant", "elegant"],
+      "occasion_tags": [
+        "wedding",
+        "semi_formal",
+        "festival"
+      ],
+      "sensory_tags": [
+        "flowy",
+        "light but rich",
+        "breathable yet elegant",
+        "elegant"
+      ],
       "price_inr": 2500,
       "available": true,
-      "delivery_days": 14
+      "delivery_days": 14,
+      "description": "A signature Chanderi saree featuring a scattered gold butis. Chanderi fabric is celebrated for its sheer, flowy quality and subtle sheen — it catches light beautifully. The gold motifs are handwoven, not printed. A timeless piece for wedding.",
+      "reviews": [
+        {
+          "user": "Shreya D.",
+          "rating": 5,
+          "comment": "The drape is lovely. Wore this for an evening wedding. Perfect."
+        },
+        {
+          "user": "Bindiya X.",
+          "rating": 4,
+          "comment": "Lovely fabric. Slightly sheer but very elegant for evening."
+        }
+      ]
     },
     {
       "id": "S078",
@@ -1086,11 +2802,32 @@
       "color": "mint with silver border",
       "color_family": "green",
       "pattern": "plain with subtle sheen",
-      "occasion_tags": ["summer_wedding", "semi_formal"],
-      "sensory_tags": ["soft sheen", "flowy", "comfortable formal", "breathable yet elegant"],
+      "occasion_tags": [
+        "summer_wedding",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "soft sheen",
+        "flowy",
+        "comfortable formal",
+        "breathable yet elegant"
+      ],
       "price_inr": 2000,
       "available": true,
-      "delivery_days": 12
+      "delivery_days": 12,
+      "description": "This Mysore silk blend features a plain with subtle sheen. The blend balances Mysore's characteristic softness with everyday wearability. Elegant and soft sheen for summer wedding.",
+      "reviews": [
+        {
+          "user": "Pooja K.",
+          "rating": 4,
+          "comment": "Good weight. Not too heavy, not too light. Just right."
+        },
+        {
+          "user": "Chanda Y.",
+          "rating": 5,
+          "comment": "The ikat pattern is stunning. Cannot believe this is custom-made."
+        }
+      ]
     },
     {
       "id": "S079",
@@ -1100,11 +2837,33 @@
       "color": "coral with gold border",
       "color_family": "orange",
       "pattern": "simplified Paithani border",
-      "occasion_tags": ["wedding", "festival", "semi_formal"],
-      "sensory_tags": ["elegant", "versatile", "festive", "comfortable formal"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "elegant",
+        "versatile",
+        "festive",
+        "comfortable formal"
+      ],
       "price_inr": 3200,
       "available": true,
-      "delivery_days": 18
+      "delivery_days": 18,
+      "description": "A Yeola-style Paithani saree from Nashik featuring a simplified Paithani border. Yeola produces Paithani at a more accessible price without compromising on the signature oblique weave. Elegant and beautiful for wedding.",
+      "reviews": [
+        {
+          "user": "Neha G.",
+          "rating": 5,
+          "comment": "Beautiful colour. The cotton-silk mix is exactly what I wanted."
+        },
+        {
+          "user": "Damini Z.",
+          "rating": 4,
+          "comment": "Great blend. Breathable yet looks festive. Recommend for summer weddings."
+        }
+      ]
     },
     {
       "id": "S080",
@@ -1114,11 +2873,32 @@
       "color": "green and gold",
       "color_family": "green",
       "pattern": "lighter contrast border",
-      "occasion_tags": ["wedding", "festival"],
-      "sensory_tags": ["elegant", "versatile", "comfortable formal", "semi-formal"],
+      "occasion_tags": [
+        "wedding",
+        "festival"
+      ],
+      "sensory_tags": [
+        "elegant",
+        "versatile",
+        "comfortable formal",
+        "semi-formal"
+      ],
       "price_inr": 2800,
       "available": true,
-      "delivery_days": 14
+      "delivery_days": 14,
+      "description": "A Dharmavaram cotton-silk blend featuring a lighter contrast border. Lighter than pure Dharmavaram silk but carrying its signature contrast border. Elegant and appropriate for wedding occasions.",
+      "reviews": [
+        {
+          "user": "Ritu V.",
+          "rating": 4,
+          "comment": "Flowy and elegant. Got many compliments at the festival."
+        },
+        {
+          "user": "Esha AA.",
+          "rating": 5,
+          "comment": "Chanderi quality at a fair price. The sheen is gorgeous."
+        }
+      ]
     },
     {
       "id": "S081",
@@ -1128,11 +2908,33 @@
       "color": "pink and gold",
       "color_family": "pink",
       "pattern": "lightweight checks",
-      "occasion_tags": ["summer_wedding", "semi_formal", "festival"],
-      "sensory_tags": ["flowy", "light but rich", "elegant", "breathable yet elegant"],
+      "occasion_tags": [
+        "summer_wedding",
+        "semi_formal",
+        "festival"
+      ],
+      "sensory_tags": [
+        "flowy",
+        "light but rich",
+        "elegant",
+        "breathable yet elegant"
+      ],
       "price_inr": 3000,
       "available": true,
-      "delivery_days": 16
+      "delivery_days": 16,
+      "description": "A cotton-silk Kanjivaram blend featuring a lightweight checks. Lighter than pure Kanjivaram silk, this blend gives you the signature sheen at a flowy weight. Ideal for summer wedding without the heaviness of full silk.",
+      "reviews": [
+        {
+          "user": "Sunita B.",
+          "rating": 5,
+          "comment": "Ordered for my daughter's engagement. She looked stunning."
+        },
+        {
+          "user": "Falguni BB.",
+          "rating": 4,
+          "comment": "Nice soft feel. The colour matches the photo perfectly."
+        }
+      ]
     },
     {
       "id": "S082",
@@ -1142,11 +2944,32 @@
       "color": "green and white ikat",
       "color_family": "green",
       "pattern": "ikat temple motif",
-      "occasion_tags": ["festival", "semi_formal"],
-      "sensory_tags": ["versatile", "comfortable formal", "festive", "traditional"],
+      "occasion_tags": [
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "versatile",
+        "comfortable formal",
+        "festive",
+        "traditional"
+      ],
       "price_inr": 1800,
       "available": true,
-      "delivery_days": 13
+      "delivery_days": 13,
+      "description": "This Nuapatna cotton-silk saree carries a ikat temple motif signature of the Cuttack cluster. Versatile drape and rich ikat detailing make it a beautiful festival choice.",
+      "reviews": [
+        {
+          "user": "Mamta P.",
+          "rating": 4,
+          "comment": "Good quality. The border design is unique and handloom feel is real."
+        },
+        {
+          "user": "Girija CC.",
+          "rating": 5,
+          "comment": "Ordered twice already. This weaver does excellent work."
+        }
+      ]
     },
     {
       "id": "S083",
@@ -1156,11 +2979,33 @@
       "color": "off-white with gold kasavu",
       "color_family": "neutral",
       "pattern": "double kasavu border",
-      "occasion_tags": ["festival", "wedding", "semi_formal"],
-      "sensory_tags": ["elegant", "traditional", "light but rich", "comfortable formal"],
+      "occasion_tags": [
+        "festival",
+        "wedding",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "elegant",
+        "traditional",
+        "light but rich",
+        "comfortable formal"
+      ],
       "price_inr": 2200,
       "available": true,
-      "delivery_days": 11
+      "delivery_days": 11,
+      "description": "A cotton-silk Kerala kasavu featuring a double kasavu border. The silk content gives the kasavu border extra sheen while keeping the fabric elegant. Perfect for Onam and weddings.",
+      "reviews": [
+        {
+          "user": "Asha W.",
+          "rating": 5,
+          "comment": "Semi-formal and beautiful. Easy to manage for long events."
+        },
+        {
+          "user": "Hina DD.",
+          "rating": 4,
+          "comment": "Good for both day and evening events. Versatile pick."
+        }
+      ]
     },
     {
       "id": "S084",
@@ -1170,11 +3015,32 @@
       "color": "green with red border",
       "color_family": "green",
       "pattern": "traditional Ilkal border",
-      "occasion_tags": ["festival", "wedding"],
-      "sensory_tags": ["traditional", "festive", "versatile", "elegant"],
+      "occasion_tags": [
+        "festival",
+        "wedding"
+      ],
+      "sensory_tags": [
+        "traditional",
+        "festive",
+        "versatile",
+        "elegant"
+      ],
       "price_inr": 950,
       "available": true,
-      "delivery_days": 7
+      "delivery_days": 7,
+      "description": "This Ilkal weave from Karnataka features a traditional Ilkal border. The signature contrasting border is woven separately and joined — a technique unique to Ilkal. Traditional and perfect for festival.",
+      "reviews": [
+        {
+          "user": "Bindiya X.",
+          "rating": 4,
+          "comment": "Lovely fabric. Slightly sheer but very elegant for evening."
+        },
+        {
+          "user": "Priya S.",
+          "rating": 5,
+          "comment": "Perfect blend — light enough for summer but rich enough for weddings."
+        }
+      ]
     },
     {
       "id": "S085",
@@ -1184,11 +3050,32 @@
       "color": "white with multicolour dots",
       "color_family": "neutral",
       "pattern": "Tangaliya dot motif",
-      "occasion_tags": ["casual_formal", "semi_formal"],
-      "sensory_tags": ["versatile", "comfortable formal", "textured", "elegant"],
+      "occasion_tags": [
+        "casual_formal",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "versatile",
+        "comfortable formal",
+        "textured",
+        "elegant"
+      ],
       "price_inr": 1600,
       "available": true,
-      "delivery_days": 9
+      "delivery_days": 9,
+      "description": "A Tangaliya silk-cotton saree from Surendranagar with a Tangaliya dot motif. The GI-tagged Tangaliya dot motif is raised on the loom — purely structural, not embroidered. Versatile and genuinely unique.",
+      "reviews": [
+        {
+          "user": "Chanda Y.",
+          "rating": 5,
+          "comment": "The ikat pattern is stunning. Cannot believe this is custom-made."
+        },
+        {
+          "user": "Shreya D.",
+          "rating": 5,
+          "comment": "The drape is lovely. Wore this for an evening wedding. Perfect."
+        }
+      ]
     },
     {
       "id": "S086",
@@ -1198,11 +3085,32 @@
       "color": "lavender",
       "color_family": "purple",
       "pattern": "square weave plain",
-      "occasion_tags": ["summer_wedding", "semi_formal"],
-      "sensory_tags": ["airy", "flowy", "summer wedding", "breathable yet elegant"],
+      "occasion_tags": [
+        "summer_wedding",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "airy",
+        "flowy",
+        "summer wedding",
+        "breathable yet elegant"
+      ],
       "price_inr": 1050,
       "available": true,
-      "delivery_days": 9
+      "delivery_days": 9,
+      "description": "This Kota Doria saree from Rajasthan features a square weave plain. The hallmark square weave structure gives it an unmistakable texture that is airy, sheer, and incredibly elegant. A top choice for summer weddings.",
+      "reviews": [
+        {
+          "user": "Damini Z.",
+          "rating": 4,
+          "comment": "Great blend. Breathable yet looks festive. Recommend for summer weddings."
+        },
+        {
+          "user": "Pooja K.",
+          "rating": 4,
+          "comment": "Good weight. Not too heavy, not too light. Just right."
+        }
+      ]
     },
     {
       "id": "S087",
@@ -1212,11 +3120,33 @@
       "color": "deep teal with silver butis",
       "color_family": "blue",
       "pattern": "scattered silver butis",
-      "occasion_tags": ["wedding", "semi_formal", "festival"],
-      "sensory_tags": ["flowy", "elegant", "soft sheen", "light but rich"],
+      "occasion_tags": [
+        "wedding",
+        "semi_formal",
+        "festival"
+      ],
+      "sensory_tags": [
+        "flowy",
+        "elegant",
+        "soft sheen",
+        "light but rich"
+      ],
       "price_inr": 2000,
       "available": true,
-      "delivery_days": 11
+      "delivery_days": 11,
+      "description": "A signature Chanderi saree featuring a scattered silver butis. Chanderi fabric is celebrated for its sheer, flowy quality and subtle sheen — it catches light beautifully. The gold motifs are handwoven, not printed. A timeless piece for wedding.",
+      "reviews": [
+        {
+          "user": "Esha AA.",
+          "rating": 5,
+          "comment": "Chanderi quality at a fair price. The sheen is gorgeous."
+        },
+        {
+          "user": "Neha G.",
+          "rating": 5,
+          "comment": "Beautiful colour. The cotton-silk mix is exactly what I wanted."
+        }
+      ]
     },
     {
       "id": "S088",
@@ -1226,11 +3156,33 @@
       "color": "beige with gold jaal",
       "color_family": "neutral",
       "pattern": "light brocade jaal",
-      "occasion_tags": ["wedding", "festival", "semi_formal"],
-      "sensory_tags": ["elegant", "versatile", "light but rich", "comfortable formal"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "elegant",
+        "versatile",
+        "light but rich",
+        "comfortable formal"
+      ],
       "price_inr": 2800,
       "available": true,
-      "delivery_days": 15
+      "delivery_days": 15,
+      "description": "A Banarasi cotton-silk blend featuring a light brocade jaal. Lighter than pure Banarasi silk but carrying the same elegance of the jaal brocade. Elegant and beautiful for festive wedding.",
+      "reviews": [
+        {
+          "user": "Falguni BB.",
+          "rating": 4,
+          "comment": "Nice soft feel. The colour matches the photo perfectly."
+        },
+        {
+          "user": "Ritu V.",
+          "rating": 4,
+          "comment": "Flowy and elegant. Got many compliments at the festival."
+        }
+      ]
     },
     {
       "id": "S089",
@@ -1240,11 +3192,32 @@
       "color": "purple with gold border",
       "color_family": "purple",
       "pattern": "Ilkal signature border",
-      "occasion_tags": ["wedding", "festival"],
-      "sensory_tags": ["traditional", "elegant", "festive", "versatile"],
+      "occasion_tags": [
+        "wedding",
+        "festival"
+      ],
+      "sensory_tags": [
+        "traditional",
+        "elegant",
+        "festive",
+        "versatile"
+      ],
       "price_inr": 1400,
       "available": true,
-      "delivery_days": 9
+      "delivery_days": 9,
+      "description": "This Ilkal weave from Karnataka features a Ilkal signature border. The signature contrasting border is woven separately and joined — a technique unique to Ilkal. Traditional and perfect for wedding.",
+      "reviews": [
+        {
+          "user": "Girija CC.",
+          "rating": 5,
+          "comment": "Ordered twice already. This weaver does excellent work."
+        },
+        {
+          "user": "Sunita B.",
+          "rating": 5,
+          "comment": "Ordered for my daughter's engagement. She looked stunning."
+        }
+      ]
     },
     {
       "id": "S090",
@@ -1254,11 +3227,32 @@
       "color": "orange with silver border",
       "color_family": "orange",
       "pattern": "reversible border",
-      "occasion_tags": ["festival", "semi_formal"],
-      "sensory_tags": ["versatile", "elegant", "festive", "comfortable formal"],
+      "occasion_tags": [
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "versatile",
+        "elegant",
+        "festive",
+        "comfortable formal"
+      ],
       "price_inr": 1600,
       "available": true,
-      "delivery_days": 10
+      "delivery_days": 10,
+      "description": "This Maheshwari saree from Khargone, Madhya Pradesh features a reversible border. Maheshwari weaves are known for their reversible border and fine texture. Versatile and festival-appropriate, a versatile wardrobe staple.",
+      "reviews": [
+        {
+          "user": "Hina DD.",
+          "rating": 4,
+          "comment": "Good for both day and evening events. Versatile pick."
+        },
+        {
+          "user": "Mamta P.",
+          "rating": 4,
+          "comment": "Good quality. The border design is unique and handloom feel is real."
+        }
+      ]
     },
     {
       "id": "S091",
@@ -1268,11 +3262,32 @@
       "color": "yellow",
       "color_family": "yellow",
       "pattern": "plain square weave",
-      "occasion_tags": ["summer_wedding", "casual_formal"],
-      "sensory_tags": ["airy", "flowy", "summer wedding", "light but rich"],
+      "occasion_tags": [
+        "summer_wedding",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "airy",
+        "flowy",
+        "summer wedding",
+        "light but rich"
+      ],
       "price_inr": 820,
       "available": true,
-      "delivery_days": 8
+      "delivery_days": 8,
+      "description": "This Kota Doria saree from Rajasthan features a plain square weave. The hallmark square weave structure gives it an unmistakable texture that is airy, sheer, and incredibly elegant. A top choice for summer weddings.",
+      "reviews": [
+        {
+          "user": "Priya S.",
+          "rating": 5,
+          "comment": "Perfect blend — light enough for summer but rich enough for weddings."
+        },
+        {
+          "user": "Asha W.",
+          "rating": 5,
+          "comment": "Semi-formal and beautiful. Easy to manage for long events."
+        }
+      ]
     },
     {
       "id": "S092",
@@ -1282,11 +3297,32 @@
       "color": "blue and yellow",
       "color_family": "blue",
       "pattern": "vibrant ikat geometric",
-      "occasion_tags": ["festival", "semi_formal"],
-      "sensory_tags": ["festive", "versatile", "comfortable formal", "vibrant"],
+      "occasion_tags": [
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "festive",
+        "versatile",
+        "comfortable formal",
+        "vibrant"
+      ],
       "price_inr": 1500,
       "available": true,
-      "delivery_days": 10
+      "delivery_days": 10,
+      "description": "A Nuapatna ikat saree from Cuttack, Odisha featuring a vibrant ikat geometric. Nuapatna is known for intricate temple and geometric motifs achieved through tie-dye ikat. The festive fabric and vibrant colours make it ideal for festival.",
+      "reviews": [
+        {
+          "user": "Shreya D.",
+          "rating": 5,
+          "comment": "The drape is lovely. Wore this for an evening wedding. Perfect."
+        },
+        {
+          "user": "Bindiya X.",
+          "rating": 4,
+          "comment": "Lovely fabric. Slightly sheer but very elegant for evening."
+        }
+      ]
     },
     {
       "id": "S093",
@@ -1296,11 +3332,32 @@
       "color": "natural with block print",
       "color_family": "neutral",
       "pattern": "tussar texture cotton silk blend",
-      "occasion_tags": ["semi_formal", "casual_formal"],
-      "sensory_tags": ["textured", "versatile", "elegant", "earthy"],
+      "occasion_tags": [
+        "semi_formal",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "textured",
+        "versatile",
+        "elegant",
+        "earthy"
+      ],
       "price_inr": 2200,
       "available": true,
-      "delivery_days": 13
+      "delivery_days": 13,
+      "description": "A Bhagalpuri cotton-silk blend featuring a tussar texture cotton silk blend. The Tussar-like texture combined with cotton gives a textured drape with earthy richness. Great for semi formal occasions.",
+      "reviews": [
+        {
+          "user": "Pooja K.",
+          "rating": 4,
+          "comment": "Good weight. Not too heavy, not too light. Just right."
+        },
+        {
+          "user": "Chanda Y.",
+          "rating": 5,
+          "comment": "The ikat pattern is stunning. Cannot believe this is custom-made."
+        }
+      ]
     },
     {
       "id": "S094",
@@ -1310,11 +3367,33 @@
       "color": "dark maroon",
       "color_family": "red",
       "pattern": "plain with woven border",
-      "occasion_tags": ["wedding", "festival", "semi_formal"],
-      "sensory_tags": ["comfortable formal", "elegant", "versatile", "light but rich"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "comfortable formal",
+        "elegant",
+        "versatile",
+        "light but rich"
+      ],
       "price_inr": 1300,
       "available": true,
-      "delivery_days": 6
+      "delivery_days": 6,
+      "description": "A Salem cotton-silk blend featuring a plain with woven border. Salem's weaves are known for excellent colour retention and durability. Comfortable formal and practical for regular wedding wear.",
+      "reviews": [
+        {
+          "user": "Neha G.",
+          "rating": 5,
+          "comment": "Beautiful colour. The cotton-silk mix is exactly what I wanted."
+        },
+        {
+          "user": "Damini Z.",
+          "rating": 4,
+          "comment": "Great blend. Breathable yet looks festive. Recommend for summer weddings."
+        }
+      ]
     },
     {
       "id": "S095",
@@ -1324,11 +3403,32 @@
       "color": "aqua",
       "color_family": "blue",
       "pattern": "plain",
-      "occasion_tags": ["summer_wedding", "casual_formal"],
-      "sensory_tags": ["flowy", "breathable yet elegant", "light but rich", "airy"],
+      "occasion_tags": [
+        "summer_wedding",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "flowy",
+        "breathable yet elegant",
+        "light but rich",
+        "airy"
+      ],
       "price_inr": 1450,
       "available": true,
-      "delivery_days": 12
+      "delivery_days": 12,
+      "description": "A Kora cotton-silk saree featuring a plain. Kora fabric has a distinctive raw texture that is uniquely flowy. The cotton-silk blend makes it breathable yet elegant — perfect for summer events.",
+      "reviews": [
+        {
+          "user": "Ritu V.",
+          "rating": 4,
+          "comment": "Flowy and elegant. Got many compliments at the festival."
+        },
+        {
+          "user": "Esha AA.",
+          "rating": 5,
+          "comment": "Chanderi quality at a fair price. The sheen is gorgeous."
+        }
+      ]
     },
     {
       "id": "S096",
@@ -1338,11 +3438,32 @@
       "color": "green and red",
       "color_family": "green",
       "pattern": "ikat checks",
-      "occasion_tags": ["festival", "casual_formal"],
-      "sensory_tags": ["versatile", "festive", "comfortable formal", "traditional"],
+      "occasion_tags": [
+        "festival",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "versatile",
+        "festive",
+        "comfortable formal",
+        "traditional"
+      ],
       "price_inr": 1250,
       "available": true,
-      "delivery_days": 10
+      "delivery_days": 10,
+      "description": "A Pochampally cotton-silk blend featuring a ikat checks. The ikat pattern has that distinctive handcrafted blur that no machine can replicate. Versatile drape makes it ideal for festival occasions.",
+      "reviews": [
+        {
+          "user": "Sunita B.",
+          "rating": 5,
+          "comment": "Ordered for my daughter's engagement. She looked stunning."
+        },
+        {
+          "user": "Falguni BB.",
+          "rating": 4,
+          "comment": "Nice soft feel. The colour matches the photo perfectly."
+        }
+      ]
     },
     {
       "id": "S097",
@@ -1352,11 +3473,32 @@
       "color": "blue with gold border",
       "color_family": "blue",
       "pattern": "simplified Paithani style",
-      "occasion_tags": ["wedding", "festival"],
-      "sensory_tags": ["elegant", "festive", "versatile", "comfortable formal"],
+      "occasion_tags": [
+        "wedding",
+        "festival"
+      ],
+      "sensory_tags": [
+        "elegant",
+        "festive",
+        "versatile",
+        "comfortable formal"
+      ],
       "price_inr": 1800,
       "available": true,
-      "delivery_days": 11
+      "delivery_days": 11,
+      "description": "A cotton-silk Paithani-style saree from Yeola featuring a simplified Paithani style. The cotton-silk blend gives a elegant drape while the Paithani border retains its characteristic sheen. Ideal for festive wedding.",
+      "reviews": [
+        {
+          "user": "Mamta P.",
+          "rating": 4,
+          "comment": "Good quality. The border design is unique and handloom feel is real."
+        },
+        {
+          "user": "Girija CC.",
+          "rating": 5,
+          "comment": "Ordered twice already. This weaver does excellent work."
+        }
+      ]
     },
     {
       "id": "S098",
@@ -1366,11 +3508,34 @@
       "color": "white with gold jamdani",
       "color_family": "neutral",
       "pattern": "jamdani floral weave",
-      "occasion_tags": ["wedding", "formal", "ceremony"],
-      "sensory_tags": ["luxurious", "elegant", "royal", "rich", "glossy"],
+      "occasion_tags": [
+        "wedding",
+        "formal",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "luxurious",
+        "elegant",
+        "royal",
+        "rich",
+        "glossy"
+      ],
       "price_inr": 7500,
       "available": true,
-      "delivery_days": 22
+      "delivery_days": 22,
+      "description": "An Uppada Jamdani saree featuring a jamdani floral weave. The Jamdani weave inserts supplementary threads to create intricate designs without embroidery. Luxurious silk with a distinctly artistic quality.",
+      "reviews": [
+        {
+          "user": "Madhavi V.",
+          "rating": 4,
+          "comment": "Good silk quality. Slight colour variation from photo but still beautiful."
+        },
+        {
+          "user": "Jayalakshmi I.",
+          "rating": 5,
+          "comment": "Best silk saree I have bought online. Stunning piece."
+        }
+      ]
     },
     {
       "id": "S099",
@@ -1380,11 +3545,33 @@
       "color": "pale green with gold border",
       "color_family": "green",
       "pattern": "fine zari border",
-      "occasion_tags": ["wedding", "festival", "casual_formal"],
-      "sensory_tags": ["light", "elegant", "comfortable", "wedding"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "light",
+        "elegant",
+        "comfortable",
+        "wedding"
+      ],
       "price_inr": 1400,
       "available": true,
-      "delivery_days": 8
+      "delivery_days": 8,
+      "description": "A classic Venkatagiri cotton saree featuring a fine zari border. The gold zari work is handwoven directly into the fabric — not printed or added on. Lightweight and light, this is a go-to for wedding occasions.",
+      "reviews": [
+        {
+          "user": "Lalitha T.",
+          "rating": 4,
+          "comment": "Colour is exactly as shown. Delivery was fast too."
+        },
+        {
+          "user": "Meena R.",
+          "rating": 5,
+          "comment": "Exactly what I needed for daily wear. Soft and breathable all day."
+        }
+      ]
     },
     {
       "id": "S100",
@@ -1394,11 +3581,33 @@
       "color": "white with thick gold border",
       "color_family": "neutral",
       "pattern": "double kasavu border",
-      "occasion_tags": ["wedding", "festival", "ceremony"],
-      "sensory_tags": ["light", "traditional", "elegant", "comfortable"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "light",
+        "traditional",
+        "elegant",
+        "comfortable"
+      ],
       "price_inr": 1200,
       "available": true,
-      "delivery_days": 8
+      "delivery_days": 8,
+      "description": "Classic Kerala kasavu featuring a double kasavu border. Pure cotton with a handwoven gold border — the signature of Kerala's weaving tradition. Light and elegant for Onam, weddings, and formal occasions.",
+      "reviews": [
+        {
+          "user": "Padma A.",
+          "rating": 5,
+          "comment": "Fine weave, lovely texture. Will order again."
+        },
+        {
+          "user": "Sudha V.",
+          "rating": 5,
+          "comment": "Beautiful colour. Washed well and did not fade at all."
+        }
+      ]
     }
   ],
   "metadata": {
@@ -1412,7 +3621,16 @@
       "min": 350,
       "max": 18000
     },
-    "color_families": ["red", "blue", "green", "yellow", "orange", "pink", "purple", "neutral"],
+    "color_families": [
+      "red",
+      "blue",
+      "green",
+      "yellow",
+      "orange",
+      "pink",
+      "purple",
+      "neutral"
+    ],
     "states_represented": 13
   }
 }
