@@ -420,6 +420,7 @@ def _init_buyer_state():
         "one_of_a_kind": [], # rejected custom pieces -> resale
         "buyer_orders": [],     # confirmed orders for tracking
         "agent_thinking": False, # shows thinking spinner
+        "audio_key": 0,          # dynamic key for audio input reset
     }
     for k, v in defaults.items():
         if k not in st.session_state:
@@ -850,18 +851,20 @@ No waste, no loss.
                 _send_message("hi")
                 st.rerun()
 
-            # Voice input (Whisper STT)
+            # Voice input (Whisper STT) — FIXED AUDIO LOOP
             if cur not in ("confirmed", "failed"):
                 st.markdown(
                     '<div class="section-label">Speak your request</div>',
                     unsafe_allow_html=True
                 )
                 # --- Mic Permission Handling ---
+                # Use dynamic key to reset audio after processing
+                audio_key = st.session_state.get("audio_key", 0)
                 try:
                     audio_file = st.audio_input(
                         "\U0001f3a4 Record your fabric request",
                         label_visibility="collapsed",
-                        key="audio_input"
+                        key=f"audio_input_{audio_key}"
                     )
                 except Exception as e:
                     if "Permission denied" in str(e) or "not allowed" in str(e):
@@ -870,6 +873,7 @@ No waste, no loss.
                     else:
                         st.error(f"Error accessing microphone: {e}")
                         audio_file = None
+
                 if audio_file:
                     with st.spinner("Transcribing..."):
                         try:
@@ -891,6 +895,8 @@ No waste, no loss.
                             if transcribed:
                                 st.success(f"Heard: {transcribed}")
                                 _send_message(transcribed)
+                                # Increment audio key to reset the widget
+                                st.session_state.audio_key = audio_key + 1
                                 st.rerun()
                             else:
                                 st.warning("Could not hear anything. Please try again or type below.")
