@@ -1,6 +1,6 @@
 """
-Pakshi — Agentic Orchestration Engine
-=======================================
+Pakshi — Agentic Orchestration Engine (Enhanced)
+=================================================
 This is the brain of Pakshi. It is genuinely agentic because it:
 
   1. PARSES    — converts raw buyer text into structured intent
@@ -10,7 +10,7 @@ This is the brain of Pakshi. It is genuinely agentic because it:
   5. WAITS     — holds state and waits for buyer confirmation
   6. BROADCASTS— notifies matched weavers with order details
   7. RANKS     — autonomously selects optimal weaver (proximity + rating + history)
-  8. CONFIRMS  — locks the order on Meesho
+  8. CONFIRMS  — locks the order
 
 Agent states (conversation FSM):
   GREETING → COLLECTING → RETRIEVED → FALLBACK_PENDING →
@@ -116,7 +116,7 @@ class ConversationSession:
     order:            Order | None         = None
     history:          list[AgentMessage]   = field(default_factory=list)
     turn_count:       int                  = 0
-    low_confidence_strikes: int            = 0   # how many vague inputs in a row
+    low_confidence_strikes: int            = 0
 
 
 # ---------------------------------------------------------------------------
@@ -129,91 +129,6 @@ def _load_weaver_profiles() -> dict[str, dict]:
     return {w["id"]: w for w in data["weaver_profiles"]}
 
 _WEAVER_PROFILES = _load_weaver_profiles()
-
-
-# ---------------------------------------------------------------------------
-# Location extraction — now with Devanagari Hindi support
-# Maps known weaving clusters / states to canonical names
-# ---------------------------------------------------------------------------
-_LOCATION_ALIASES: dict[str, str] = {
-    # Clusters (English / Romanised)
-    "kanchipuram": "Kanchipuram",
-    "kancheepuram": "Kanchipuram",
-    "pochampally": "Pochampally",
-    "pochampalli": "Pochampally",
-    "banarasi": "Varanasi",
-    "varanasi": "Varanasi",
-    "ilkal": "Ilkal",
-    "kota": "Kota",
-    "chanderi": "Chanderi",
-    "maheshwar": "Maheshwar",
-    "maheshwari": "Maheshwar",
-    "dharmavaram": "Dharmavaram",
-    "molakalmuru": "Molakalmuru",
-    "mysore": "Mysore",
-    "sambalpur": "Sambalpuri",
-    "sambalpuri": "Sambalpuri",
-    "nuapatna": "Nuapatna",
-    "bagru": "Bagru",
-    "sanganer": "Sanganer",
-    "kutch": "Kutch",
-    "kerala": "Kerala",
-    "tamilnadu": "Tamil Nadu",
-    "tamil nadu": "Tamil Nadu",
-    "andhra": "Andhra Pradesh",
-    "andhra pradesh": "Andhra Pradesh",
-    "telangana": "Telangana",
-    "karnataka": "Karnataka",
-    "rajasthan": "Rajasthan",
-    "west bengal": "West Bengal",
-    "bengal": "West Bengal",
-    "odisha": "Odisha",
-    "orissa": "Odisha",
-    "gujarat": "Gujarat",
-    "maharashtra": "Maharashtra",
-    "bihar": "Bihar",
-    "uttar pradesh": "Uttar Pradesh",
-    
-    # Devanagari Hindi
-    "कांचीपुरम": "Kanchipuram",
-    "कांचीपुरम": "Kanchipuram",
-    "पोचमपल्ली": "Pochampally",
-    "बनारसी": "Varanasi",
-    "वाराणसी": "Varanasi",
-    "इलकल": "Ilkal",
-    "कोटा": "Kota",
-    "चंदेरी": "Chanderi",
-    "महेश्वर": "Maheshwar",
-    "धर्मावरम": "Dharmavaram",
-    "मैसूर": "Mysore",
-    "संबलपुर": "Sambalpuri",
-    "बागरू": "Bagru",
-    "संगानेर": "Sanganer",
-    "कच्छ": "Kutch",
-    "केरल": "Kerala",
-    "तमिलनाडु": "Tamil Nadu",
-    "आंध्र": "Andhra Pradesh",
-    "आंध्र प्रदेश": "Andhra Pradesh",
-    "तेलंगाना": "Telangana",
-    "कर्नाटक": "Karnataka",
-    "राजस्थान": "Rajasthan",
-    "पश्चिम बंगाल": "West Bengal",
-    "बंगाल": "West Bengal",
-    "उड़ीसा": "Odisha",
-    "ओडिशा": "Odisha",
-    "गुजरात": "Gujarat",
-    "महाराष्ट्र": "Maharashtra",
-    "बिहार": "Bihar",
-    "उत्तर प्रदेश": "Uttar Pradesh",
-}
-
-def _extract_location(text: str) -> str | None:
-    """Extract a location (cluster or state) from buyer text."""
-    text_lower = text.lower()
-    for alias, canonical in _LOCATION_ALIASES.items():
-        if re.search(r'\b' + re.escape(alias) + r'\b', text_lower):
-            return canonical
-    return None
 
 
 # ---------------------------------------------------------------------------
@@ -393,33 +308,14 @@ class PakshiAgent:
         self.session.state = AgentState.COLLECTING
         return self._handle_collecting(user_input)
 
-
     def _handle_collecting(self, user_input: str) -> dict:
         """
         Parse buyer intent. If confidence >= 0.5, retrieve swatches.
         If too vague, ask the most important missing question.
         """
         intent = parse_intent(user_input)
-        
-        # ── Extract location (supports Devanagari) ──
-        location = _extract_location(user_input)
-        if location:
-            intent.location = location
-        
         self.session.intent = intent
 
-        # ── SMART DEFAULT: If user gave location or color but no feel, set default feel ──
-        # This prevents the agent from asking "How do you want the fabric to feel?"
-        # when the user is clearly asking for something specific.
-        if not intent.feel:
-            has_location = hasattr(intent, 'location') and intent.location
-            has_color = intent.color is not None
-            if has_location or has_color:
-                # Set a neutral default feel
-                intent.feel = ["comfortable", "elegant"]
-                # Recalculate confidence after adding feel
-                intent.confidence, _ = _compute_confidence_manually(intent)
-        
         # Too vague — ask follow-up
         if intent.confidence < 0.5:
             self.session.low_confidence_strikes += 1
@@ -431,6 +327,8 @@ class PakshiAgent:
                 if not intent.budget:
                     intent.budget = 1500
                     intent.budget_flex = True
+                # Recalculate confidence after applying defaults
+                intent.confidence, intent.missing = self._compute_confidence_manually(intent)
             else:
                 followup = build_followup_question(intent.missing)
                 return self._respond(
@@ -443,17 +341,13 @@ class PakshiAgent:
         result = self._do_retrieval()
         return result
 
-
     def _do_retrieval(self) -> dict:
         """
         Query ChromaDB RAG with current intent, passing location filter.
         """
         intent = self.session.intent
-        # Convert IntentResult to dict and add location if present
-        intent_dict = intent.to_dict() if hasattr(intent, 'to_dict') else intent.__dict__
-        # Add location key if we extracted one
-        if hasattr(intent, 'location') and intent.location:
-            intent_dict['location'] = intent.location
+        # Convert IntentResult to dict (includes location field now)
+        intent_dict = intent.to_dict()
 
         result = retrieve_swatches(intent_dict)
         self.session.retrieval_result = result
@@ -485,7 +379,7 @@ class PakshiAgent:
             budget_line = (
                 f"₹{intent.budget}" if intent.budget else "your budget"
             )
-            location_info = f" from {intent.location}" if hasattr(intent, 'location') and intent.location else ""
+            location_info = f" from {intent.location}" if intent.location else ""
             msg = (
                 f"Here are {len(options)} swatches that match your intent "
                 f"within {budget_line}{location_info}:\n\n"
@@ -538,7 +432,6 @@ class PakshiAgent:
                 done=True
             )
 
-
     def _handle_swatch_selection(self, user_input: str) -> dict:
         """
         Buyer selects a swatch (1, 2, or 3).
@@ -557,7 +450,6 @@ class PakshiAgent:
             selection = 2
         else:
             # Try to extract digit
-            import re
             m = re.search(r'\b([123])\b', user_input)
             if m:
                 selection = int(m.group(1)) - 1
@@ -571,7 +463,7 @@ class PakshiAgent:
         selected = options[selection]
         self.session.order = Order(
             order_id     = f"PKS-{uuid.uuid4().hex[:6].upper()}",
-            buyer_intent = self.session.intent.to_dict() if hasattr(self.session.intent, 'to_dict') else self.session.intent.__dict__,
+            buyer_intent = self.session.intent.to_dict() if self.session.intent else {},
             selected_swatch = selected,
         )
         self.session.state = AgentState.SWATCH_SELECTED
@@ -586,7 +478,6 @@ class PakshiAgent:
         )
         return self._respond(msg, AgentState.SWATCH_SELECTED,
                              data={"selected_swatch": asdict(selected)})
-
 
     def _handle_fallback_response(self, user_input: str) -> dict:
         """
@@ -638,7 +529,6 @@ class PakshiAgent:
                 "Please say YES to see alternative options or NO to wait for availability.",
                 AgentState.FALLBACK_PENDING
             )
-
 
     def _handle_post_selection(self, user_input: str) -> dict:
         """
@@ -713,7 +603,6 @@ class PakshiAgent:
                              data={"order": asdict(self.session.order)},
                              done=True)
 
-
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
@@ -743,33 +632,33 @@ class PakshiAgent:
     def _log(self, text: str, state: AgentState):
         pass  # swap in logging.info() for production
 
-
-# ---------------------------------------------------------------------------
-# Manual confidence computation (used for smart defaults)
-# ---------------------------------------------------------------------------
-
-def _compute_confidence_manually(intent) -> tuple[float, list[str]]:
-    """Replicates the confidence scoring from intent_parser."""
-    score = 0.0
-    missing = []
-    if intent.feel:
-        score += 0.40
-    else:
-        missing.append("feel")
-    if intent.occasion:
-        score += 0.30
-    else:
-        missing.append("occasion")
-    if intent.budget:
-        score += 0.20
-    else:
-        missing.append("budget")
-    if intent.color:
-        score += 0.10
-    else:
-        missing.append("color")
-    intent.missing = missing
-    return round(score, 2), missing
+    @staticmethod
+    def _compute_confidence_manually(intent: IntentResult) -> tuple[float, list[str]]:
+        """Replicates the confidence scoring from intent_parser."""
+        score = 0.0
+        missing = []
+        if intent.feel:
+            score += 0.40
+        else:
+            missing.append("feel")
+        if intent.occasion:
+            score += 0.30
+        else:
+            missing.append("occasion")
+        if intent.budget:
+            score += 0.20
+        else:
+            missing.append("budget")
+        if intent.color:
+            score += 0.05
+        else:
+            missing.append("color")
+        if intent.location:
+            score += 0.05
+        else:
+            missing.append("location")
+        intent.missing = missing
+        return round(score, 2), missing
 
 
 # ---------------------------------------------------------------------------
@@ -846,7 +735,7 @@ if __name__ == "__main__":
         ]
     )
 
-    # Scenario 6: Location filtering — "Kanchipuram silk saree"
+    # Scenario 6: Location filtering — "Kanchipuram silk saree" (now uses parser)
     _run_scenario(
         "Location Filtering — Kanchipuram",
         [
