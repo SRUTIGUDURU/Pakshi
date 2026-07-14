@@ -333,65 +333,53 @@ html, body, [class*="css"] {
 </style>
 """, unsafe_allow_html=True)
 
-
 # ---------------------------------------------------------------------------
-# Audio Validation Function (Fixes the "reshape" error)
+# Multilingual language detection helper
 # ---------------------------------------------------------------------------
-def _audio_contains_sound(file_path: str, threshold: int = 100) -> bool:
+def _detect_language(text: str) -> str:
     """
-    Validates that the WAV file contains actual audio (non-zero amplitude).
-    Returns True if sound is detected, False if it's pure silence or corrupted.
-    This completely eliminates the "cannot reshape tensor of 0 elements" error.
+    Detect the language of the transcribed text and return the appropriate
+    Whisper language code: 'te' (Telugu), 'ta' (Tamil), 'kn' (Kannada),
+    'bn' (Bengali), 'or' (Odia), 'hi' (Hindi), or 'en' (English).
     """
-    try:
-        with wave.open(file_path, 'rb') as wf:
-            n_frames = wf.getnframes()
-            if n_frames < 100:  # Too short to contain speech
-                return False
-            
-            # Read up to 2000 frames (enough to detect any sound)
-            read_frames = min(n_frames, 2000)
-            raw_data = wf.readframes(read_frames)
-            
-            if len(raw_data) < 100:
-                return False
-            
-            # Check if any sample has amplitude above threshold
-            sample_count = min(read_frames, 500)
-            for i in range(0, sample_count * 2, 2):
-                val = struct.unpack('<h', raw_data[i:i+2])[0]
-                if abs(val) > threshold:
-                    return True
-            
-            return False
-            
-    except Exception:
-        return False
+    text_lower = text.lower()
+    
+    # Telugu markers
+    telugu_words = {"naaku", "oka", "tella", "cheera", "kaavali", "pelli", "pellikuturu",
+                    "erupu", "pacha", "neelam", "nalla", "pillu", "ugadi", "sankranti"}
+    # Tamil markers
+    tamil_words = {"kalyanam", "pudavai", "sivappu", "pachchai", "vella", "neelam", "karuppu",
+                   "romba", "nalla", "pongal", "deepavali", "manjal"}
+    # Kannada markers
+    kannada_words = {"maduve", "chennagide", "kempu", "hasiru", "bili", "neeli", "kappu",
+                     "dasara", "sankranti", "haladi"}
+    # Bengali markers
+    bengali_words = {"biye", "shada", "lal", "sobuj", "neel", "kalo", "holud", "durga puja",
+                     "khoob", "sundor", "bhalo"}
+    # Odia markers
+    odia_words = {"bibaha", "dhala", "lal", "haria", "neela", "kala", "pila", "nuakhai"}
+    # Hindi markers
+    hindi_words = {"hai", "ka", "ki", "ke", "mein", "se", "koi", "bahut", "acha", "thoda",
+                   "shaadi", "kapda", "lena", "chahiye", "rupaye", "halka", "bhaari", "naram",
+                   "laal", "safed", "pila", "hara", "neela", "kala"}
 
-
-def _fix_wav_header(file_path: str) -> bool:
-    """
-    Attempts to fix a corrupted WAV header by rewriting it using pydub.
-    Returns True if the fix succeeded and the file contains sound.
-    """
-    try:
-        from pydub import AudioSegment
-        
-        # Try loading the file with pydub (which uses ffmpeg to parse corrupt headers)
-        audio = AudioSegment.from_file(file_path)
-        
-        # Check if there's any audio data
-        if len(audio) < 200:  # Less than 200ms = likely silence
-            return False
-        
-        # Export as a clean WAV
-        audio.export(file_path, format="wav")
-        
-        # Verify it now has sound
-        return _audio_contains_sound(file_path)
-        
-    except Exception:
-        return False
+    words = set(text_lower.split())
+    
+    if words & telugu_words:
+        return "te"  # Telugu
+    if words & tamil_words:
+        return "ta"  # Tamil
+    if words & kannada_words:
+        return "kn"  # Kannada
+    if words & bengali_words:
+        return "bn"  # Bengali
+    if words & odia_words:
+        return "or"  # Odia
+    if words & hindi_words:
+        return "hi"  # Hindi
+    
+    # Default to English if no markers found
+    return "en"
 
 
 # ---------------------------------------------------------------------------
@@ -423,7 +411,6 @@ def _load_weaver_profiles():
 def _load_whisper_model():
     try:
         import whisper
-        # Use "base" for speed, "small" for accuracy. "base" is faster.
         return whisper.load_model("base"), None
     except Exception as exc:
         return None, str(exc)
@@ -466,15 +453,14 @@ def _autoplay_audio(audio_bytes: bytes, fmt: str = "mp3") -> None:
 # Audio processing — fixed and robust
 # ---------------------------------------------------------------------------
 _WHISPER_OPTIONS = {
-    "beam_size": 3,                      # Faster than 5, still accurate
-    "temperature": (0.0, 0.2, 0.4),      # Fewer retries = faster
+    "beam_size": 3,
+    "temperature": (0.0, 0.2, 0.4),
     "compression_ratio_threshold": 2.4,
     "no_speech_threshold": 0.6,
     "condition_on_previous_text": False,
     "word_timestamps": False,
     "fp16": False,
 }
-_WHISPER_LANGUAGE = None
 
 
 # ---------------------------------------------------------------------------
@@ -494,7 +480,7 @@ def _init_buyer_state() -> None:
         "one_of_a_kind":   [],
         "buyer_orders":    [],
         "agent_thinking":  False,
-        "last_audio_hash": None,   # Tracks the last audio hash to prevent re-processing
+        "audio_processed": False,   # Simple flag to prevent re-processing
     }
     for key, val in defaults.items():
         if key not in st.session_state:
@@ -954,99 +940,119 @@ It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss
                 _send_message("hi")
                 st.rerun()
 
-            # --- FIXED AUDIO INPUT (Static Key + Hash Tracking) ---
+            # --- FIXED AUDIO INPUT (Simple flag, no hash issues) ---
             st.markdown(
                 '<div class="section-label">Speak your request</div>',
                 unsafe_allow_html=True,
             )
 
-            # Static key ensures the widget doesn't reset on reruns
+            # Always reset the processed flag on each fresh render
+            # This ensures new recordings get processed
+            if not st.session_state.get("audio_processed", False):
+                st.session_state["audio_processed"] = False
+
             audio_file = st.audio_input(
                 "Record your fabric request (speak clearly for 2-3 seconds)",
                 label_visibility="collapsed",
                 key="audio_input_main",
             )
 
-            if audio_file is not None:
-                # Generate a unique hash for this audio file
-                audio_hash = hash(bytes(audio_file.getbuffer()))
-                
-                # Only process if this is a NEW audio recording (not the same as before)
-                if st.session_state.get("last_audio_hash") != audio_hash:
-                    st.session_state["last_audio_hash"] = audio_hash
+            if audio_file is not None and not st.session_state.get("audio_processed", False):
+                # Mark as processed immediately to prevent loops
+                st.session_state["audio_processed"] = True
 
-                    whisper_model, whisper_err = _load_whisper_model()
-                    if whisper_err or whisper_model is None:
-                        st.warning(
-                            f"Voice transcription unavailable ({whisper_err}). "
-                            "Please type your request below."
-                        )
-                        st.session_state["last_audio_hash"] = None
-                    else:
-                        with st.spinner("Transcribing..."):
-                            tmp_path = None
-                            try:
-                                with tempfile.NamedTemporaryFile(
-                                    delete=False, suffix=".wav"
-                                ) as tmp:
-                                    tmp.write(audio_file.getbuffer())
-                                    tmp_path = tmp.name
+                whisper_model, whisper_err = _load_whisper_model()
+                if whisper_err or whisper_model is None:
+                    st.warning(
+                        f"Voice transcription unavailable ({whisper_err}). "
+                        "Please type your request below."
+                    )
+                    st.session_state["audio_processed"] = False
+                else:
+                    with st.spinner("Transcribing..."):
+                        tmp_path = None
+                        try:
+                            with tempfile.NamedTemporaryFile(
+                                delete=False, suffix=".wav"
+                            ) as tmp:
+                                tmp.write(audio_file.getbuffer())
+                                tmp_path = tmp.name
 
-                                # --- Audio validation removed ---
-                                # Pratilekha/Whisper handles silence internally.
-                                # The custom validator caused false negatives on Streamlit Cloud.
+                            # --- First pass: transcribe to detect language ---
+                            result = whisper_model.transcribe(
+                                tmp_path,
+                                language=None,  # Auto-detect first
+                                **_WHISPER_OPTIONS,
+                            )
+                            transcribed = (result.get("text") or "").strip()
 
-                                # --- Call model ---
-                                result = whisper_model.transcribe(
-                                    tmp_path,
-                                    language=_WHISPER_LANGUAGE,
-                                    **_WHISPER_OPTIONS,
+                            if not transcribed or len(transcribed) < 2:
+                                st.warning(
+                                    "Could not detect clear speech. "
+                                    "Please try again or type below."
                                 )
-                                transcribed = (result.get("text") or "").strip()
-
-                                if transcribed and len(transcribed) > 2:
-                                    # Check for hallucination
-                                    if transcribed.lower() in {"thank you", "thanks", "bye", "hello", "hi", "ok"}:
-                                        st.warning(
-                                            f'Transcribed: "{transcribed}" — this seems too short or unclear. '
-                                            "Please try again or type your request."
-                                        )
-                                        st.session_state["last_audio_hash"] = None
-                                        st.rerun()
-                                        return
-                                    
-                                    st.success(f"Heard: {transcribed}")
-                                    _send_message(transcribed)
-                                    st.session_state["last_audio_hash"] = None
-                                    st.rerun()
-                                else:
-                                    st.warning(
-                                        "Could not detect clear speech. "
-                                        "Please try again or type below."
-                                    )
-                                    st.session_state["last_audio_hash"] = None
-                                    st.rerun()
-
-                            except Exception as exc:
-                                err_msg = str(exc)
-                                if "reshape" in err_msg:
-                                    st.warning(
-                                        "🔇 The recording was silent or corrupted. "
-                                        "Please try speaking clearly for 2-3 seconds, or type your request below."
-                                    )
-                                else:
-                                    st.error(
-                                        f"Transcription error: {err_msg}. "
-                                        "Please type your request below."
-                                    )
-                                st.session_state["last_audio_hash"] = None
+                                st.session_state["audio_processed"] = False
                                 st.rerun()
-                            finally:
-                                if tmp_path and os.path.exists(tmp_path):
-                                    try:
-                                        os.unlink(tmp_path)
-                                    except OSError:
-                                        pass
+                                return
+
+                            # --- Detect language from the transcribed text ---
+                            detected_lang = _detect_language(transcribed)
+                            
+                            # --- Second pass: transcribe with the detected language ---
+                            # This ensures accurate transcription for the specific language
+                            result = whisper_model.transcribe(
+                                tmp_path,
+                                language=detected_lang,
+                                **_WHISPER_OPTIONS,
+                            )
+                            transcribed = (result.get("text") or "").strip()
+
+                            if not transcribed or len(transcribed) < 2:
+                                st.warning(
+                                    "Could not detect clear speech. "
+                                    "Please try again or type below."
+                                )
+                                st.session_state["audio_processed"] = False
+                                st.rerun()
+                                return
+
+                            # Map language code to display name
+                            lang_map = {
+                                "te": "Telugu",
+                                "ta": "Tamil",
+                                "kn": "Kannada",
+                                "bn": "Bengali",
+                                "or": "Odia",
+                                "hi": "Hindi",
+                                "en": "English"
+                            }
+                            lang_display = lang_map.get(detected_lang, "Unknown")
+                            
+                            st.success(f"Heard ({lang_display}): {transcribed}")
+                            _send_message(transcribed)
+                            st.session_state["audio_processed"] = False
+                            st.rerun()
+
+                        except Exception as exc:
+                            err_msg = str(exc)
+                            if "reshape" in err_msg:
+                                st.warning(
+                                    "🔇 The recording was silent or corrupted. "
+                                    "Please try speaking clearly for 2-3 seconds, or type your request below."
+                                )
+                            else:
+                                st.error(
+                                    f"Transcription error: {err_msg}. "
+                                    "Please type your request below."
+                                )
+                            st.session_state["audio_processed"] = False
+                            st.rerun()
+                        finally:
+                            if tmp_path and os.path.exists(tmp_path):
+                                try:
+                                    os.unlink(tmp_path)
+                                except OSError:
+                                    pass
 
             st.markdown(
                 '<div class="section-label" style="margin-top:0.8rem;">Or type</div>',
@@ -1075,23 +1081,15 @@ It moves to the One of a Kind resale tab at a wholesale price. No waste, no loss
                     unsafe_allow_html=True,
                 )
                 st.markdown(
-                    f'<div class="section-label">{_t("Try saying...", "यह कहकर देखें...")}</div>',
+                    '<div class="section-label">Try saying...</div>',
                     unsafe_allow_html=True,
                 )
-                examples = _t(
-                    [
-                        "Light saree for summer wedding, Rs.1500",
-                        "Shaadi ke liye flowy cotton, around Rs.2000",
-                        "Something royal for reception, deep red silk, Rs.8000",
-                        "Breathable office saree, Rs.700, navy blue",
-                    ],
-                    [
-                        "गर्मियों की शादी के लिए हल्की साड़ी, Rs.1500",
-                        "शादी के लिए फ्लोई कॉटन, लगभग Rs.2000",
-                        "रिसेप्शन के लिए रॉयल साड़ी, गहरा लाल सिल्क, Rs.8000",
-                        "ऑफिस के लिए सांस लेने वाली साड़ी, Rs.700",
-                    ],
-                )
+                examples = [
+                    "Light saree for summer wedding, Rs.1500",
+                    "Shaadi ke liye flowy cotton, around Rs.2000",
+                    "Something royal for reception, deep red silk, Rs.8000",
+                    "Breathable office saree, Rs.700, navy blue",
+                ]
                 cols = st.columns(2)
                 for i, ex in enumerate(examples):
                     with cols[i % 2]:
