@@ -14,11 +14,21 @@ from setup_chromadb import load_swatches_into_chroma, TFIDFEmbeddingFunction
 
 BASE_DIR = Path(__file__).parent
 
+# ---------------------------------------------------------------------------
+# Load both ontology and full swatch catalog ONCE at module load
+# ---------------------------------------------------------------------------
+def _load_swatch_catalog():
+    """Load the complete fabric_swatches.json and create a lookup by swatch_id."""
+    with open(BASE_DIR / "fabric_swatches.json") as f:
+        data = json.load(f)
+    # Build a fast lookup dictionary: swatch_id -> full swatch object
+    return {swatch["id"]: swatch for swatch in data["fabric_swatches"]}
+
+_SWATCH_CATALOG = _load_swatch_catalog()
 
 def load_ontology():
     with open(BASE_DIR / "fabric_ontology.json") as f:
         return json.load(f)
-
 
 def build_query_text(intent: dict) -> str:
     """
@@ -39,7 +49,6 @@ def build_query_text(intent: dict) -> str:
         parts.append(intent["location"])
     return " ".join(parts)
 
-
 def get_fallback(fabric_type: str, budget: int, ontology: dict) -> dict | None:
     """Returns fallback rule if budget is below minimum for fabric_type."""
     for rule in ontology["budget_fallback_rules"]:
@@ -47,7 +56,6 @@ def get_fallback(fabric_type: str, budget: int, ontology: dict) -> dict | None:
                 budget < rule["budget_too_low_below"]):
             return rule
     return None
-
 
 def _matches_location(meta: dict, requested_location: str | None) -> bool:
     """
@@ -71,6 +79,17 @@ def _matches_location(meta: dict, requested_location: str | None) -> bool:
     
     return False
 
+def _get_swatch_details(swatch_id: str) -> dict:
+    """
+    Look up rich text/visual details from the original JSON file.
+    Returns a dict with description, image_url, and reviews.
+    """
+    swatch = _SWATCH_CATALOG.get(swatch_id, {})
+    return {
+        "description": swatch.get("description", "Handwoven by skilled artisans."),
+        "image_url": swatch.get("image_url", ""),
+        "reviews": swatch.get("reviews", []),
+    }
 
 def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
     """
@@ -123,8 +142,11 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
         results = []
         for r in ranked:
             m = r["meta"]
+            swatch_id = m["swatch_id"]
+            details = _get_swatch_details(swatch_id)
+            
             results.append({
-                "swatch_id":      m["swatch_id"],
+                "swatch_id":      swatch_id,
                 "fabric_type":    m["fabric_type"],
                 "weave_style":    m["weave_style"],
                 "color":          m["color"],
@@ -136,9 +158,10 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
                 "weaver_rating":  m["weaver_rating"],
                 "sensory_tags":   m["sensory_tags"].split(","),
                 "occasion_tags":  m["occasion_tags"].split(","),
-                "description":    m.get("description", "Handwoven by skilled artisans."),
-                "image_url":      m.get("image_url", ""),
-                "reviews":        json.loads(m.get("reviews", "[]")),
+                # Rich details from the JSON file:
+                "description":    details["description"],
+                "image_url":      details["image_url"],
+                "reviews":        details["reviews"],
             })
 
         location_msg = f" in {location}" if location else ""
@@ -183,8 +206,11 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
         fallback_swatches = []
         for r in fallback_results:
             m = r["meta"]
+            swatch_id = m["swatch_id"]
+            details = _get_swatch_details(swatch_id)
+            
             fallback_swatches.append({
-                "swatch_id":      m["swatch_id"],
+                "swatch_id":      swatch_id,
                 "fabric_type":    m["fabric_type"],
                 "weave_style":    m["weave_style"],
                 "color":          m["color"],
@@ -196,9 +222,9 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
                 "weaver_rating":  m["weaver_rating"],
                 "sensory_tags":   m["sensory_tags"].split(","),
                 "occasion_tags":  m["occasion_tags"].split(","),
-                "description":    m.get("description", "Handwoven by skilled artisans."),
-                "image_url":      m.get("image_url", ""),
-                "reviews":        json.loads(m.get("reviews", "[]")),
+                "description":    details["description"],
+                "image_url":      details["image_url"],
+                "reviews":        details["reviews"],
             })
 
         location_msg = f" in {location}" if location else ""
