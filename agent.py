@@ -132,11 +132,11 @@ _WEAVER_PROFILES = _load_weaver_profiles()
 
 
 # ---------------------------------------------------------------------------
-# Location extraction (new)
+# Location extraction — now with Devanagari Hindi support
 # Maps known weaving clusters / states to canonical names
 # ---------------------------------------------------------------------------
 _LOCATION_ALIASES: dict[str, str] = {
-    # Clusters
+    # Clusters (English / Romanised)
     "kanchipuram": "Kanchipuram",
     "kancheepuram": "Kanchipuram",
     "pochampally": "Pochampally",
@@ -173,6 +173,38 @@ _LOCATION_ALIASES: dict[str, str] = {
     "maharashtra": "Maharashtra",
     "bihar": "Bihar",
     "uttar pradesh": "Uttar Pradesh",
+    
+    # Devanagari Hindi
+    "कांचीपुरम": "Kanchipuram",
+    "कांचीपुरम": "Kanchipuram",
+    "पोचमपल्ली": "Pochampally",
+    "बनारसी": "Varanasi",
+    "वाराणसी": "Varanasi",
+    "इलकल": "Ilkal",
+    "कोटा": "Kota",
+    "चंदेरी": "Chanderi",
+    "महेश्वर": "Maheshwar",
+    "धर्मावरम": "Dharmavaram",
+    "मैसूर": "Mysore",
+    "संबलपुर": "Sambalpuri",
+    "बागरू": "Bagru",
+    "संगानेर": "Sanganer",
+    "कच्छ": "Kutch",
+    "केरल": "Kerala",
+    "तमिलनाडु": "Tamil Nadu",
+    "आंध्र": "Andhra Pradesh",
+    "आंध्र प्रदेश": "Andhra Pradesh",
+    "तेलंगाना": "Telangana",
+    "कर्नाटक": "Karnataka",
+    "राजस्थान": "Rajasthan",
+    "पश्चिम बंगाल": "West Bengal",
+    "बंगाल": "West Bengal",
+    "उड़ीसा": "Odisha",
+    "ओडिशा": "Odisha",
+    "गुजरात": "Gujarat",
+    "महाराष्ट्र": "Maharashtra",
+    "बिहार": "Bihar",
+    "उत्तर प्रदेश": "Uttar Pradesh",
 }
 
 def _extract_location(text: str) -> str | None:
@@ -368,13 +400,26 @@ class PakshiAgent:
         If too vague, ask the most important missing question.
         """
         intent = parse_intent(user_input)
-        # Enhance intent with location
+        
+        # ── Extract location (supports Devanagari) ──
         location = _extract_location(user_input)
         if location:
-            # Store location in the intent for later use in retrieval
-            intent.location = location  # we'll add this field dynamically
+            intent.location = location
+        
         self.session.intent = intent
 
+        # ── SMART DEFAULT: If user gave location or color but no feel, set default feel ──
+        # This prevents the agent from asking "How do you want the fabric to feel?"
+        # when the user is clearly asking for something specific.
+        if not intent.feel:
+            has_location = hasattr(intent, 'location') and intent.location
+            has_color = intent.color is not None
+            if has_location or has_color:
+                # Set a neutral default feel
+                intent.feel = ["comfortable", "elegant"]
+                # Recalculate confidence after adding feel
+                intent.confidence, _ = _compute_confidence_manually(intent)
+        
         # Too vague — ask follow-up
         if intent.confidence < 0.5:
             self.session.low_confidence_strikes += 1
@@ -700,6 +745,34 @@ class PakshiAgent:
 
 
 # ---------------------------------------------------------------------------
+# Manual confidence computation (used for smart defaults)
+# ---------------------------------------------------------------------------
+
+def _compute_confidence_manually(intent) -> tuple[float, list[str]]:
+    """Replicates the confidence scoring from intent_parser."""
+    score = 0.0
+    missing = []
+    if intent.feel:
+        score += 0.40
+    else:
+        missing.append("feel")
+    if intent.occasion:
+        score += 0.30
+    else:
+        missing.append("occasion")
+    if intent.budget:
+        score += 0.20
+    else:
+        missing.append("budget")
+    if intent.color:
+        score += 0.10
+    else:
+        missing.append("color")
+    intent.missing = missing
+    return round(score, 2), missing
+
+
+# ---------------------------------------------------------------------------
 # Test harness — full end-to-end conversation simulations
 # ---------------------------------------------------------------------------
 
@@ -778,6 +851,16 @@ if __name__ == "__main__":
         "Location Filtering — Kanchipuram",
         [
             "Kanchipuram silk saree for wedding, under ₹5000",
+            "1",
+            "confirm",
+        ]
+    )
+
+    # Scenario 7: Hindi Devanagari — "yellow Kanchipuram saree"
+    _run_scenario(
+        "Hindi Devanagari — Yellow Kanchipuram",
+        [
+            "मुझे एक पीले रंग की कांचीपुरम साड़ी चाहिए",
             "1",
             "confirm",
         ]
