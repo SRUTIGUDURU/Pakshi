@@ -3,6 +3,9 @@ Pakshi - RAG Retrieval Module
 Given a parsed buyer intent dict, retrieves the top 3 matching swatches
 from ChromaDB, applies budget filtering, and returns ranked results.
 If no match within budget, triggers fallback logic from fabric_ontology.json.
+
+Supports location filtering — if the buyer specifies a region (e.g., "Kanchipuram"),
+only swatches from that region are returned.
 """
 
 import json
@@ -27,10 +30,13 @@ def build_query_text(intent: dict) -> str:
       - occasion  : str        e.g. "wedding"
       - budget    : int        e.g. 1500
       - color     : str|None   e.g. "green" (optional)
+      - location  : str|None   e.g. "Kanchipuram" (optional)
     """
     parts = intent.get("feel", []) + [intent.get("occasion", "")]
     if intent.get("color"):
         parts.append(intent["color"])
+    if intent.get("location"):
+        parts.append(intent["location"])
     return " ".join(parts)
 
 
@@ -41,6 +47,29 @@ def get_fallback(fabric_type: str, budget: int, ontology: dict) -> dict | None:
                 budget < rule["budget_too_low_below"]):
             return rule
     return None
+
+
+def _matches_location(meta: dict, requested_location: str | None) -> bool:
+    """
+    Check if a swatch's weaver matches the requested location.
+    Matches against both weaver_cluster and weaver_state.
+    """
+    if not requested_location:
+        return True
+    
+    location_lower = requested_location.lower()
+    
+    # Check cluster (e.g., "Kanchipuram", "Pochampally")
+    cluster = meta.get("weaver_cluster", "").lower()
+    if location_lower in cluster or cluster in location_lower:
+        return True
+    
+    # Check state (e.g., "Tamil Nadu", "Telangana")
+    state = meta.get("weaver_state", "").lower()
+    if location_lower in state or state in location_lower:
+        return True
+    
+    return False
 
 
 def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
@@ -59,7 +88,7 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
     collection, ef = load_swatches_into_chroma()
 
     budget = intent.get("budget", 99999)
-    occasion = intent.get("occasion", "")
+    location = intent.get("location")
     query_text = build_query_text(intent)
 
     # Step 1 — semantic search over full collection (retrieve more, filter after)
@@ -76,16 +105,18 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
             "document": raw_results["documents"][0][i],
         })
 
-    # Step 2 — filter by budget and availability
-    within_budget = [
+    # Step 2 — filter by budget, availability, AND location
+    filtered = [
         c for c in candidates
-        if c["meta"]["price_inr"] <= budget and c["meta"]["available"]
+        if (c["meta"]["price_inr"] <= budget 
+            and c["meta"]["available"]
+            and _matches_location(c["meta"], location))
     ]
 
     # Step 3 — if we have matches, rank by distance then weaver rating
-    if within_budget:
+    if filtered:
         ranked = sorted(
-            within_budget,
+            filtered,
             key=lambda x: (x["distance"], -x["meta"]["weaver_rating"])
         )[:top_k]
 
@@ -105,20 +136,23 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
                 "weaver_rating":  m["weaver_rating"],
                 "sensory_tags":   m["sensory_tags"].split(","),
                 "occasion_tags":  m["occasion_tags"].split(","),
+                "description":    m.get("description", "Handwoven by skilled artisans."),
+                "image_url":      m.get("image_url", ""),
+                "reviews":        json.loads(m.get("reviews", "[]")),
             })
 
+        location_msg = f" in {location}" if location else ""
         return {
             "status": "match",
             "results": results,
             "fallback": None,
             "agent_message": (
-                f"Found {len(results)} matching swatches within ₹{budget}. "
+                f"Found {len(results)} matching swatches{location_msg} within ₹{budget}. "
                 f"Please select one to proceed."
             )
         }
 
     # Step 4 — no match within budget, check ontology for fallback
-    # Guess the intended fabric from feel tags
     feel_tags = intent.get("feel", [])
     sensory_map = ontology["sensory_to_fabric_mapping"]
     fabric_votes: dict[str, int] = {}
@@ -131,19 +165,15 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
 
     if fallback_rule and fallback_rule["fallback_fabric"]:
         fallback_fabric = fallback_rule["fallback_fabric"]
-        fallback_min = next(
-            f["price_range_inr"]["min"]
-            for f in ontology["fabrics"]
-            if f["id"] == fallback_fabric
-        )
-
+        
         # Retrieve swatches for the fallback fabric within a relaxed budget
         relaxed_budget = budget + 800
         fallback_candidates = [
             c for c in candidates
             if (c["meta"]["fabric_type"] == fallback_fabric
                 and c["meta"]["price_inr"] <= relaxed_budget
-                and c["meta"]["available"])
+                and c["meta"]["available"]
+                and _matches_location(c["meta"], location))
         ]
         fallback_results = sorted(
             fallback_candidates,
@@ -166,10 +196,14 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
                 "weaver_rating":  m["weaver_rating"],
                 "sensory_tags":   m["sensory_tags"].split(","),
                 "occasion_tags":  m["occasion_tags"].split(","),
+                "description":    m.get("description", "Handwoven by skilled artisans."),
+                "image_url":      m.get("image_url", ""),
+                "reviews":        json.loads(m.get("reviews", "[]")),
             })
 
+        location_msg = f" in {location}" if location else ""
         agent_msg = (
-            f"No {intended_fabric.replace('_',' ')} match found within ₹{budget}. "
+            f"No {intended_fabric.replace('_',' ')} match found{location_msg} within ₹{budget}. "
             f"{fallback_rule['message']} "
             f"Say YES to see {fallback_fabric.replace('_',' ')} options "
             f"or NO to wait for ₹{budget} availability."
@@ -183,75 +217,13 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
         }
 
     # Step 5 — truly no match
+    location_msg = f" in {location}" if location else ""
     return {
         "status": "no_match",
         "results": [],
         "fallback": None,
         "agent_message": (
-            f"No swatches found for your request within ₹{budget}. "
+            f"No swatches found{location_msg} within ₹{budget}. "
             f"We'll notify you when a matching weaver becomes available."
         )
     }
-
-
-# ---------------------------------------------------------------------------
-# Quick test harness
-# ---------------------------------------------------------------------------
-if __name__ == "__main__":
-    test_cases = [
-        {
-            "label": "Happy path — cotton, wedding, ₹1500",
-            "intent": {
-                "feel": ["light", "airy", "elegant"],
-                "occasion": "wedding",
-                "budget": 1500,
-                "color": "green"
-            }
-        },
-        {
-            "label": "Budget fallback — silk requested but budget ₹1500",
-            "intent": {
-                "feel": ["rich", "royal", "glossy"],
-                "occasion": "wedding",
-                "budget": 1500,
-                "color": None
-            }
-        },
-        {
-            "label": "Summer wedding — flowy, cotton-silk range",
-            "intent": {
-                "feel": ["flowy", "airy", "breathable yet elegant"],
-                "occasion": "summer_wedding",
-                "budget": 2000,
-                "color": "pastel"
-            }
-        },
-        {
-            "label": "Casual daily wear — very low budget ₹400",
-            "intent": {
-                "feel": ["light", "soft", "everyday"],
-                "occasion": "casual",
-                "budget": 400,
-                "color": None
-            }
-        },
-    ]
-
-    print("=" * 60)
-    print("PAKSHI RAG RETRIEVAL — TEST RUNS")
-    print("=" * 60)
-
-    for case in test_cases:
-        print(f"\n📌 {case['label']}")
-        print(f"   Intent: {case['intent']}")
-        result = retrieve_swatches(case["intent"])
-        print(f"   Status: {result['status'].upper()}")
-        print(f"   Agent:  {result['agent_message']}")
-        if result["results"]:
-            print(f"   Top matches:")
-            for r in result["results"]:
-                print(f"     → [{r['swatch_id']}] {r['fabric_type']} | "
-                      f"{r['weave_style']} | {r['color']} | "
-                      f"₹{r['price_inr']} | {r['weaver_name']} "
-                      f"({r['weaver_cluster']}) ⭐{r['weaver_rating']}")
-        print()
