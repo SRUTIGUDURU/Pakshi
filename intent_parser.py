@@ -1,5 +1,5 @@
 """
-Pakshi — Intent Parser (Devanagari‑Enhanced)
+Pakshi — Intent Parser (Devanagari‑Friendly with substring matching)
 """
 import re
 import json
@@ -14,7 +14,7 @@ class IntentResult:
     budget_flex:   bool            = False
     color:         str | None      = None
     color_family:  str | None      = None
-    location:      str | None      = None      # <<< NEW
+    location:      str | None      = None
     urgency_days:  int | None      = None
     language_hint: str             = "english"
     raw_input:     str             = ""
@@ -32,75 +32,83 @@ _VALID_SENSORY = set()
 for _fab in _ONTOLOGY["fabrics"]:
     _VALID_SENSORY.update(_fab["sensory_descriptors"])
 
-# ---------- OCCASION ALIASES (Devanagari included) ----------
+# ---------- OCCASION ALIASES ----------
 OCCASION_ALIASES = {
-    "wedding": "wedding", "shaadi": "wedding", "शादी": "wedding",
-    "विवाह": "wedding", "reception": "reception", "रिसेप्शन": "reception",
-    "festival": "festival", "त्योहार": "festival", "पूजा": "festival",
-    "casual": "casual", "daily": "daily_wear", "रोज़": "daily_wear",
-    "office": "work", "ऑफिस": "work", "college": "college", "कॉलेज": "college",
+    # English / romanised
+    "wedding": "wedding", "shaadi": "wedding", "shadi": "wedding",
+    "reception": "reception", "engagement": "reception",
+    "festival": "festival", "puja": "festival", "pooja": "festival",
+    "casual": "casual", "daily": "daily_wear", "daily wear": "daily_wear",
+    "office": "work", "work": "work", "college": "college",
     "formal": "formal", "semi formal": "semi_formal",
-    "ceremony": "ceremony", "समारोह": "ceremony",
+    "ceremony": "ceremony",
+    # Devanagari
+    "शादी": "wedding", "विवाह": "wedding", "रिसेप्शन": "reception",
+    "त्योहार": "festival", "पूजा": "festival", "दिवाली": "festival",
+    "होली": "festival", "ऑफिस": "work", "कॉलेज": "college",
+    "समारोह": "ceremony", "रोज़": "daily_wear", "कैज़ुअल": "casual",
 }
 
-# ---------- FEEL KEYWORDS (Devanagari + romanised) ----------
+# ---------- FEEL KEYWORDS ----------
 FEEL_KEYWORDS = {
-    "light": ["light","airy"], "halka": ["light","airy"], "हल्का": ["light","airy"],
-    "heavy": ["heavy","stiff"], "bhaari": ["heavy","stiff"], "भारी": ["heavy","stiff"],
-    "soft": ["soft","comfortable"], "naram": ["soft"], "नरम": ["soft"],
-    "rich": ["rich","elegant"], "royal": ["royal","grand"], "शाही": ["royal","grand"],
-    "luxurious": ["luxurious","rich"], "शानदार": ["luxurious","rich"],
-    "flowy": ["flowy","airy"], "बहने वाला": ["flowy","airy"],
-    "breathable": ["breathable","airy"], "सांस लेने योग्य": ["breathable","airy"],
-    "cool": ["cool","breathable"], "ठंडा": ["cool","breathable"],
-    "glossy": ["glossy"], "चमकदार": ["glossy","shiny"],
-    "stiff": ["stiff"], "कड़ा": ["stiff"],
-    "comfortable": ["comfortable"], "आरामदायक": ["comfortable"],
-    "traditional": ["traditional"], "पारंपरिक": ["traditional"],
+    # English / romanised
+    "light": ["light","airy"], "halka": ["light","airy"],
+    "heavy": ["heavy","stiff"], "bhaari": ["heavy","stiff"],
+    "soft": ["soft","comfortable"], "naram": ["soft"],
+    "rich": ["rich","elegant"], "royal": ["royal","grand"], "shahi": ["royal","grand"],
+    "luxurious": ["luxurious","rich"], "flowy": ["flowy","airy"],
+    "breathable": ["breathable","airy"], "cool": ["cool","breathable"],
+    "glossy": ["glossy"], "stiff": ["stiff"], "comfortable": ["comfortable"],
+    "traditional": ["traditional"],
+    # Devanagari
+    "हल्का": ["light","airy"], "भारी": ["heavy","stiff"],
+    "नरम": ["soft"], "शाही": ["royal","grand"], "शानदार": ["luxurious","rich"],
+    "बहने वाला": ["flowy","airy"], "सांस लेने योग्य": ["breathable","airy"],
+    "ठंडा": ["cool","breathable"], "चमकदार": ["glossy","shiny"],
+    "कड़ा": ["stiff"], "आरामदायक": ["comfortable"], "पारंपरिक": ["traditional"],
 }
 
-# ---------- COLOR KEYWORDS (Devanagari + others) ----------
+# ---------- COLOR KEYWORDS ----------
 COLOR_KEYWORDS = {
-    "लाल": ("red","red"), "red": ("red","red"),
-    "गुलाबी": ("pink","pink"), "pink": ("pink","pink"),
-    "नीला": ("blue","blue"), "blue": ("blue","blue"),
-    "हरा": ("green","green"), "green": ("green","green"),
-    "पीला": ("yellow","yellow"), "yellow": ("yellow","yellow"),
-    "नारंगी": ("orange","orange"), "orange": ("orange","orange"),
-    "बैंगनी": ("purple","purple"), "purple": ("purple","purple"),
-    "सफेद": ("white","neutral"), "white": ("white","neutral"),
-    "काला": ("black","neutral"), "black": ("black","neutral"),
-    "भूरा": ("brown","neutral"), "beige": ("beige","neutral"),
-    "ग्रे": ("grey","neutral"), "grey": ("grey","neutral"),
+    # English / romanised
+    "red": ("red","red"), "pink": ("pink","pink"), "blue": ("blue","blue"),
+    "green": ("green","green"), "yellow": ("yellow","yellow"),
+    "orange": ("orange","orange"), "purple": ("purple","purple"),
+    "white": ("white","neutral"), "black": ("black","neutral"),
+    "beige": ("beige","neutral"), "grey": ("grey","neutral"),
+    "maroon": ("maroon","red"), "navy": ("navy blue","blue"),
+    "teal": ("teal","green"), "mint": ("mint green","green"),
+    # Devanagari
+    "लाल": ("red","red"), "गुलाबी": ("pink","pink"),
+    "नीला": ("blue","blue"), "हरा": ("green","green"),
+    "पीला": ("yellow","yellow"), "नारंगी": ("orange","orange"),
+    "बैंगनी": ("purple","purple"), "सफेद": ("white","neutral"),
+    "काला": ("black","neutral"), "भूरा": ("brown","neutral"),
+    "ग्रे": ("grey","neutral"),
 }
 
-# ---------- LOCATION ALIASES (Devanagari included) ----------
+# ---------- LOCATION ALIASES ----------
 LOCATION_ALIASES = {
-    "कांचीपुरम": "Kanchipuram", "kanchipuram": "Kanchipuram",
-    "बनारस": "Varanasi", "varanasi": "Varanasi", "banarasi": "Varanasi",
-    "पोचमपल्ली": "Pochampally", "pochampally": "Pochampally",
-    "इलकल": "Ilkal", "ilkal": "Ilkal",
-    "कोटा": "Kota", "kota": "Kota",
-    "चंदेरी": "Chanderi", "chanderi": "Chanderi",
-    "महेश्वर": "Maheshwar", "maheshwar": "Maheshwar",
-    "धर्मावरम": "Dharmavaram", "dharmavaram": "Dharmavaram",
-    "मैसूर": "Mysore", "mysore": "Mysore",
-    "संबलपुर": "Sambalpuri", "sambalpuri": "Sambalpuri",
-    "बागरू": "Bagru", "bagru": "Bagru",
-    "संगानेर": "Sanganer", "sanganer": "Sanganer",
-    "कच्छ": "Kutch", "kutch": "Kutch",
-    "केरल": "Kerala", "kerala": "Kerala",
-    "तमिलनाडु": "Tamil Nadu", "tamil nadu": "Tamil Nadu",
-    "आंध्र": "Andhra Pradesh", "andhra pradesh": "Andhra Pradesh",
-    "तेलंगाना": "Telangana", "telangana": "Telangana",
-    "कर्नाटक": "Karnataka", "karnataka": "Karnataka",
-    "राजस्थान": "Rajasthan", "rajasthan": "Rajasthan",
-    "पश्चिम बंगाल": "West Bengal", "west bengal": "West Bengal",
-    "उड़ीसा": "Odisha", "odisha": "Odisha",
-    "गुजरात": "Gujarat", "gujarat": "Gujarat",
-    "महाराष्ट्र": "Maharashtra", "maharashtra": "Maharashtra",
-    "बिहार": "Bihar", "bihar": "Bihar",
-    "उत्तर प्रदेश": "Uttar Pradesh", "uttar pradesh": "Uttar Pradesh",
+    # English / romanised
+    "kanchipuram": "Kanchipuram", "banaras": "Varanasi", "varanasi": "Varanasi",
+    "pochampally": "Pochampally", "ilkal": "Ilkal", "kota": "Kota",
+    "chanderi": "Chanderi", "maheshwar": "Maheshwar", "dharmavaram": "Dharmavaram",
+    "mysore": "Mysore", "sambalpuri": "Sambalpuri", "bagru": "Bagru",
+    "sanganer": "Sanganer", "kutch": "Kutch", "kerala": "Kerala",
+    "tamil nadu": "Tamil Nadu", "andhra pradesh": "Andhra Pradesh",
+    "telangana": "Telangana", "karnataka": "Karnataka", "rajasthan": "Rajasthan",
+    "west bengal": "West Bengal", "odisha": "Odisha", "gujarat": "Gujarat",
+    "maharashtra": "Maharashtra", "bihar": "Bihar", "uttar pradesh": "Uttar Pradesh",
+    # Devanagari
+    "कांचीपुरम": "Kanchipuram", "बनारस": "Varanasi", "वाराणसी": "Varanasi",
+    "पोचमपल्ली": "Pochampally", "इलकल": "Ilkal", "कोटा": "Kota",
+    "चंदेरी": "Chanderi", "महेश्वर": "Maheshwar", "धर्मावरम": "Dharmavaram",
+    "मैसूर": "Mysore", "संबलपुर": "Sambalpuri", "बागरू": "Bagru",
+    "संगानेर": "Sanganer", "कच्छ": "Kutch", "केरल": "Kerala",
+    "तमिलनाडु": "Tamil Nadu", "आंध्र": "Andhra Pradesh", "तेलंगाना": "Telangana",
+    "कर्नाटक": "Karnataka", "राजस्थान": "Rajasthan", "पश्चिम बंगाल": "West Bengal",
+    "उड़ीसा": "Odisha", "गुजरात": "Gujarat", "महाराष्ट्र": "Maharashtra",
+    "बिहार": "Bihar", "उत्तर प्रदेश": "Uttar Pradesh",
 }
 
 # ---------- BUDGET (handles Devanagari numerals) ----------
@@ -162,36 +170,37 @@ def _detect_language(text: str) -> str:
         return "romanised_odia"
     return "english"
 
-# ---------- EXTRACTORS ----------
+# ---------- EXTRACTORS (substring based, no word boundaries) ----------
 def _extract_feel(text: str) -> list[str]:
     found = set()
     text_lower = text.lower()
     for phrase, tags in sorted(FEEL_KEYWORDS.items(), key=lambda x: len(x[0]), reverse=True):
-        if re.search(r'\b' + re.escape(phrase) + r'\b', text_lower):
+        if phrase in text_lower:
             found.update(tags)
+    # Also check direct sensory tags from ontology
     for tag in _VALID_SENSORY:
-        if re.search(r'\b' + re.escape(tag) + r'\b', text_lower):
+        if tag in text_lower:
             found.add(tag)
     return sorted(found)
 
 def _extract_occasion(text: str) -> str | None:
     text_lower = text.lower()
     for phrase, canon in sorted(OCCASION_ALIASES.items(), key=lambda x: len(x[0]), reverse=True):
-        if re.search(r'\b' + re.escape(phrase) + r'\b', text_lower):
+        if phrase in text_lower:
             return canon
     return None
 
 def _extract_color(text: str):
     text_lower = text.lower()
     for phrase, (display, family) in sorted(COLOR_KEYWORDS.items(), key=lambda x: len(x[0]), reverse=True):
-        if re.search(r'\b' + re.escape(phrase) + r'\b', text_lower):
+        if phrase in text_lower:
             return display, family
     return None, None
 
 def _extract_location(text: str) -> str | None:
     text_lower = text.lower()
     for alias, canon in LOCATION_ALIASES.items():
-        if re.search(r'\b' + re.escape(alias) + r'\b', text_lower):
+        if alias in text_lower:
             return canon
     return None
 
@@ -227,7 +236,6 @@ def parse_intent(raw_text: str) -> IntentResult:
     result.location = _extract_location(raw_text)
     result.urgency_days = _extract_urgency(raw_text)
 
-    # Smart default: if location or color given but no feel, inject a neutral feel
     if not result.feel and (result.location or result.color):
         result.feel = ["comfortable", "elegant"]
 
