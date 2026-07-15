@@ -1,5 +1,6 @@
 """
-Pakshi — Intent Parser (Final – robust location, colour & budget)
+Pakshi — Intent Parser (Comprehensive – extracts location, colour, budget,
+feel, occasion, weave/style, fabric type, urgency, and more)
 """
 import re
 import json
@@ -15,6 +16,8 @@ class IntentResult:
     color:         str | None      = None
     color_family:  str | None      = None
     location:      str | None      = None
+    weave:         list[str]       = field(default_factory=list)   # NEW
+    fabric:        list[str]       = field(default_factory=list)   # NEW
     urgency_days:  int | None      = None
     language_hint: str             = "english"
     raw_input:     str             = ""
@@ -45,7 +48,7 @@ OCCASION_ALIASES = {
     "त्योहार": "festival", "पूजा": "festival", "दिवाली": "festival",
     "होली": "festival", "ऑफिस": "work", "कॉलेज": "college",
     "समारोह": "ceremony", "रोज़": "daily_wear", "कैज़ुअल": "casual",
-    "फेस्टिवल": "festival",  # added
+    "फेस्टिवल": "festival",
 }
 
 # ---------- FEEL KEYWORDS ----------
@@ -66,7 +69,7 @@ FEEL_KEYWORDS = {
     "कड़ा": ["stiff"], "आरामदायक": ["comfortable"], "पारंपरिक": ["traditional"],
 }
 
-# ---------- COLOR KEYWORDS (more inflected forms) ----------
+# ---------- COLOR KEYWORDS (inflected forms) ----------
 COLOR_KEYWORDS = {
     "red": ("red","red"), "pink": ("pink","pink"), "blue": ("blue","blue"),
     "green": ("green","green"), "yellow": ("yellow","yellow"),
@@ -87,13 +90,16 @@ COLOR_KEYWORDS = {
     "ग्रे": ("grey","neutral"), "धूसर": ("grey","neutral"),
 }
 
-# ---------- LOCATION ALIASES (extra variants) ----------
+# ---------- LOCATION ALIASES (complete, with new entries) ----------
 LOCATION_ALIASES = {
     # Banaras / Varanasi
     "banaras": "Varanasi", "varanasi": "Varanasi", "kashi": "Varanasi",
     "बनारस": "Varanasi", "वाराणसी": "Varanasi", "बनारसी": "Varanasi", "काशी": "Varanasi",
-    # Others
+    # Kanchipuram
     "kanchipuram": "Kanchipuram", "कांचीपुरम": "Kanchipuram",
+    # Venkatagiri – new
+    "venkatagiri": "Venkatagiri", "वेंकटागिरी": "Venkatagiri",
+    # Others
     "pochampally": "Pochampally", "पोचमपल्ली": "Pochampally",
     "ilkal": "Ilkal", "इलकल": "Ilkal",
     "kota": "Kota", "कोटा": "Kota",
@@ -119,7 +125,38 @@ LOCATION_ALIASES = {
     "uttar pradesh": "Uttar Pradesh", "उत्तर प्रदेश": "Uttar Pradesh",
 }
 
-# ---------- BUDGET (handles Devanagari numerals) ----------
+# ---------- WEAVE / STYLE ALIASES (new) ----------
+WEAVE_ALIASES = {
+    # English
+    "ikat": "ikat", "block print": "block print", "blockprint": "block print",
+    "jamdani": "jamdani", "kanjivaram": "kanjivaram", "kanchipuram": "kanjivaram",
+    "tussar": "tussar", "bhagalpuri": "tussar", "banarasi": "banarasi",
+    "brocade": "brocade", "paithani": "paithani", "patola": "patola",
+    "kota doria": "kota doria", "chanderi": "chanderi", "maheshwari": "maheshwari",
+    "sambalpuri": "sambalpuri", "ilkal": "ilkal", "venkatagiri": "venkatagiri",
+    "temple border": "temple border", "zari": "zari", "kasavu": "kasavu",
+    "dye": "dye", "handloom": "handloom", "handwoven": "handloom",
+    # Devanagari
+    "इकट": "ikat", "ब्लॉक प्रिंट": "block print", "जामदानी": "jamdani",
+    "कांचीपुरम": "kanjivaram", "तुस्सर": "tussar", "बनारसी": "banarasi",
+    "ब्रोकेड": "brocade", "पैठणी": "paithani", "पटोला": "patola",
+    "कोटा डोरिया": "kota doria", "चंदेरी": "chanderi", "महेश्वरी": "maheshwari",
+    "संबलपुरी": "sambalpuri", "इलकल": "ilkal", "वेंकटागिरी": "venkatagiri",
+    "जरी": "zari", "कसावु": "kasavu",
+}
+
+# ---------- FABRIC TYPE ALIASES (new) ----------
+FABRIC_ALIASES = {
+    "cotton": "cotton", "suti": "cotton", "कॉटन": "cotton", "सूती": "cotton",
+    "silk": "silk", "resham": "silk", "सिल्क": "silk", "रेशम": "silk",
+    "cotton silk": "cotton_silk", "cotton-silk": "cotton_silk",
+    "कॉटन सिल्क": "cotton_silk", "सूती रेशम": "cotton_silk",
+    "tussar": "silk", "bhagalpuri": "silk",
+    "linen": "cotton",  # fallback
+    "wool": "cotton",   # not typical but safe
+}
+
+# ---------- BUDGET (handles Devanagari numerals AND आरएस) ----------
 _DEVANAGARI_DIGITS = { '०':'0','१':'1','२':'2','३':'3','४':'4',
                        '५':'5','६':'6','७':'7','८':'8','९':'9' }
 def _devanagari_to_arabic(s: str) -> str:
@@ -130,10 +167,10 @@ def _parse_budget(text: str):
     text = text.lower().replace(",","")
     flex = bool(re.search(r"\b(around|approx|under|below|se kam|tak|लगभग|करीब|तक|से कम)\b", text, re.I))
     patterns = [
-        (r"(?:₹|rs\.?|inr|रु\.?|रुपये?)\s*(\d+(?:\.\d+)?)\s*k", 1000),
-        (r"(?:₹|rs\.?|inr|रु\.?|रुपये?)\s*(\d[\d,]*)", 1),
+        (r"(?:₹|rs\.?|inr|रु\.?|रुपये?|आरएस)\s*(\d+(?:\.\d+)?)\s*k", 1000),
+        (r"(?:₹|rs\.?|inr|रु\.?|रुपये?|आरएस)\s*(\d[\d,]*)", 1),
         (r"(\d+(?:\.\d+)?)\s*k(?:rupee|rupees?)?", 1000),
-        (r"(\d[\d,]*)\s*(?:rupees?|rs\.?|inr|रुपये?|रु)", 1),
+        (r"(\d[\d,]*)\s*(?:rupees?|rs\.?|inr|रुपये?|रु|आरएस)", 1),
         (r"\b(\d{3,5})\b", 1),
     ]
     for pat, mult in patterns:
@@ -178,7 +215,7 @@ def _detect_language(text: str) -> str:
         return "romanised_odia"
     return "english"
 
-# ---------- EXTRACTORS ----------
+# ---------- EXTRACTORS (all now extract multiple fields) ----------
 def _extract_feel(text: str) -> list[str]:
     found = set()
     text_lower = text.lower()
@@ -211,6 +248,22 @@ def _extract_location(text: str) -> str | None:
             return canon
     return None
 
+def _extract_weave(text: str) -> list[str]:
+    found = set()
+    text_lower = text.lower()
+    for alias, canon in WEAVE_ALIASES.items():
+        if alias in text or alias in text_lower:
+            found.add(canon)
+    return sorted(found)
+
+def _extract_fabric(text: str) -> list[str]:
+    found = set()
+    text_lower = text.lower()
+    for alias, canon in FABRIC_ALIASES.items():
+        if alias in text or alias in text_lower:
+            found.add(canon)
+    return sorted(found)
+
 def _extract_urgency(text: str) -> int | None:
     for pat, days in URGENCY_PATTERNS:
         if pat.search(text):
@@ -220,16 +273,20 @@ def _extract_urgency(text: str) -> int | None:
 def _compute_confidence(result: IntentResult):
     score = 0.0
     missing = []
-    if result.feel: score += 0.35
+    if result.feel: score += 0.30
     else: missing.append("feel")
-    if result.occasion: score += 0.30
+    if result.occasion: score += 0.25
     else: missing.append("occasion")
-    if result.budget: score += 0.25
+    if result.budget: score += 0.20
     else: missing.append("budget")
     if result.color: score += 0.05
     else: missing.append("color")
     if result.location: score += 0.05
     else: missing.append("location")
+    if result.weave: score += 0.05
+    else: missing.append("weave")
+    if result.fabric: score += 0.05
+    else: missing.append("fabric")
     return round(score, 2), missing
 
 # ---------- PUBLIC API ----------
@@ -241,22 +298,22 @@ def parse_intent(raw_text: str) -> IntentResult:
     result.budget, result.budget_flex = _parse_budget(raw_text)
     result.color, result.color_family = _extract_color(raw_text)
     result.location = _extract_location(raw_text)
+    result.weave = _extract_weave(raw_text)
+    result.fabric = _extract_fabric(raw_text)
     result.urgency_days = _extract_urgency(raw_text)
 
     # ---- DEFAULT BUDGET for silk or premium locations ----
     if not result.budget:
-        # If user mentions silk, Banaras, Kanchipuram, etc., set a higher default
         lower_text = raw_text.lower()
         if ("silk" in lower_text or "रेशम" in raw_text or
-            result.location in ["Varanasi", "Kanchipuram"] or
-            "बनारस" in raw_text or "कांची" in raw_text):
+            result.location in ["Varanasi", "Kanchipuram", "Venkatagiri"] or
+            "बनारस" in raw_text or "कांची" in raw_text or "वेंकट" in raw_text):
             result.budget = 6000
             result.budget_flex = True
         elif result.occasion == "wedding":
             result.budget = 6000
             result.budget_flex = True
         else:
-            # default for casual etc.
             result.budget = 1500
             result.budget_flex = True
 
@@ -278,13 +335,15 @@ def parse_intent(raw_text: str) -> IntentResult:
     return result
 
 def build_followup_question(missing: list[str]) -> str | None:
-    priority = ["feel", "occasion", "budget", "color", "location"]
+    priority = ["feel", "occasion", "budget", "color", "location", "weave", "fabric"]
     q = {
         "feel": "How do you want the fabric to feel? (light and airy, rich and heavy, soft, flowy...)",
         "occasion": "What's the occasion? (wedding, festival, casual, office...)",
         "budget": "What's your budget? (in rupees)",
         "color": "Any color preference? (or say 'no preference')",
-        "location": "Any specific weaving cluster or state? (e.g. Kanchipuram, Banaras, Kota...)"
+        "location": "Any specific weaving cluster or state? (e.g. Kanchipuram, Banaras, Kota...)",
+        "weave": "Any specific weave or style? (ikat, block print, jamdani, etc.)",
+        "fabric": "Do you prefer cotton, silk, or a blend?",
     }
     for field in priority:
         if field in missing:
