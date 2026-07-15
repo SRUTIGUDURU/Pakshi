@@ -1,5 +1,5 @@
 """
-Pakshi — Intent Parser (Final – robust location & budget)
+Pakshi — Intent Parser (Final – robust location, colour & budget)
 """
 import re
 import json
@@ -45,6 +45,7 @@ OCCASION_ALIASES = {
     "त्योहार": "festival", "पूजा": "festival", "दिवाली": "festival",
     "होली": "festival", "ऑफिस": "work", "कॉलेज": "college",
     "समारोह": "ceremony", "रोज़": "daily_wear", "कैज़ुअल": "casual",
+    "फेस्टिवल": "festival",  # added
 }
 
 # ---------- FEEL KEYWORDS ----------
@@ -65,7 +66,7 @@ FEEL_KEYWORDS = {
     "कड़ा": ["stiff"], "आरामदायक": ["comfortable"], "पारंपरिक": ["traditional"],
 }
 
-# ---------- COLOR KEYWORDS ----------
+# ---------- COLOR KEYWORDS (more inflected forms) ----------
 COLOR_KEYWORDS = {
     "red": ("red","red"), "pink": ("pink","pink"), "blue": ("blue","blue"),
     "green": ("green","green"), "yellow": ("yellow","yellow"),
@@ -75,36 +76,47 @@ COLOR_KEYWORDS = {
     "maroon": ("maroon","red"), "navy": ("navy blue","blue"),
     "teal": ("teal","green"), "mint": ("mint green","green"),
     "लाल": ("red","red"), "गुलाबी": ("pink","pink"),
-    "नीला": ("blue","blue"), "हरा": ("green","green"),
-    "पीला": ("yellow","yellow"), "नारंगी": ("orange","orange"),
-    "बैंगनी": ("purple","purple"), "सफेद": ("white","neutral"),
-    "काला": ("black","neutral"), "भूरा": ("brown","neutral"),
-    "ग्रे": ("grey","neutral"),
+    "नीला": ("blue","blue"), "नीली": ("blue","blue"), "नीले": ("blue","blue"),
+    "हरा": ("green","green"), "हरी": ("green","green"), "हरे": ("green","green"),
+    "पीला": ("yellow","yellow"), "पीली": ("yellow","yellow"), "पीले": ("yellow","yellow"),
+    "नारंगी": ("orange","orange"), "संतरी": ("orange","orange"),
+    "बैंगनी": ("purple","purple"), "जामुनी": ("purple","purple"),
+    "सफेद": ("white","neutral"), "सफ़ेद": ("white","neutral"),
+    "काला": ("black","neutral"), "काली": ("black","neutral"), "काले": ("black","neutral"),
+    "भूरा": ("brown","neutral"), "भूरी": ("brown","neutral"),
+    "ग्रे": ("grey","neutral"), "धूसर": ("grey","neutral"),
 }
 
-# ---------- LOCATION ALIASES (more robust) ----------
+# ---------- LOCATION ALIASES (extra variants) ----------
 LOCATION_ALIASES = {
-    # English / romanised
-    "kanchipuram": "Kanchipuram", "banaras": "Varanasi", "varanasi": "Varanasi",
-    "pochampally": "Pochampally", "ilkal": "Ilkal", "kota": "Kota",
-    "chanderi": "Chanderi", "maheshwar": "Maheshwar", "dharmavaram": "Dharmavaram",
-    "mysore": "Mysore", "sambalpuri": "Sambalpuri", "bagru": "Bagru",
-    "sanganer": "Sanganer", "kutch": "Kutch", "kerala": "Kerala",
-    "tamil nadu": "Tamil Nadu", "andhra pradesh": "Andhra Pradesh",
-    "telangana": "Telangana", "karnataka": "Karnataka", "rajasthan": "Rajasthan",
-    "west bengal": "West Bengal", "odisha": "Odisha", "gujarat": "Gujarat",
-    "maharashtra": "Maharashtra", "bihar": "Bihar", "uttar pradesh": "Uttar Pradesh",
-    # Devanagari – common spellings
-    "कांचीपुरम": "Kanchipuram", "कांचीपुरम": "Kanchipuram",  # both variants
-    "बनारस": "Varanasi", "वाराणसी": "Varanasi",
-    "पोचमपल्ली": "Pochampally", "इलकल": "Ilkal", "कोटा": "Kota",
-    "चंदेरी": "Chanderi", "महेश्वर": "Maheshwar", "धर्मावरम": "Dharmavaram",
-    "मैसूर": "Mysore", "संबलपुर": "Sambalpuri", "बागरू": "Bagru",
-    "संगानेर": "Sanganer", "कच्छ": "Kutch", "केरल": "Kerala",
-    "तमिलनाडु": "Tamil Nadu", "आंध्र": "Andhra Pradesh", "तेलंगाना": "Telangana",
-    "कर्नाटक": "Karnataka", "राजस्थान": "Rajasthan", "पश्चिम बंगाल": "West Bengal",
-    "उड़ीसा": "Odisha", "ओडिशा": "Odisha", "गुजरात": "Gujarat",
-    "महाराष्ट्र": "Maharashtra", "बिहार": "Bihar", "उत्तर प्रदेश": "Uttar Pradesh",
+    # Banaras / Varanasi
+    "banaras": "Varanasi", "varanasi": "Varanasi", "kashi": "Varanasi",
+    "बनारस": "Varanasi", "वाराणसी": "Varanasi", "बनारसी": "Varanasi", "काशी": "Varanasi",
+    # Others
+    "kanchipuram": "Kanchipuram", "कांचीपुरम": "Kanchipuram",
+    "pochampally": "Pochampally", "पोचमपल्ली": "Pochampally",
+    "ilkal": "Ilkal", "इलकल": "Ilkal",
+    "kota": "Kota", "कोटा": "Kota",
+    "chanderi": "Chanderi", "चंदेरी": "Chanderi",
+    "maheshwar": "Maheshwar", "महेश्वर": "Maheshwar",
+    "dharmavaram": "Dharmavaram", "धर्मावरम": "Dharmavaram",
+    "mysore": "Mysore", "मैसूर": "Mysore",
+    "sambalpuri": "Sambalpuri", "संबलपुर": "Sambalpuri",
+    "bagru": "Bagru", "बागरू": "Bagru",
+    "sanganer": "Sanganer", "संगानेर": "Sanganer",
+    "kutch": "Kutch", "कच्छ": "Kutch",
+    "kerala": "Kerala", "केरल": "Kerala",
+    "tamil nadu": "Tamil Nadu", "तमिलनाडु": "Tamil Nadu",
+    "andhra pradesh": "Andhra Pradesh", "आंध्र": "Andhra Pradesh",
+    "telangana": "Telangana", "तेलंगाना": "Telangana",
+    "karnataka": "Karnataka", "कर्नाटक": "Karnataka",
+    "rajasthan": "Rajasthan", "राजस्थान": "Rajasthan",
+    "west bengal": "West Bengal", "पश्चिम बंगाल": "West Bengal",
+    "odisha": "Odisha", "उड़ीसा": "Odisha", "ओडिशा": "Odisha",
+    "gujarat": "Gujarat", "गुजरात": "Gujarat",
+    "maharashtra": "Maharashtra", "महाराष्ट्र": "Maharashtra",
+    "bihar": "Bihar", "बिहार": "Bihar",
+    "uttar pradesh": "Uttar Pradesh", "उत्तर प्रदेश": "Uttar Pradesh",
 }
 
 # ---------- BUDGET (handles Devanagari numerals) ----------
@@ -166,12 +178,11 @@ def _detect_language(text: str) -> str:
         return "romanised_odia"
     return "english"
 
-# ---------- EXTRACTORS (substring, case‑insensitive for English) ----------
+# ---------- EXTRACTORS ----------
 def _extract_feel(text: str) -> list[str]:
     found = set()
     text_lower = text.lower()
     for phrase, tags in sorted(FEEL_KEYWORDS.items(), key=lambda x: len(x[0]), reverse=True):
-        # For Devanagari, we compare directly; for English, lowercased
         if phrase in text or phrase in text_lower:
             found.update(tags)
     for tag in _VALID_SENSORY:
@@ -194,7 +205,6 @@ def _extract_color(text: str):
     return None, None
 
 def _extract_location(text: str) -> str | None:
-    # Try both original (for Devanagari) and lowercased (for English)
     text_lower = text.lower()
     for alias, canon in LOCATION_ALIASES.items():
         if alias in text or alias in text_lower:
@@ -233,10 +243,22 @@ def parse_intent(raw_text: str) -> IntentResult:
     result.location = _extract_location(raw_text)
     result.urgency_days = _extract_urgency(raw_text)
 
-    # ---- DEFAULT BUDGET for weddings (if not specified) ----
-    if result.occasion == "wedding" and not result.budget:
-        result.budget = 6000   # enough for lightweight silk or cotton-silk
-        result.budget_flex = True
+    # ---- DEFAULT BUDGET for silk or premium locations ----
+    if not result.budget:
+        # If user mentions silk, Banaras, Kanchipuram, etc., set a higher default
+        lower_text = raw_text.lower()
+        if ("silk" in lower_text or "रेशम" in raw_text or
+            result.location in ["Varanasi", "Kanchipuram"] or
+            "बनारस" in raw_text or "कांची" in raw_text):
+            result.budget = 6000
+            result.budget_flex = True
+        elif result.occasion == "wedding":
+            result.budget = 6000
+            result.budget_flex = True
+        else:
+            # default for casual etc.
+            result.budget = 1500
+            result.budget_flex = True
 
     # ---- If no feel but we have silk or location/color, set a feel ----
     if not result.feel:
