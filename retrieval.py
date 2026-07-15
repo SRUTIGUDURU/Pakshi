@@ -1,5 +1,5 @@
 """
-Pakshi - RAG Retrieval Module (Location‑Aware & Safe)
+Pakshi - RAG Retrieval Module (Strict Location Filter + Safe Fallback)
 """
 import json
 from pathlib import Path
@@ -33,11 +33,13 @@ def get_fallback(fabric_type: str, budget: int, ontology: dict):
     return None
 
 def _matches_location(meta: dict, requested_location: str | None) -> bool:
+    """Strict location check – both cluster and state are checked."""
     if not requested_location:
         return True
     loc_lower = requested_location.lower()
     cluster = meta.get("weaver_cluster", "").lower()
     state = meta.get("weaver_state", "").lower()
+    # Exact substring match (cluster or state contains the location, or vice versa)
     return (loc_lower in cluster or cluster in loc_lower or
             loc_lower in state or state in loc_lower)
 
@@ -58,7 +60,6 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
     query_text = build_query_text(intent)
 
     if not query_text.strip():
-        # If query is empty, return no_match
         return {
             "status": "no_match",
             "results": [],
@@ -87,6 +88,7 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
             "document": raw_results["documents"][0][i],
         })
 
+    # ---- PRIMARY FILTER: budget, availability, location ----
     filtered = [
         c for c in candidates
         if (c["meta"]["price_inr"] <= budget
@@ -100,14 +102,11 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
         for r in ranked:
             m = r["meta"]
             details = _get_swatch_details(m["swatch_id"])
-            # Safe parse of tags
-            sensory = m.get("sensory_tags")
-            if not sensory or not isinstance(sensory, str):
-                sensory = ""
+            sensory = m.get("sensory_tags") or ""
+            if not isinstance(sensory, str): sensory = ""
             sensory_list = [t.strip() for t in sensory.split(",") if t.strip()]
-            occasion = m.get("occasion_tags")
-            if not occasion or not isinstance(occasion, str):
-                occasion = ""
+            occasion = m.get("occasion_tags") or ""
+            if not isinstance(occasion, str): occasion = ""
             occasion_list = [t.strip() for t in occasion.split(",") if t.strip()]
 
             results.append({
@@ -128,15 +127,15 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
                 "reviews": details["reviews"],
             })
 
-        location_msg = f" in {location}" if location else ""
+        location_msg = f" from {location}" if location else ""
         return {
             "status": "match",
             "results": results,
             "fallback": None,
-            "agent_message": f"Found {len(results)} matching swatches{location_msg} within ₹{budget}."
+            "agent_message": f"Found {len(results)} swatches{location_msg} within ₹{budget}."
         }
 
-    # Fallback
+    # ---- NO MATCH – try fallback, but STILL filter by location ----
     feel_tags = intent.get("feel", [])
     sensory_map = ontology["sensory_to_fabric_mapping"]
     fabric_votes = {}
@@ -155,51 +154,52 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
             if (c["meta"]["fabric_type"] == fallback_fabric
                 and c["meta"]["price_inr"] <= relaxed_budget
                 and c["meta"]["available"]
-                and _matches_location(c["meta"], location))
+                and _matches_location(c["meta"], location))   # <<<< location filter applied
         ]
-        fallback_results = sorted(fallback_candidates,
-            key=lambda x: (x["distance"], -x["meta"]["weaver_rating"]))[:top_k]
-        fallback_swatches = []
-        for r in fallback_results:
-            m = r["meta"]
-            details = _get_swatch_details(m["swatch_id"])
-            sensory = m.get("sensory_tags")
-            if not sensory or not isinstance(sensory, str):
-                sensory = ""
-            sensory_list = [t.strip() for t in sensory.split(",") if t.strip()]
-            occasion = m.get("occasion_tags")
-            if not occasion or not isinstance(occasion, str):
-                occasion = ""
-            occasion_list = [t.strip() for t in occasion.split(",") if t.strip()]
-            fallback_swatches.append({
-                "swatch_id": m["swatch_id"],
-                "fabric_type": m["fabric_type"],
-                "weave_style": m["weave_style"],
-                "color": m["color"],
-                "price_inr": m["price_inr"],
-                "delivery_days": m["delivery_days"],
-                "weaver_name": m["weaver_name"],
-                "weaver_cluster": m["weaver_cluster"],
-                "weaver_state": m["weaver_state"],
-                "weaver_rating": m["weaver_rating"],
-                "sensory_tags": sensory_list,
-                "occasion_tags": occasion_list,
-                "description": details["description"],
-                "image_url": details["image_url"],
-                "reviews": details["reviews"],
-            })
-        location_msg = f" in {location}" if location else ""
-        return {
-            "status": "fallback",
-            "results": fallback_swatches,
-            "fallback": fallback_rule,
-            "agent_message": (
-                f"No {intended_fabric.replace('_',' ')} match{location_msg} within ₹{budget}. "
-                f"{fallback_rule['message']} Say YES to see {fallback_fabric.replace('_',' ')} options or NO to wait."
-            )
-        }
+        if fallback_candidates:
+            fallback_results = sorted(fallback_candidates,
+                key=lambda x: (x["distance"], -x["meta"]["weaver_rating"]))[:top_k]
+            fallback_swatches = []
+            for r in fallback_results:
+                m = r["meta"]
+                details = _get_swatch_details(m["swatch_id"])
+                sensory = m.get("sensory_tags") or ""
+                if not isinstance(sensory, str): sensory = ""
+                sensory_list = [t.strip() for t in sensory.split(",") if t.strip()]
+                occasion = m.get("occasion_tags") or ""
+                if not isinstance(occasion, str): occasion = ""
+                occasion_list = [t.strip() for t in occasion.split(",") if t.strip()]
+                fallback_swatches.append({
+                    "swatch_id": m["swatch_id"],
+                    "fabric_type": m["fabric_type"],
+                    "weave_style": m["weave_style"],
+                    "color": m["color"],
+                    "price_inr": m["price_inr"],
+                    "delivery_days": m["delivery_days"],
+                    "weaver_name": m["weaver_name"],
+                    "weaver_cluster": m["weaver_cluster"],
+                    "weaver_state": m["weaver_state"],
+                    "weaver_rating": m["weaver_rating"],
+                    "sensory_tags": sensory_list,
+                    "occasion_tags": occasion_list,
+                    "description": details["description"],
+                    "image_url": details["image_url"],
+                    "reviews": details["reviews"],
+                })
+            location_msg = f" from {location}" if location else ""
+            return {
+                "status": "fallback",
+                "results": fallback_swatches,
+                "fallback": fallback_rule,
+                "agent_message": (
+                    f"No {intended_fabric.replace('_',' ')} match{location_msg} within ₹{budget}. "
+                    f"{fallback_rule['message']} "
+                    f"Say YES to see {fallback_fabric.replace('_',' ')} options{location_msg} or NO to wait."
+                )
+            }
 
-    location_msg = f" in {location}" if location else ""
+    # ---- TRULY NO MATCH ----
+    location_msg = f" from {location}" if location else ""
     return {
         "status": "no_match",
         "results": [],
