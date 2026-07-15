@@ -1,5 +1,5 @@
 """
-Pakshi — Intent Parser (Devanagari‑Friendly with substring matching)
+Pakshi — Intent Parser (Final – robust location & budget)
 """
 import re
 import json
@@ -34,7 +34,6 @@ for _fab in _ONTOLOGY["fabrics"]:
 
 # ---------- OCCASION ALIASES ----------
 OCCASION_ALIASES = {
-    # English / romanised
     "wedding": "wedding", "shaadi": "wedding", "shadi": "wedding",
     "reception": "reception", "engagement": "reception",
     "festival": "festival", "puja": "festival", "pooja": "festival",
@@ -42,7 +41,6 @@ OCCASION_ALIASES = {
     "office": "work", "work": "work", "college": "college",
     "formal": "formal", "semi formal": "semi_formal",
     "ceremony": "ceremony",
-    # Devanagari
     "शादी": "wedding", "विवाह": "wedding", "रिसेप्शन": "reception",
     "त्योहार": "festival", "पूजा": "festival", "दिवाली": "festival",
     "होली": "festival", "ऑफिस": "work", "कॉलेज": "college",
@@ -51,7 +49,6 @@ OCCASION_ALIASES = {
 
 # ---------- FEEL KEYWORDS ----------
 FEEL_KEYWORDS = {
-    # English / romanised
     "light": ["light","airy"], "halka": ["light","airy"],
     "heavy": ["heavy","stiff"], "bhaari": ["heavy","stiff"],
     "soft": ["soft","comfortable"], "naram": ["soft"],
@@ -60,7 +57,7 @@ FEEL_KEYWORDS = {
     "breathable": ["breathable","airy"], "cool": ["cool","breathable"],
     "glossy": ["glossy"], "stiff": ["stiff"], "comfortable": ["comfortable"],
     "traditional": ["traditional"],
-    # Devanagari
+    "silk": ["rich","elegant"], "रेशम": ["rich","elegant"],
     "हल्का": ["light","airy"], "भारी": ["heavy","stiff"],
     "नरम": ["soft"], "शाही": ["royal","grand"], "शानदार": ["luxurious","rich"],
     "बहने वाला": ["flowy","airy"], "सांस लेने योग्य": ["breathable","airy"],
@@ -70,7 +67,6 @@ FEEL_KEYWORDS = {
 
 # ---------- COLOR KEYWORDS ----------
 COLOR_KEYWORDS = {
-    # English / romanised
     "red": ("red","red"), "pink": ("pink","pink"), "blue": ("blue","blue"),
     "green": ("green","green"), "yellow": ("yellow","yellow"),
     "orange": ("orange","orange"), "purple": ("purple","purple"),
@@ -78,7 +74,6 @@ COLOR_KEYWORDS = {
     "beige": ("beige","neutral"), "grey": ("grey","neutral"),
     "maroon": ("maroon","red"), "navy": ("navy blue","blue"),
     "teal": ("teal","green"), "mint": ("mint green","green"),
-    # Devanagari
     "लाल": ("red","red"), "गुलाबी": ("pink","pink"),
     "नीला": ("blue","blue"), "हरा": ("green","green"),
     "पीला": ("yellow","yellow"), "नारंगी": ("orange","orange"),
@@ -87,7 +82,7 @@ COLOR_KEYWORDS = {
     "ग्रे": ("grey","neutral"),
 }
 
-# ---------- LOCATION ALIASES ----------
+# ---------- LOCATION ALIASES (more robust) ----------
 LOCATION_ALIASES = {
     # English / romanised
     "kanchipuram": "Kanchipuram", "banaras": "Varanasi", "varanasi": "Varanasi",
@@ -99,16 +94,17 @@ LOCATION_ALIASES = {
     "telangana": "Telangana", "karnataka": "Karnataka", "rajasthan": "Rajasthan",
     "west bengal": "West Bengal", "odisha": "Odisha", "gujarat": "Gujarat",
     "maharashtra": "Maharashtra", "bihar": "Bihar", "uttar pradesh": "Uttar Pradesh",
-    # Devanagari
-    "कांचीपुरम": "Kanchipuram", "बनारस": "Varanasi", "वाराणसी": "Varanasi",
+    # Devanagari – common spellings
+    "कांचीपुरम": "Kanchipuram", "कांचीपुरम": "Kanchipuram",  # both variants
+    "बनारस": "Varanasi", "वाराणसी": "Varanasi",
     "पोचमपल्ली": "Pochampally", "इलकल": "Ilkal", "कोटा": "Kota",
     "चंदेरी": "Chanderi", "महेश्वर": "Maheshwar", "धर्मावरम": "Dharmavaram",
     "मैसूर": "Mysore", "संबलपुर": "Sambalpuri", "बागरू": "Bagru",
     "संगानेर": "Sanganer", "कच्छ": "Kutch", "केरल": "Kerala",
     "तमिलनाडु": "Tamil Nadu", "आंध्र": "Andhra Pradesh", "तेलंगाना": "Telangana",
     "कर्नाटक": "Karnataka", "राजस्थान": "Rajasthan", "पश्चिम बंगाल": "West Bengal",
-    "उड़ीसा": "Odisha", "गुजरात": "Gujarat", "महाराष्ट्र": "Maharashtra",
-    "बिहार": "Bihar", "उत्तर प्रदेश": "Uttar Pradesh",
+    "उड़ीसा": "Odisha", "ओडिशा": "Odisha", "गुजरात": "Gujarat",
+    "महाराष्ट्र": "Maharashtra", "बिहार": "Bihar", "उत्तर प्रदेश": "Uttar Pradesh",
 }
 
 # ---------- BUDGET (handles Devanagari numerals) ----------
@@ -170,14 +166,14 @@ def _detect_language(text: str) -> str:
         return "romanised_odia"
     return "english"
 
-# ---------- EXTRACTORS (substring based, no word boundaries) ----------
+# ---------- EXTRACTORS (substring, case‑insensitive for English) ----------
 def _extract_feel(text: str) -> list[str]:
     found = set()
     text_lower = text.lower()
     for phrase, tags in sorted(FEEL_KEYWORDS.items(), key=lambda x: len(x[0]), reverse=True):
-        if phrase in text_lower:
+        # For Devanagari, we compare directly; for English, lowercased
+        if phrase in text or phrase in text_lower:
             found.update(tags)
-    # Also check direct sensory tags from ontology
     for tag in _VALID_SENSORY:
         if tag in text_lower:
             found.add(tag)
@@ -186,21 +182,22 @@ def _extract_feel(text: str) -> list[str]:
 def _extract_occasion(text: str) -> str | None:
     text_lower = text.lower()
     for phrase, canon in sorted(OCCASION_ALIASES.items(), key=lambda x: len(x[0]), reverse=True):
-        if phrase in text_lower:
+        if phrase in text or phrase in text_lower:
             return canon
     return None
 
 def _extract_color(text: str):
     text_lower = text.lower()
     for phrase, (display, family) in sorted(COLOR_KEYWORDS.items(), key=lambda x: len(x[0]), reverse=True):
-        if phrase in text_lower:
+        if phrase in text or phrase in text_lower:
             return display, family
     return None, None
 
 def _extract_location(text: str) -> str | None:
+    # Try both original (for Devanagari) and lowercased (for English)
     text_lower = text.lower()
     for alias, canon in LOCATION_ALIASES.items():
-        if alias in text_lower:
+        if alias in text or alias in text_lower:
             return canon
     return None
 
@@ -213,11 +210,11 @@ def _extract_urgency(text: str) -> int | None:
 def _compute_confidence(result: IntentResult):
     score = 0.0
     missing = []
-    if result.feel: score += 0.40
+    if result.feel: score += 0.35
     else: missing.append("feel")
     if result.occasion: score += 0.30
     else: missing.append("occasion")
-    if result.budget: score += 0.20
+    if result.budget: score += 0.25
     else: missing.append("budget")
     if result.color: score += 0.05
     else: missing.append("color")
@@ -236,8 +233,17 @@ def parse_intent(raw_text: str) -> IntentResult:
     result.location = _extract_location(raw_text)
     result.urgency_days = _extract_urgency(raw_text)
 
-    if not result.feel and (result.location or result.color):
-        result.feel = ["comfortable", "elegant"]
+    # ---- DEFAULT BUDGET for weddings (if not specified) ----
+    if result.occasion == "wedding" and not result.budget:
+        result.budget = 6000   # enough for lightweight silk or cotton-silk
+        result.budget_flex = True
+
+    # ---- If no feel but we have silk or location/color, set a feel ----
+    if not result.feel:
+        if "silk" in raw_text.lower() or "रेशम" in raw_text:
+            result.feel = ["rich", "elegant"]
+        elif result.location or result.color:
+            result.feel = ["comfortable", "elegant"]
 
     result.confidence, result.missing = _compute_confidence(result)
 
