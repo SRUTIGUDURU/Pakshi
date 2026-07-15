@@ -18,11 +18,24 @@ def load_ontology():
         return json.load(f)
 
 def build_query_text(intent: dict) -> str:
+    """
+    Builds a search query from all extracted intent fields.
+    Now includes weave, fabric, and raw_text for maximum relevance.
+    """
     feel = intent.get("feel") or []
     occ = intent.get("occasion") or ""
     color = intent.get("color") or ""
     location = intent.get("location") or ""
-    parts = feel + [occ, color, location]
+    weave = intent.get("weave") or []
+    fabric = intent.get("fabric") or []
+    raw = intent.get("raw_text") or ""      # passed from agent.py
+
+    # Combine all parts; raw_text may contain extra terms the parser didn't capture
+    parts = feel + [occ, color, location] + weave + fabric
+    if raw:
+        parts.append(raw)
+
+    # Filter out empty strings and non‑string values
     parts = [p for p in parts if p and isinstance(p, str)]
     return " ".join(parts)
 
@@ -154,7 +167,7 @@ def retrieve_swatches(intent: dict, top_k: int = 3) -> dict:
             if (c["meta"]["fabric_type"] == fallback_fabric
                 and c["meta"]["price_inr"] <= relaxed_budget
                 and c["meta"]["available"]
-                and _matches_location(c["meta"], location))   # <<<< location filter applied
+                and _matches_location(c["meta"], location))   # location filter applied
         ]
         if fallback_candidates:
             fallback_results = sorted(fallback_candidates,
