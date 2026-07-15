@@ -315,7 +315,7 @@ def _tts_edge(text: str, lang: str = "hi") -> bytes | None:
         except RuntimeError:
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
-            
+
         tmp_path = loop.run_until_complete(generate())
         with open(tmp_path, "rb") as f:
             data = f.read()
@@ -402,55 +402,69 @@ def _is_number_selection(text: str) -> bool:
 
 def _parse_weaver_voice_command(text: str, pending: list, accepted: list) -> dict | None:
     """
-    Parses natural Hindi/English voice commands from the weaver to accept, reject, 
+    Parses natural Hindi/English voice commands from the weaver to accept, reject,
     or show the fabric to the buyer hands-free.
+    Now handles missing order numbers, more keywords, and fallback defaults.
     """
     t = text.lower()
     action = None
-    
-    # 1. Determine Intent
-    if any(w in t for w in ["swikaar", "accept", "le lo", "manzoor", "pakka", "done"]):
+
+    # 1. Determine Intent – expanded with more Hindi variations
+    accept_words = {"swikaar", "accept", "le lo", "manzoor", "pakka", "done", "han", "haan", "ok", "theek", "yes", "y", "sahi"}
+    reject_words = {"mana", "reject", "decline", "cancel", "nahi", "chhod", "no", "n", "galat", "wrong", "cancel"}
+    show_words = {"dikhao", "show", "bhejo", "send", "photo", "tasveer", "approve", "buyer", "dekhao"}
+
+    if any(w in t for w in accept_words):
         action = "accept"
-    elif any(w in t for w in ["mana", "reject", "decline", "cancel", "nahi", "chhod"]):
+    elif any(w in t for w in reject_words):
         action = "decline"
-    elif any(w in t for w in ["dikhao", "show", "bhejo", "send", "photo", "tasveer", "approve", "buyer"]):
+    elif any(w in t for w in show_words):
         action = "show_buyer"
-        
-    if not action: 
-        return None
-        
-    # 2. Determine Target List
+
+    if not action:
+        return {"action": "error", "message": "Could not understand command. Try 'Accept first order', 'Reject order 2847', or 'Show buyer'."}
+
+    # 2. Determine which list to target (pending for accept/decline, accepted for show)
     target_list = accepted if action == "show_buyer" else pending
-    if not target_list: 
-        return {"action": "error", "message": f"No {'in-production' if action == 'show_buyer' else 'pending'} orders available to target."}
-        
+    if not target_list:
+        return {"action": "error", "message": f"No {'in-production' if action == 'show_buyer' else 'pending'} orders available."}
+
     target_idx = None
-    
-    # 3. Check for explicit 4-digit order ID match (e.g. "Order 2847")
+
+    # 3. Try to extract a 4-digit order ID (e.g., 2847)
     m = re.search(r'\b(\d{4})\b', t)
     if m:
         oid = m.group(1)
         for i, o in enumerate(target_list):
-            if oid in o["order_id"]:
+            if oid in o.get("order_id", ""):
                 target_idx = i
                 break
-                
-    # 4. Check for Ordinal matches (e.g. "pehla order", "first one")
+
+    # 4. If no ID, try ordinal words (first, second, third)
     if target_idx is None:
-        if any(w in t for w in ["pehla", "first", "1", "ek", "one"]): target_idx = 0
-        elif any(w in t for w in ["doosra", "second", "2", "do", "two"]) and len(target_list) > 1: target_idx = 1
-        elif any(w in t for w in ["teesra", "third", "3", "teen", "three"]) and len(target_list) > 2: target_idx = 2
-        # Default to first order if they just say "Accept" and there's only 1 order
-        elif len(target_list) == 1: target_idx = 0
-        
+        ordinals = {
+            "first": 0, "pehla": 0, "1": 0, "one": 0, "ek": 0,
+            "second": 1, "doosra": 1, "2": 1, "two": 1, "do": 1,
+            "third": 2, "teesra": 2, "3": 2, "three": 2, "teen": 2
+        }
+        for word, idx in ordinals.items():
+            if word in t:
+                if idx < len(target_list):
+                    target_idx = idx
+                break
+
+    # 5. If still no match and there's only one order, default to it
+    if target_idx is None and len(target_list) == 1:
+        target_idx = 0
+
     if target_idx is not None and target_idx < len(target_list):
         return {
-            "action": action, 
+            "action": action,
             "order_id": target_list[target_idx]["order_id"],
             "weave_style": target_list[target_idx].get("weave_style", "")
         }
-        
-    return {"action": "error", "message": "Could not determine which order you meant. Try saying 'First order' or the 4-digit ID."}
+
+    return {"action": "error", "message": "Could not identify which order. Please say the 4‑digit order ID (e.g., 2847) or 'first order'."}
 
 # ---------------------------------------------------------------------------
 # Session state initializers
@@ -508,7 +522,7 @@ def _render_header() -> None:
 
 _STATE_STEPS = [
     ("greeting", "Start"), ("collecting", "Describe Intent"), ("retrieved", "Select Swatch"),
-    ("fallback_pending", "Fallback"), ("swatch_selected", "Lock Fabric"), 
+    ("fallback_pending", "Fallback"), ("swatch_selected", "Lock Fabric"),
     ("broadcasting", "Broadcast"), ("weaver_selected", "Matched"), ("confirmed", "Order Placed"),
 ]
 _HIDDEN_STATES = {"fallback_pending", "broadcasting", "weaver_selected"}
@@ -632,11 +646,10 @@ def _buyer_page() -> None:
             for bo in buyer_orders:
                 status = bo.get("status", "In Production")
                 color = {"In Production": "var(--warning)", "Awaiting Approval": "var(--accent)", "Completed": "#22c55e"}.get(status, "var(--text-muted)")
-                
-                # Check if weaver sent photo/requested approval
+
                 needs_approval = status == "Awaiting Approval"
                 photo_html = f'<div style="margin-top:10px;"><img src="https://picsum.photos/seed/{bo["order_id"]}/400/200" style="width:100%;max-width:300px;border-radius:8px;border:2px solid var(--accent);"></div>' if bo.get("photo_path") else ""
-                
+
                 st.markdown(f"""
                 <div style="background:rgba(58,24,112,0.6);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:0.5rem;">
                     <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;">
@@ -649,15 +662,13 @@ def _buyer_page() -> None:
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
-                
-                # Interactive Buyer Approval Step
+
                 if needs_approval:
                     st.markdown('<div style="font-size:0.85rem;color:var(--text-white);margin-bottom:8px;">The artisan has finished weaving! Review the final fabric above.</div>', unsafe_allow_html=True)
                     a1, a2, _ = st.columns([1, 1, 2])
                     with a1:
                         if st.button("✅ Approve & Ship", key=f"app_{bo['order_id']}", use_container_width=True):
                             bo["status"] = "Completed"
-                            # Update weaver side too
                             for wo in st.session_state.get("weaver_orders", []):
                                 if wo["order_id"] == bo["order_id"]: wo["status"] = "completed"
                             st.success(f"Fabric Approved! {bo['weaver_name']} is shipping your order.")
@@ -670,7 +681,6 @@ def _buyer_page() -> None:
                                 "weaver_name": bo["weaver_name"], "reason": "Buyer rejected final fabric",
                             })
                             st.session_state["buyer_orders"].remove(bo)
-                            # Update weaver side
                             for wo in st.session_state.get("weaver_orders", []):
                                 if wo["order_id"] == bo["order_id"]: wo["status"] = "declined"
                             st.warning("Order Cancelled. Piece moved to Wholesale Outlet.")
@@ -763,13 +773,13 @@ def _weaver_page() -> None:
         st.session_state["audio_work_mode"] = st.toggle("Enable Hindi Announcements", value=st.session_state["audio_work_mode"])
 
     st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
-    
+
     # ── Voice Router for Weavers ──
     st.markdown('<div class="section-label">🎙️ Voice Loom Controls (हाथों के बिना काम करें)</div>', unsafe_allow_html=True)
     st.caption("Say 'Pehla order swikaar karo' (Accept first), 'Order 2847 mana karo' (Reject), or 'Buyer ko dikhao' (Send photo to buyer).")
-    
+
     w_audio = st.audio_input("Record Weaver Command", label_visibility="collapsed", key=f"w_audio_{st.session_state['weaver_audio_counter']}")
-    
+
     orders = st.session_state["weaver_orders"]
     pending = [o for o in orders if o.get("status") == "pending"]
     accepted = [o for o in orders if o.get("status") == "accepted"]
@@ -778,13 +788,13 @@ def _weaver_page() -> None:
         with st.spinner("🎧 Sun rahe hain..."):
             text, err = _transcribe_audio(w_audio)
         st.session_state["weaver_audio_counter"] += 1
-        
-        if err: 
+
+        if err:
             st.warning(err)
         else:
             st.info(f'🗣️ Heard: "{text}"')
             cmd = _parse_weaver_voice_command(text, pending, accepted)
-            
+
             if cmd and cmd.get("action") != "error":
                 act, oid = cmd["action"], cmd["order_id"]
                 # Find index in global orders
@@ -792,31 +802,46 @@ def _weaver_page() -> None:
                 if idx is not None:
                     if act == "accept":
                         orders[idx]["status"] = "accepted"
+                        # Update buyer orders as well
+                        for bo in st.session_state.get("buyer_orders", []):
+                            if bo["order_id"] == oid:
+                                bo["status"] = "In Production"
+                        st.session_state["weaver_orders"] = orders  # force update
                         hi_txt = f"Order {oid[-4:]} swikaar ho gaya. Loom par bhej diya."
-                        if ab := _tts_bytes(hi_txt): _autoplay_audio(ab)
+                        if ab := _tts_bytes(hi_txt, lang="hi"):
+                            _autoplay_audio(ab)
                         st.success(f"✅ Voice Command: Accepted {oid}!")
+                        st.rerun()
+
                     elif act == "decline":
                         orders[idx]["status"] = "declined"
+                        st.session_state["weaver_orders"] = orders
                         hi_txt = f"Order {oid[-4:]} mana kar diya gaya."
-                        if ab := _tts_bytes(hi_txt): _autoplay_audio(ab)
+                        if ab := _tts_bytes(hi_txt, lang="hi"):
+                            _autoplay_audio(ab)
                         st.warning(f"❌ Voice Command: Declined {oid}.")
+                        st.rerun()
+
                     elif act == "show_buyer":
                         orders[idx]["status"] = "awaiting_approval"
                         orders[idx]["photo"] = "loom_snapshot_auto.jpg"
+                        st.session_state["weaver_orders"] = orders
                         # Update buyer side
                         for bo in st.session_state.get("buyer_orders", []):
                             if bo["order_id"] == oid:
                                 bo["status"] = "Awaiting Approval"
                                 bo["photo_path"] = "loom_snapshot_auto.jpg"
                         hi_txt = f"Fabric tayyar hai. Buyer ko tasveer bhej di gayi hai."
-                        if ab := _tts_bytes(hi_txt): _autoplay_audio(ab)
+                        if ab := _tts_bytes(hi_txt, lang="hi"):
+                            _autoplay_audio(ab)
                         st.success(f"📸 Voice Command: Photo sent to buyer for {oid}. Awaiting Approval.")
-                    time.sleep(1)
-                    st.rerun()
+                        st.rerun()
+                else:
+                    st.error(f"Order {oid} not found.")
             else:
-                msg = cmd["message"] if cmd else "Could not understand the command. Try saying 'Accept first order'."
-                if ab := _tts_bytes("Command samajh nahi aaya.", lang="hi"): _autoplay_audio(ab)
+                msg = cmd["message"] if cmd else "Command not recognised."
                 st.error(msg)
+        # After processing, reload the page to reflect changes
         st.rerun()
 
     # ── Display Order Queues ──
@@ -827,7 +852,7 @@ def _weaver_page() -> None:
             is_below = int(order.get("price",0)) < st.session_state["min_base_price"]
             bg_card = "order-card below-base" if is_below else "order-card"
             badge = f'<span class="tag-warning">⚠️ Below Base (₹{st.session_state["min_base_price"]})</span>' if is_below else '<span class="tag">✓ Meets Base</span>'
-            
+
             st.markdown(f"""
             <div class="{bg_card}">
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;">
@@ -836,14 +861,17 @@ def _weaver_page() -> None:
                     <div class="swatch-price">₹{order.get("price",0):,}</div>
                 </div>
             </div>""", unsafe_allow_html=True)
-            
+
             b1, b2 = st.columns(2)
             if b1.button("✅ Accept", key=f"acc_{order['order_id']}", use_container_width=True):
                 orders[idx]["status"] = "accepted"
+                st.session_state["weaver_orders"] = orders
                 if ab := _tts_bytes("Order swikaar kiya", lang="hi"): _autoplay_audio(ab)
                 st.rerun()
             if b2.button("❌ Decline", key=f"dec_{order['order_id']}", use_container_width=True):
-                orders[idx]["status"] = "declined"; st.rerun()
+                orders[idx]["status"] = "declined"
+                st.session_state["weaver_orders"] = orders
+                st.rerun()
 
     if accepted:
         st.markdown('<div class="section-label" style="margin-top:1rem;">🧵 In Production (लूम पर)</div>', unsafe_allow_html=True)
@@ -857,10 +885,11 @@ def _weaver_page() -> None:
                     <div class="state-badge state-active">In Production</div>
                 </div>
             </div>""", unsafe_allow_html=True)
-            
+
             if st.button(f"📸 Send Fabric Photo for Approval (#{order['order_id']})", key=f"show_{order['order_id']}"):
                 orders[idx]["status"] = "awaiting_approval"
                 orders[idx]["photo"] = "loom_manual.jpg"
+                st.session_state["weaver_orders"] = orders
                 for bo in st.session_state.get("buyer_orders", []):
                     if bo["order_id"] == order["order_id"]:
                         bo["status"] = "Awaiting Approval"
@@ -895,7 +924,7 @@ def _ooak_page() -> None:
     st.markdown('<div class="section-label">♻️ One of a Kind — Wholesale Resale Outlet</div>', unsafe_allow_html=True)
     items = st.session_state.get("one_of_a_kind", [])
     if not items: return st.info("🌱 Zero Waste — No Rejected Pieces Currently Available")
-    
+
     for idx, item in enumerate(items):
         orig, resale = item.get("original_price", 0), item.get("resale_price", 0)
         st.markdown(f"""
