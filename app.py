@@ -4,10 +4,10 @@ Pakshi - Full Streamlit App (Tier-2/3 Buyer & Artisan Optimized)
 Buyer  : Bilingual voice/text input -> agent matches swatches -> trust-first confirmation
 Weaver : Hands-free bidirectional audio commands (Accept/Reject/Show Buyer) + Min Base Filter
 OOAK   : Zero-waste wholesale listing for rejected custom pieces
-Onboard: Voice & GPS-assisted weaver registration with Hindi/English auto‑fill.
+Onboard: Persists new weavers into the live dashboard.
 
 Run:
-    pip install streamlit chromadb scikit-learn edge-tts SpeechRecognition requests
+    pip install streamlit chromadb scikit-learn edge-tts SpeechRecognition
     streamlit run app.py
 """
 
@@ -22,7 +22,6 @@ import asyncio
 from pathlib import Path
 
 import streamlit as st
-import requests  # for reverse geocoding
 
 # ---------------------------------------------------------------------------
 # Page config (must be first Streamlit call)
@@ -35,11 +34,238 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------------------------------
-# Brand & Tier-2/3 Touch-Friendly CSS (truncated for brevity – keep your existing CSS)
+# Brand & Tier-2/3 Touch-Friendly CSS
 # ---------------------------------------------------------------------------
 st.markdown("""
 <style>
-/* ... your full CSS from earlier ... */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --bg-deep:        #19031c;
+    --bg-surface:     #2d0d2a;
+    --bg-card:        #52104c;
+    --bg-card-2:      #8a1c7c;
+    --accent:         #da4167;
+    --accent-glow:    rgba(218,65,103,0.35);
+    --text-primary:   #f0bcd4;
+    --text-muted:     #9c8a95;
+    --text-white:     #ffffff;
+    --success:        #22c55e;
+    --warning:        #f59e0b;
+    --danger:         #ef4444;
+    --border:         rgba(240,188,212,0.15);
+    --border-strong:  rgba(240,188,212,0.25);
+}
+
+html, body { background-color: var(--bg-deep) !important; }
+.stApp { background-color: var(--bg-deep) !important; font-family: 'Inter', sans-serif !important; }
+.main .block-container {
+    padding: 1.5rem 2rem 4rem !important;
+    max-width: 1140px !important;
+    background-color: var(--bg-deep) !important;
+}
+section[data-testid="stSidebar"] { background-color: var(--bg-surface) !important; }
+#MainMenu, footer, header { visibility: hidden !important; }
+
+p, li, span, label { color: var(--text-primary); font-family: 'Inter', sans-serif !important; }
+h1, h2, h3 { color: var(--text-white) !important; font-family: 'Inter', sans-serif !important; }
+
+.wordmark {
+    font-size: 2.2rem; font-weight: 800;
+    color: var(--text-white); letter-spacing: -0.8px; line-height: 1.1;
+}
+.wordmark span { color: var(--accent); }
+.tagline {
+    font-size: 0.85rem; color: var(--text-muted);
+    margin-top: 2px; margin-bottom: 0; letter-spacing: 0.02em;
+}
+
+.meesho-badge {
+    font-size: 0.70rem; color: #fff;
+    background: linear-gradient(90deg, rgba(218,65,103,0.25), rgba(138,28,124,0.35));
+    border: 1px solid rgba(218,65,103,0.4);
+    padding: 3px 12px; border-radius: 999px;
+    display: inline-block; margin-top: 6px;
+    letter-spacing: 0.05em; font-weight: 600;
+}
+
+.trust-banner {
+    display: flex; gap: 1rem; align-items: center; justify-content: space-around;
+    background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.25);
+    border-radius: 10px; padding: 0.6rem 1rem; margin-bottom: 1.2rem;
+    font-size: 0.80rem; color: #86efac; font-weight: 600; text-align: center;
+}
+
+.card {
+    background: rgba(45,13,42,0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-strong);
+    border-radius: 14px;
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 0.9rem;
+    color: var(--text-primary);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.45); }
+
+.swatch-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+    margin-bottom: 0.6rem;
+}
+.swatch-price { font-size: 1.5rem; font-weight: 800; color: var(--accent); line-height: 1.1; }
+.swatch-label {
+    font-size: 0.68rem; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    margin-top: 0.7rem; margin-bottom: 0.1rem;
+}
+.swatch-value { font-size: 0.9rem; font-weight: 600; color: var(--text-white); }
+
+.tag {
+    display: inline-block; padding: 2px 9px; border-radius: 999px;
+    background: rgba(218,65,103,0.15); color: var(--accent);
+    font-size: 0.7rem; font-weight: 600; margin: 2px 2px 0 0;
+    border: 1px solid rgba(218,65,103,0.25);
+}
+
+.tag-warning {
+    display: inline-block; padding: 3px 10px; border-radius: 999px;
+    background: rgba(245,158,11,0.15); color: var(--warning);
+    font-size: 0.72rem; font-weight: 700; margin: 2px 2px 0 0;
+    border: 1px solid rgba(245,158,11,0.35);
+}
+
+.chat-wrap { display: flex; flex-direction: column; gap: 0.3rem; padding-bottom: 0.5rem; }
+.bubble-agent {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 14px 14px 14px 3px;
+    padding: 0.8rem 1rem;
+    max-width: 86%;
+    font-size: 0.90rem; line-height: 1.6;
+    white-space: pre-wrap; color: var(--text-primary);
+    align-self: flex-start;
+}
+.bubble-user {
+    background: var(--bg-card-2);
+    border: 1px solid rgba(218,65,103,0.2);
+    border-radius: 14px 14px 3px 14px;
+    padding: 0.8rem 1rem;
+    max-width: 74%;
+    font-size: 0.90rem; line-height: 1.6;
+    color: var(--text-white);
+    align-self: flex-end; text-align: right;
+}
+
+.section-label {
+    font-size: 0.72rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.14em;
+    color: var(--accent); margin-bottom: 0.45rem;
+}
+.divider { height: 1px; background: var(--border); margin: 1.1rem 0; }
+
+.confirmed-banner {
+    background: linear-gradient(135deg,rgba(34,197,94,0.15),rgba(34,197,94,0.03));
+    border: 1.5px solid rgba(34,197,94,0.5);
+    border-radius: 14px; padding: 1.4rem; text-align: center; margin-top: 1rem;
+}
+.confirmed-banner h2 { color: #22c55e !important; margin: 0; font-size: 1.5rem; }
+
+.order-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    padding: 1rem 1.2rem; margin-bottom: 0.75rem;
+}
+.order-card.accepted { border-color: rgba(34,197,94,0.35); background: rgba(34,197,94,0.04); }
+.order-card.declined { border-color: rgba(239,68,68,0.25); opacity: 0.55; }
+.order-card.below-base { border-color: rgba(245,158,11,0.45); background: rgba(245,158,11,0.04); }
+
+.state-badge {
+    display: inline-block; padding: 3px 10px; border-radius: 999px;
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+.state-active  { background: rgba(34,197,94,0.18);  color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+.state-pending { background: rgba(218,65,103,0.15); color: var(--accent); border: 1px solid rgba(218,65,103,0.3); }
+
+.step-row { display: flex; align-items: center; gap: 0.55rem; font-size: 0.82rem; }
+.step-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.step-dot.done    { background: #22c55e; box-shadow: 0 0 5px rgba(34,197,94,0.5); }
+.step-dot.active  { background: var(--accent); box-shadow: 0 0 6px var(--accent-glow); }
+.step-dot.pending { background: var(--bg-card); opacity: 0.35; }
+
+.stTextInput input,
+.stTextArea textarea {
+    background-color: var(--bg-surface) !important;
+    color: var(--text-white) !important;
+    border: 1.5px solid var(--bg-card) !important;
+    border-radius: 10px !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 0.95rem !important;
+    caret-color: var(--accent) !important;
+}
+.stTextInput input:focus,
+.stTextArea textarea:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 2px rgba(218,65,103,0.22) !important;
+    outline: none !important;
+}
+
+.stButton > button {
+    background: var(--accent) !important;
+    color: var(--text-white) !important;
+    font-weight: 700 !important;
+    border: none !important;
+    border-radius: 9px !important;
+    padding: 0.6rem 1.4rem !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 0.90rem !important;
+    transition: opacity 0.15s, box-shadow 0.15s !important;
+    letter-spacing: 0.01em !important;
+}
+.stButton > button:hover {
+    opacity: 0.88 !important;
+    box-shadow: 0 0 18px var(--accent-glow) !important;
+}
+.stButton > button:active { opacity: 0.75 !important; }
+
+div[role="radiogroup"] {
+    display: flex !important;
+    gap: 0.3rem !important;
+    background: var(--bg-surface) !important;
+    padding: 4px !important;
+    border-radius: 10px !important;
+    border: 1px solid var(--border-strong) !important;
+    width: fit-content !important;
+}
+div[role="radiogroup"] label {
+    padding: 0.4rem 1rem !important;
+    border-radius: 7px !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    color: var(--text-muted) !important;
+    transition: background 0.15s, color 0.15s !important;
+}
+div[role="radiogroup"] label:has(input:checked) {
+    background: var(--accent) !important;
+    color: var(--text-white) !important;
+}
+div[role="radiogroup"] input[type="radio"] { display: none !important; }
+
+.stSelectbox > div > div {
+    background-color: var(--bg-surface) !important;
+    color: var(--text-white) !important;
+    border: 1.5px solid var(--bg-card) !important;
+    border-radius: 9px !important;
+}
+
+details summary { color: var(--accent) !important; font-weight: 600 !important; font-size: 0.88rem !important; }
+.stCaption { color: var(--text-muted) !important; font-size: 0.78rem !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -106,14 +332,16 @@ def _tts_edge(text: str, lang: str = "hi") -> bytes | None:
 def _tts_bytes(text: str, lang: str = "hi") -> bytes | None:
     return _tts_edge(text, lang)
 
-def _autoplay_audio(audio_bytes: bytes, fmt: str = "mp3") -> None:
+def _autoplay_audio(audio_bytes: bytes, fmt: str = "mp3", label: str = "") -> None:
     b64 = base64.b64encode(audio_bytes).decode()
     st.markdown(
-        f'<audio autoplay style="display:none">'
+        f'<audio controls autoplay style="width:100%;margin:4px 0;border-radius:6px;">'
         f'<source src="data:audio/{fmt};base64,{b64}" type="audio/{fmt}">'
         f'</audio>',
         unsafe_allow_html=True,
     )
+    if label:
+        st.caption(f"{label} — press play if audio did not start.")
 
 def _stt_google(audio_bytes: bytes) -> tuple[str | None, str | None]:
     if len(audio_bytes) < 8_000:
@@ -134,14 +362,12 @@ def _stt_google(audio_bytes: bytes) -> tuple[str | None, str | None]:
             recognizer.adjust_for_ambient_noise(source, duration=0.3)
             audio = recognizer.record(source)
 
-        # Try Hindi first
         try:
             text = recognizer.recognize_google(audio, language="hi-IN")
             if text and len(text.strip()) > 1: return text.strip(), None
         except sr.UnknownValueError: pass
         except sr.RequestError as e: return None, f"Speech recognition service unavailable: {e}"
 
-        # Then English
         try:
             text = recognizer.recognize_google(audio, language="en-IN")
             if text and len(text.strip()) > 1: return text.strip(), None
@@ -160,7 +386,7 @@ def _transcribe_audio(audio_file) -> tuple[str | None, str | None]:
     return _stt_google(bytes(buf))
 
 # ---------------------------------------------------------------------------
-# Natural Language Voice Command Parsers (buyer & weaver)
+# Natural Language Voice Command Parsers
 # ---------------------------------------------------------------------------
 _CORRECTION_PHRASES = {
     "not what i want", "that's not", "thats not", "wrong", "not this",
@@ -180,8 +406,15 @@ def _is_number_selection(text: str) -> bool:
     return t in {"1", "2", "3", "one", "two", "three", "first", "second", "third", "ek", "do", "teen", "pehla", "doosra", "teesra"}
 
 def _parse_weaver_voice_command(text: str, pending: list, accepted: list) -> dict | None:
+    """
+    Parses natural Hindi/English voice commands from the weaver to accept, reject,
+    or show the fabric to the buyer hands-free.
+    Now handles missing order numbers, more keywords, and fallback defaults.
+    """
     t = text.lower()
     action = None
+
+    # 1. Determine Intent – expanded with more Hindi variations
     accept_words = {"swikaar", "accept", "le lo", "manzoor", "pakka", "done", "han", "haan", "ok", "theek", "yes", "y", "sahi"}
     reject_words = {"mana", "reject", "decline", "cancel", "nahi", "chhod", "no", "n", "galat", "wrong", "cancel"}
     show_words = {"dikhao", "show", "bhejo", "send", "photo", "tasveer", "approve", "buyer", "dekhao"}
@@ -196,11 +429,14 @@ def _parse_weaver_voice_command(text: str, pending: list, accepted: list) -> dic
     if not action:
         return {"action": "error", "message": "Could not understand command. Try 'Accept first order', 'Reject order 2847', or 'Show buyer'."}
 
+    # 2. Determine which list to target (pending for accept/decline, accepted for show)
     target_list = accepted if action == "show_buyer" else pending
     if not target_list:
         return {"action": "error", "message": f"No {'in-production' if action == 'show_buyer' else 'pending'} orders available."}
 
     target_idx = None
+
+    # 3. Try to extract a 4-digit order ID (e.g., 2847)
     m = re.search(r'\b(\d{4})\b', t)
     if m:
         oid = m.group(1)
@@ -209,6 +445,7 @@ def _parse_weaver_voice_command(text: str, pending: list, accepted: list) -> dic
                 target_idx = i
                 break
 
+    # 4. If no ID, try ordinal words (first, second, third)
     if target_idx is None:
         ordinals = {
             "first": 0, "pehla": 0, "1": 0, "one": 0, "ek": 0,
@@ -221,6 +458,7 @@ def _parse_weaver_voice_command(text: str, pending: list, accepted: list) -> dic
                     target_idx = idx
                 break
 
+    # 5. If still no match and there's only one order, default to it
     if target_idx is None and len(target_list) == 1:
         target_idx = 0
 
@@ -232,43 +470,6 @@ def _parse_weaver_voice_command(text: str, pending: list, accepted: list) -> dic
         }
 
     return {"action": "error", "message": "Could not identify which order. Please say the 4‑digit order ID (e.g., 2847) or 'first order'."}
-
-# ---------------------------------------------------------------------------
-# Parser for weaver registration voice input (Hindi/English)
-# ---------------------------------------------------------------------------
-def _parse_registration_text(text: str) -> dict:
-    """
-    Extract name, cluster, specialty, phone from a transcribed voice message.
-    Works for Hindi and English patterns.
-    """
-    result = {"name": "", "cluster": "", "specialty": "", "phone": ""}
-    t = text.lower().strip()
-
-    # Patterns: "mera naam X hai", "my name is X", "name X", etc.
-    name_match = re.search(r'(?:mera naam|my name is|name is|naam)\s*(.+?)(?:\s+hai|\s*$|\.)', t, re.IGNORECASE)
-    if name_match:
-        result["name"] = name_match.group(1).strip().title()
-
-    # Cluster: "cluster X hai", "cluster X", "X cluster", "X mein", "from X"
-    cluster_match = re.search(r'(?:cluster|clusters?|group|area|from|से|में)\s*(.+?)(?:\s+(?:hai|is|mein|क्लस्टर)|$|\.)', t, re.IGNORECASE)
-    if cluster_match:
-        result["cluster"] = cluster_match.group(1).strip().title()
-
-    # Specialty: "specialty X", "weave X", "X weave", "X banata hoon", "X ki weaving"
-    specialty_match = re.search(r'(?:specialty|weave|weaving|बुनाई|काम|banata|karate)\s*(.+?)(?:\s+(?:hai|is|करता)|$|\.)', t, re.IGNORECASE)
-    if specialty_match:
-        result["specialty"] = specialty_match.group(1).strip().title()
-
-    # Phone: 10-digit number
-    phone_match = re.search(r'\b(\d{10})\b', t)
-    if phone_match:
-        result["phone"] = phone_match.group(1)
-
-    # Fallback: if no name extracted but we have text, use first few words as name
-    if not result["name"] and len(t.split()) >= 2:
-        result["name"] = " ".join(t.split()[:2]).title()
-
-    return result
 
 # ---------------------------------------------------------------------------
 # Session state initializers
@@ -290,7 +491,6 @@ def _init_weaver_state() -> None:
     if "audio_work_mode" not in st.session_state: st.session_state["audio_work_mode"] = False
     if "weaver_audio_counter" not in st.session_state: st.session_state["weaver_audio_counter"] = 0
     if "custom_weavers" not in st.session_state: st.session_state["custom_weavers"] = []
-    if "reg_parsed" not in st.session_state: st.session_state["reg_parsed"] = {}
 
 def _make_demo_orders() -> list:
     return [
@@ -382,6 +582,9 @@ def _swatch_card(swatch: dict, index: int) -> None:
         </div>
         <div class="swatch-price">₹{swatch.get("price_inr","?")}</div>
         <div style="font-size:0.72rem;color:#86efac;margin-bottom:6px;">Includes weaver labor & direct home delivery</div>
+        <div style="font-size:0.80rem;color:var(--text-primary);line-height:1.55;margin-bottom:6px;opacity:0.9;">
+            {swatch.get('description', '')}
+        </div>
         <div style="margin:6px 0;">{tags}</div>
         <div class="divider"></div>
         <div class="swatch-label">Master Artisan</div>
@@ -563,128 +766,16 @@ def _buyer_page() -> None:
                 st.rerun()
 
 # ---------------------------------------------------------------------------
-# WEAVER PAGE (Voice Router + Min Base Price + Onboarding with Voice & GPS)
+# WEAVER PAGE (Voice Router + Min Base Price)
 # ---------------------------------------------------------------------------
 def _weaver_page() -> None:
     _init_weaver_state()
-    all_weavers = _get_all_weavers()
+    all_weavers = _get_all_weavers()  # ← now includes custom weavers
     st.markdown('<div class="section-label">🧑‍🎨 Artisan Portal (बुनकर पोर्टल)</div>', unsafe_allow_html=True)
 
-    # ---- ONBOARDING FORM with Voice & GPS ----
-    with st.expander("🆕 Register as a New Weaver (हमसे जुड़ें)", expanded=False):
-        # 1. GPS location button
-        col_gps, _ = st.columns([1, 4])
-        with col_gps:
-            if st.button("📍 Get Current Location", help="Uses browser GPS to get your coordinates"):
-                gps_js = """
-                <script>
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                        (pos) => {
-                            const lat = pos.coords.latitude;
-                            const lon = pos.coords.longitude;
-                            window.location.href = window.location.pathname + '?lat=' + lat + '&lon=' + lon;
-                        },
-                        (err) => {
-                            alert('GPS error: ' + err.message);
-                        }
-                    );
-                } else {
-                    alert('Geolocation not supported by this browser.');
-                }
-                </script>
-                """
-                st.components.v1.html(gps_js, height=0, width=0)
-
-        # Read GPS from query params and store in session state
-        lat = st.query_params.get("lat")
-        lon = st.query_params.get("lon")
-        if lat and lon:
-            st.session_state["gps_coords"] = f"{lat}, {lon}"
-            try:
-                resp = requests.get(
-                    f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}&format=json&zoom=10",
-                    headers={"User-Agent": "Pakshi-Hackathon"}
-                )
-                if resp.status_code == 200:
-                    data = resp.json()
-                    if "display_name" in data:
-                        st.session_state["gps_place"] = data["display_name"].split(",")[0].strip()
-            except Exception:
-                pass
-            st.query_params.clear()
-            st.rerun()
-
-        # 2. Voice input for registration (Hindi/English)
-        st.markdown("**🎤 Speak Your Registration (बोलकर भरें)**")
-        st.caption("Say your details in one go: e.g., 'My name is Ramesh, I weave Banarasi silk in Varanasi, phone 9876543210' or Hindi: 'Mera naam Ramesh hai, main Banarasi silk ki weaving karta hoon, phone 9876543210'")
-        reg_audio = st.audio_input("Record registration details", key="reg_audio")
-        if reg_audio is not None:
-            with st.spinner("🎧 Transcribing..."):
-                text, err = _transcribe_audio(reg_audio)
-            if err:
-                st.warning(err)
-            else:
-                st.info(f"🗣️ Heard: {text}")
-                # Parse the text to extract fields
-                parsed = _parse_registration_text(text)
-                # Store parsed data in session state for auto-fill
-                for key, val in parsed.items():
-                    if val:
-                        st.session_state[f"reg_{key}"] = val
-                st.success("✅ Fields extracted! Please review and correct below.")
-                st.rerun()
-
-        # 3. Registration form – auto-filled from voice or GPS
-        with st.form("weaver_onboarding"):
-            # Pre-fill from session state or GPS
-            default_name = st.session_state.get("reg_name", "")
-            default_cluster = st.session_state.get("gps_place", "") or st.session_state.get("reg_cluster", "")
-            default_specialty = st.session_state.get("reg_specialty", "")
-            default_phone = st.session_state.get("reg_phone", "")
-            default_gps = st.session_state.get("gps_coords", "")
-
-            name = st.text_input("Full Name (पूरा नाम)", value=default_name, placeholder="e.g., Ramesh Kumar")
-            cluster = st.text_input("Weaving Cluster (बुनकर समूह)", value=default_cluster, placeholder="e.g., Pochampally, Banaras")
-            specialty = st.text_input("Speciality Weave (विशेषता)", value=default_specialty, placeholder="e.g., Ikat, Banarasi Brocade")
-            phone = st.text_input("Phone (मोबाइल)", value=default_phone, placeholder="e.g., 9876543210")
-            gps_display = st.text_input("GPS Coordinates (auto-detected)", value=default_gps, disabled=True)
-
-            submitted = st.form_submit_button("✅ Register Weaver")
-            if submitted:
-                if name.strip() and cluster.strip() and specialty.strip():
-                    new_id = f"CW{random.randint(100,999)}"
-                    new_profile = {
-                        "id": new_id,
-                        "name": name.strip(),
-                        "cluster": cluster.strip(),
-                        "state": "India",
-                        "fabric_specialty": [specialty.strip()],
-                        "weave_style": specialty.strip(),
-                        "price_range_inr": {"min": 1000, "max": 5000},
-                        "rating": 4.0,
-                        "orders_completed": 0,
-                        "active": True,
-                        "onboarded": True,
-                        "gps": gps_display if gps_display else "",
-                        "phone": phone.strip(),
-                    }
-                    st.session_state.setdefault("custom_weavers", []).append(new_profile)
-                    st.session_state["weaver_id"] = new_id
-                    # Clear temporary session state
-                    for k in ["reg_name", "reg_cluster", "reg_specialty", "reg_phone", "gps_coords", "gps_place"]:
-                        if k in st.session_state:
-                            del st.session_state[k]
-                    st.success(f"✅ Registered successfully! Weaver ID: {new_id}")
-                    st.balloons()
-                    time.sleep(0.5)
-                    st.rerun()
-                else:
-                    st.error("Please fill all required fields (Name, Cluster, Specialty).")
-
-    # ---- Existing weaver dashboard (dropdown, orders, voice commands) ----
     col_sel, col_stat = st.columns([2, 3])
     with col_sel:
+        # Build dropdown from ALL weavers (built-in + custom)
         opts = [f"{w['id']} — {w.get('name','Unknown')} ({w.get('cluster','')})" for w in all_weavers]
         if not opts:
             opts = ["No weavers registered. Please onboard."]
@@ -711,7 +802,7 @@ def _weaver_page() -> None:
 
     st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
 
-    # ---- Voice Router for Weavers ----
+    # ── Voice Router for Weavers ──
     st.markdown('<div class="section-label">🎙️ Voice Loom Controls (हाथों के बिना काम करें)</div>', unsafe_allow_html=True)
     st.caption("Say 'Pehla order swikaar karo' (Accept first), 'Order 2847 mana karo' (Reject), or 'Buyer ko dikhao' (Send photo to buyer).")
 
@@ -734,14 +825,16 @@ def _weaver_page() -> None:
 
             if cmd and cmd.get("action") != "error":
                 act, oid = cmd["action"], cmd["order_id"]
+                # Find index in global orders
                 idx = next((i for i, o in enumerate(orders) if o["order_id"] == oid), None)
                 if idx is not None:
                     if act == "accept":
                         orders[idx]["status"] = "accepted"
+                        # Update buyer orders as well
                         for bo in st.session_state.get("buyer_orders", []):
                             if bo["order_id"] == oid:
                                 bo["status"] = "In Production"
-                        st.session_state["weaver_orders"] = orders
+                        st.session_state["weaver_orders"] = orders  # force update
                         hi_txt = f"Order {oid[-4:]} swikaar ho gaya. Loom par bhej diya."
                         if ab := _tts_bytes(hi_txt, lang="hi"):
                             _autoplay_audio(ab)
@@ -761,6 +854,7 @@ def _weaver_page() -> None:
                         orders[idx]["status"] = "awaiting_approval"
                         orders[idx]["photo"] = "loom_snapshot_auto.jpg"
                         st.session_state["weaver_orders"] = orders
+                        # Update buyer side
                         for bo in st.session_state.get("buyer_orders", []):
                             if bo["order_id"] == oid:
                                 bo["status"] = "Awaiting Approval"
@@ -774,33 +868,30 @@ def _weaver_page() -> None:
                     st.error(f"Order {oid} not found.")
             else:
                 msg = cmd["message"] if cmd else "Command not recognised."
-                st.error(msg)
-        st.rerun()
+                st.warning(msg)
+                st.caption("Try: 'pehla order swikaar karo' / 'accept first order' / 'order 2847 mana karo'")
 
-    # ---- Display Order Queues ----
+    # ── Display Order Queues ──
     if st.session_state.get("audio_work_mode") and (pending or accepted):
-        if st.button("🔊 Read My Orders Aloud", use_container_width=False):
+        if st.button("Read My Orders Aloud", use_container_width=False, key="read_orders_btn"):
             lines = []
             if pending:
                 lines.append(f"Aapke paas {len(pending)} naye order hain.")
                 for o in pending[:3]:
                     lines.append(
                         f"Order {o.get('order_id','')[-4:]}: "
-                        f"{o.get('weave_style','fabric')}, {o.get('color','')}, "
-                        f"keemat {o.get('price',0)} rupaye, deliver by {o.get('delivery_by','')}."
+                        f"{o.get('weave_style','fabric')}, "
+                        f"{o.get('color','')}, "
+                        f"keemat {o.get('price',0)} rupaye, "
+                        f"deliver by {o.get('delivery_by','')}."
                     )
             if accepted:
                 lines.append(f"{len(accepted)} order loom par chal rahe hain.")
-                for o in accepted[:2]:
-                    lines.append(
-                        f"Order {o.get('order_id','')[-4:]}: "
-                        f"{o.get('weave_style','fabric')}, deliver by {o.get('delivery_by','')}."
-                    )
             full_text = " ".join(lines)
             if ab := _tts_bytes(full_text, lang="hi"):
-                _autoplay_audio(ab)
+                _autoplay_audio(ab, label="Your orders summary")
             else:
-                st.warning("Audio not available.")
+                st.warning("Audio unavailable — check edge-tts is installed.")
 
     if pending:
         st.markdown('<div class="section-label" style="margin-top:1rem;">📥 Pending Broadcasts</div>', unsafe_allow_html=True)
@@ -843,16 +934,24 @@ def _weaver_page() -> None:
                 </div>
             </div>""", unsafe_allow_html=True)
 
-            if st.button(f"📸 Send Fabric Photo for Approval (#{order['order_id']})", key=f"show_{order['order_id']}"):
+            uploaded = st.file_uploader(
+                f"Upload progress photo — #{order['order_id']}",
+                type=["jpg","jpeg","png"],
+                key=f"photo_{order['order_id']}",
+                label_visibility="collapsed",
+            )
+            if uploaded:
+                st.image(uploaded, caption=f"Progress photo — {order['order_id']}", width=260)
+            if st.button(f"Send Photo for Buyer Approval — #{order['order_id']}", key=f"show_{order['order_id']}"):
+                photo_name = uploaded.name if uploaded else "loom_snapshot.jpg"
                 orders[idx]["status"] = "awaiting_approval"
-                orders[idx]["photo"] = "loom_manual.jpg"
+                orders[idx]["photo"] = photo_name
                 st.session_state["weaver_orders"] = orders
                 for bo in st.session_state.get("buyer_orders", []):
                     if bo["order_id"] == order["order_id"]:
-                        bo["status"] = "Awaiting Approval"
-                        bo["photo_path"] = "loom_manual.jpg"
-                if ab := _tts_bytes("Tasveer bhej di gayi hai.", lang="hi"): _autoplay_audio(ab)
-                st.success("Photo sent! Awaiting buyer approval.")
+                        bo["status"] = "Photo Sent — Awaiting Approval"
+                        bo["photo_path"] = photo_name
+                st.success(f"Photo sent for #{order['order_id']}. Buyer will be notified.")
                 st.rerun()
 
     awaiting = [o for o in orders if o.get("status") == "awaiting_approval"]
@@ -863,6 +962,7 @@ def _weaver_page() -> None:
 
     st.markdown('<div style="height:1.2rem;"></div>', unsafe_allow_html=True)
     if st.button("📡 Simulate New Incoming Broadcast", use_container_width=True):
+        # Use the current profile's specialty to generate a matching order
         specialty = profile.get("weave_style", "Handloom")
         weave_map = {
             "Ikat": ("Pochampally Ikat", "Cotton-Silk"),
@@ -903,32 +1003,284 @@ def _weaver_page() -> None:
 # ---------------------------------------------------------------------------
 # ONE OF A KIND PAGE (Wholesale Resale Outlet)
 # ---------------------------------------------------------------------------
+_OOAK_SEED = [
+    {
+        "order_id": "PKS-2801",
+        "weave_style": "Pochampally Ikat",
+        "color": "Teal with gold border",
+        "original_price": 1800,
+        "resale_price": 1080,
+        "weaver_name": "Padmavathi Devi",
+        "weaver_cluster": "Pochampally",
+        "weaver_state": "Telangana",
+        "sensory_tags": ["flowy", "breathable yet elegant", "light but rich"],
+        "reason": "Colour slightly deeper than buyer expected",
+    },
+    {
+        "order_id": "PKS-2788",
+        "weave_style": "Chanderi Cotton Silk",
+        "color": "Ivory with silver zari",
+        "original_price": 2400,
+        "resale_price": 1440,
+        "weaver_name": "Kamla Bai",
+        "weaver_cluster": "Chanderi",
+        "weaver_state": "Madhya Pradesh",
+        "sensory_tags": ["sheer", "elegant", "soft sheen"],
+        "reason": "Weaving imperfection on pallu border",
+    },
+]
+
 def _ooak_page() -> None:
     st.markdown('<div class="section-label">♻️ One of a Kind — Wholesale Resale Outlet</div>', unsafe_allow_html=True)
+
+    # Seed demo items on first visit so page is never empty for judges
+    if "ooak_seeded" not in st.session_state:
+        existing_ids = {i.get("order_id") for i in st.session_state.get("one_of_a_kind", [])}
+        for seed in _OOAK_SEED:
+            if seed["order_id"] not in existing_ids:
+                st.session_state.setdefault("one_of_a_kind", []).append(seed)
+        st.session_state["ooak_seeded"] = True
+
     items = st.session_state.get("one_of_a_kind", [])
-    if not items: return st.info("🌱 Zero Waste — No Rejected Pieces Currently Available")
+    if not items:
+        st.markdown("""
+        <div class="card" style="text-align:center;padding:2rem;">
+            <div style="font-size:0.95rem;font-weight:700;margin-bottom:0.4rem;">No rejected pieces yet — that is a good sign</div>
+            <div style="font-size:0.82rem;color:var(--text-muted);">When a custom order does not meet a buyer's expectation,
+            it lands here at wholesale price. No waste. No loss.</div>
+        </div>""", unsafe_allow_html=True)
+        return
+
+    st.caption(f"{len(items)} unique handwoven piece{'s' if len(items)>1 else ''} at wholesale prices — ready to ship.")
 
     for idx, item in enumerate(items):
         orig, resale = item.get("original_price", 0), item.get("resale_price", 0)
+        discount = int((1 - resale / orig) * 100) if orig else 0
+        tags_html = "".join(
+            f'<span class="tag">{t}</span>'
+            for t in item.get("sensory_tags", [])[:3]
+        )
+        col_card, col_btn = st.columns([5, 1], gap="small")
+        with col_card:
+            st.markdown(f"""
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;">
+                    <div>
+                        <div style="font-weight:800;font-size:1.05rem;color:var(--text-white);">
+                            {item.get("weave_style","—")} &middot; {item.get("color","—")}
+                        </div>
+                        <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px;">
+                            #{item.get("order_id","—")} &middot; {item.get("reason","Rejected custom piece")}
+                        </div>
+                        <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px;">
+                            Woven by <strong style="color:var(--text-primary);">{item.get("weaver_name","—")}</strong>
+                            &middot; {item.get("weaver_cluster","—")}, {item.get("weaver_state","—")}
+                        </div>
+                        <div style="margin-top:6px;">{tags_html}
+                            <span class="tag" style="background:rgba(34,197,94,0.15);color:#22c55e;">ready to ship</span>
+                        </div>
+                    </div>
+                    <div style="text-align:right;flex-shrink:0;">
+                        <div style="font-size:0.78rem;color:var(--text-muted);text-decoration:line-through;">₹{orig:,}</div>
+                        <div class="swatch-price">₹{resale:,}</div>
+                        <div style="background:rgba(34,197,94,0.2);color:#22c55e;padding:2px 8px;
+                            border-radius:999px;font-size:0.72rem;font-weight:700;display:inline-block;margin-top:2px;">
+                            {discount}% off
+                        </div>
+                    </div>
+                </div>
+            </div>""", unsafe_allow_html=True)
+        with col_btn:
+            st.markdown('<div style="height:1.2rem;"></div>', unsafe_allow_html=True)
+            if st.button("Buy Now", key=f"buy_{item.get('order_id',idx)}_{idx}", use_container_width=True):
+                st.success(f"#{item.get('order_id','')} added to cart. Delivery in 3-5 days.")
+
+# ---------------------------------------------------------------------------
+# WEAVER ONBOARDING PAGE (Now persists profiles)
+# ---------------------------------------------------------------------------
+def _onboarding_page() -> None:
+    st.markdown('<div class="section-label">Weaver Onboarding — Join the Pakshi Network</div>', unsafe_allow_html=True)
+    st.markdown("""
+    <div style="background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.25);
+        border-radius:10px;padding:0.75rem 1rem;margin-bottom:1rem;font-size:0.82rem;
+        color:var(--text-primary);line-height:1.6;">
+        <strong style="color:#f5a623;">Powered by Meesho</strong> — Once you complete onboarding,
+        your weaver profile goes live on the Pakshi network. Buyers describe what they want,
+        the agent matches you, and orders come directly to your phone. No middlemen.
+        Your craft. Your price.
+    </div>
+    """, unsafe_allow_html=True)
+
+    if "onboard_submitted" not in st.session_state:
+        st.session_state["onboard_submitted"] = False
+    if "onboard_data" not in st.session_state:
+        st.session_state["onboard_data"] = {}
+
+    if st.session_state["onboard_submitted"]:
+        d = st.session_state["onboard_data"]
+        # New weaver is already stored, show success and invite to dashboard
         st.markdown(f"""
-        <div class="card">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                <div><div style="font-weight:800;font-size:1.05rem;color:var(--text-white);">{item.get("weave_style","—")}</div>
-                     <div style="font-size:0.80rem;color:var(--text-muted);">Original Order #{item.get("order_id","—")}</div></div>
-                <div style="text-align:right;"><div style="font-size:0.80rem;color:var(--text-muted);text-decoration:line-through;">₹{orig:,}</div>
-                     <div class="swatch-price">₹{resale:,}</div></div>
+        <div style="background:rgba(34,197,94,0.08);border:1.5px solid #22c55e;
+            border-radius:12px;padding:1.4rem;text-align:center;margin-top:1rem;">
+            <div style="font-size:1.3rem;font-weight:800;color:#22c55e;margin-bottom:0.4rem;">
+                ✅ Profile Live!
             </div>
-        </div>""", unsafe_allow_html=True)
+            <div style="font-size:0.85rem;color:var(--text-primary);line-height:1.7;">
+                Welcome to Pakshi, <strong>{d.get("name","")}</strong>.<br>
+                Cluster: {d.get("cluster","")} · Speciality: {d.get("fabric","")}<br>
+                Your profile is now active. Switch to the <strong>Weaver Dashboard</strong> tab
+                to view your orders.<br>
+                <span style="color:#f5a623;font-weight:600;">
+                Meesho Seller ID will be sent to {d.get("phone","")} via WhatsApp.</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        if st.button("Go to Weaver Dashboard", use_container_width=True):
+            # Auto-select the new weaver (already set in session state)
+            st.session_state["onboard_submitted"] = False
+            st.session_state["onboard_data"] = {}
+            # Rerun to switch to the dashboard tab – we'll do it via navigation
+            st.success("Navigating to Dashboard...")
+            # We'll force the tab to switch by setting a query param
+            st.query_params.update({"tab": "Weaver Dashboard"})
+            st.rerun()
+        if st.button("Register Another Weaver", use_container_width=True):
+            st.session_state["onboard_submitted"] = False
+            st.session_state["onboard_data"] = {}
+            st.rerun()
+        return
+
+    with st.form("onboard_form"):
+        st.markdown('<div class="section-label">Basic Details</div>', unsafe_allow_html=True)
+        c1, c2 = st.columns(2)
+        name     = c1.text_input("Full Name (पूरा नाम)", placeholder="e.g. Padmavathi Devi")
+        phone    = c2.text_input("Mobile / WhatsApp Number", placeholder="10-digit number")
+
+        c3, c4 = st.columns(2)
+        cluster  = c3.text_input("Village / Cluster (गांव / क्लस्टर)", placeholder="e.g. Pochampally")
+        state    = c4.selectbox("State (राज्य)", [
+            "Andhra Pradesh", "Bihar", "Gujarat", "Jharkhand", "Karnataka",
+            "Kerala", "Madhya Pradesh", "Maharashtra", "Odisha", "Rajasthan",
+            "Tamil Nadu", "Telangana", "Uttar Pradesh", "West Bengal", "Other"
+        ])
+
+        st.markdown('<div class="section-label" style="margin-top:0.8rem;">Craft Details</div>', unsafe_allow_html=True)
+        c5, c6 = st.columns(2)
+        fabric   = c5.multiselect("Fabric Speciality", ["Cotton", "Silk", "Cotton-Silk", "Tussar", "Linen"])
+        weave    = c6.text_input("Weave Style (बुनाई शैली)", placeholder="e.g. Ikat, Jamdani, Block Print")
+
+        c7, c8 = st.columns(2)
+        min_p    = c7.number_input("Minimum Order Price (₹)", min_value=300, max_value=50000, value=1000, step=100)
+        delivery = c8.number_input("Typical Delivery Days", min_value=3, max_value=60, value=14, step=1)
+
+        st.markdown('<div class="section-label" style="margin-top:0.8rem;">Verification</div>', unsafe_allow_html=True)
+        c9, c10 = st.columns(2)
+        aadhaar  = c9.text_input("Aadhaar Last 4 Digits", placeholder="XXXX", max_chars=4)
+        bank     = c10.text_input("Bank Account Number (for payments)", placeholder="Account number")
+
+        whatsapp = st.checkbox("I have WhatsApp on this number and can receive order notifications")
+        custom   = st.checkbox("I can accept custom / made-to-order requests")
+        consent  = st.checkbox("I agree to list on Meesho through the Pakshi network")
+
+        lang     = st.selectbox("Preferred Language for Notifications", [
+            "Hindi", "Telugu", "Tamil", "Kannada", "Bengali", "Gujarati", "Marathi", "English"
+        ])
+
+        photo    = st.file_uploader("Upload a sample of your work (optional)", type=["jpg","jpeg","png"])
+        if photo:
+            st.image(photo, caption="Sample work preview", width=260)
+
+        submitted = st.form_submit_button("Submit Profile — Join Pakshi Network", use_container_width=True)
+
+        if submitted:
+            errors = []
+            if not name.strip():       errors.append("Name is required.")
+            if not phone.strip() or len(phone.strip()) != 10 or not phone.strip().isdigit():
+                errors.append("Valid 10-digit mobile number is required.")
+            if not cluster.strip():    errors.append("Village / Cluster is required.")
+            if not fabric:             errors.append("Select at least one fabric speciality.")
+            if not consent:            errors.append("You must agree to list on Meesho.")
+
+            if errors:
+                for e in errors:
+                    st.error(e)
+            else:
+                # Create new weaver profile
+                new_id = f"CW{random.randint(100,999)}"
+                new_profile = {
+                    "id": new_id,
+                    "name": name.strip(),
+                    "cluster": cluster.strip(),
+                    "state": state,
+                    "fabric_specialty": fabric,
+                    "weave_style": weave.strip(),
+                    "price_range_inr": {"min": min_p, "max": min_p * 3},
+                    "rating": 4.0,
+                    "orders_completed": 0,
+                    "active": True,
+                    "phone": phone.strip(),
+                    "whatsapp": whatsapp,
+                    "accepts_custom": custom,
+                    "language": lang,
+                }
+                st.session_state.setdefault("custom_weavers", []).append(new_profile)
+                st.session_state["weaver_id"] = new_id  # auto‑select
+
+                st.session_state["onboard_data"] = {
+                    "name": name.strip(), "phone": phone.strip(),
+                    "cluster": cluster.strip(), "state": state,
+                    "fabric": ", ".join(fabric), "weave": weave.strip(),
+                    "min_price": min_p, "delivery_days": delivery,
+                    "whatsapp": whatsapp, "accepts_custom": custom,
+                    "language": lang,
+                }
+                st.session_state["onboard_submitted"] = True
+                st.rerun()
+
 
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 def main() -> None:
     _render_header()
-    tab = st.radio("Nav", ["🛍️ Buyer Portal", "🧑‍🎨 Weaver Dashboard", "♻️ Wholesale Resale"], horizontal=True, label_visibility="collapsed")
+
+    if "app_loaded" not in st.session_state:
+        st.markdown(
+            '<div style="background:rgba(218,65,103,0.1);border:1px solid rgba(218,65,103,0.3);'
+            'border-radius:8px;padding:0.5rem 1rem;font-size:0.82rem;color:#f0bcd4;'
+            'margin-bottom:0.8rem;">Agent is warming up on first load — this takes about '
+            '15 seconds. Subsequent responses will be instant.</div>',
+            unsafe_allow_html=True,
+        )
+        st.session_state["app_loaded"] = True
+
+    # Read tab from query param to allow navigation after onboarding
+    default_tab = 0
+    tab_param = st.query_params.get("tab")
+    if tab_param:
+        if "Buyer" in tab_param:
+            default_tab = 0
+        elif "Weaver Dashboard" in tab_param:
+            default_tab = 1
+        elif "Wholesale Resale" in tab_param:
+            default_tab = 2
+        elif "Weaver Onboarding" in tab_param:
+            default_tab = 3
+        # Clear param after reading
+        st.query_params.clear()
+
+    tab = st.radio(
+        "Nav",
+        ["Buyer Portal", "Weaver Dashboard", "Wholesale Resale", "Weaver Onboarding"],
+        horizontal=True,
+        label_visibility="collapsed",
+        index=default_tab,
+    )
     st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
     if "Buyer" in tab: _buyer_page()
-    elif "Weaver" in tab: _weaver_page()
+    elif "Weaver Dashboard" in tab: _weaver_page()
+    elif "Onboarding" in tab: _onboarding_page()
     else: _ooak_page()
 
 if __name__ == "__main__":
