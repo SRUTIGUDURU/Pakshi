@@ -1183,26 +1183,40 @@ def _weaver_page() -> None:
                 text_lower = text.lower()
                 action = None
 
-                # Google STT returns Hindi in Devanagari script for hi-IN,
-                # and romanized for en-IN. Match both forms.
+                # Google STT returns Hindi in Devanagari for hi-IN and romanized for en-IN.
+                # Use whole-word boundary matching to avoid "na" matching inside "mana"/"naya".
+                import re as _re
+                def _word_match(transcript: str, words: list) -> bool:
+                    for w in words:
+                        # Exact substring for Devanagari (no word-boundary concept in Unicode \b)
+                        if any(ord(c) > 127 for c in w):
+                            if w in transcript:
+                                return True
+                        else:
+                            # Word-boundary match for ASCII/romanized words
+                            if _re.search(r'\b' + _re.escape(w) + r'\b', transcript, _re.IGNORECASE):
+                                return True
+                    return False
+
                 ACCEPT_WORDS = [
-                    # Devanagari (hi-IN output)
+                    # Devanagari (hi-IN STT output)
                     "स्वीकार", "स्वीकृत", "हाँ", "हां", "ठीक",
-                    # Romanized / en-IN output
-                    "swikaar", "sweekar", "swikar", "accept", "haan", "ok", "theek", "sahi",
+                    # Romanized (en-IN STT output)
+                    "swikaar", "sweekar", "swikar", "accept", "haan", "theek", "sahi",
                 ]
                 REJECT_WORDS = [
-                    # Devanagari (hi-IN output)
+                    # Devanagari (hi-IN STT output)
                     "मना", "नहीं", "नही", "अस्वीकार", "रद्द",
-                    # Romanized / en-IN output
-                    "mana", "mana karo", "decline", "reject", "nahi", "na", "no", "cancel",
+                    # Romanized (en-IN STT output) — "na"/"no" removed; too short, too ambiguous
+                    "mana karo", "mana kar", "decline", "reject", "nahi",
                 ]
-                if any(w in text_lower for w in ACCEPT_WORDS):
+
+                if _word_match(text_lower, ACCEPT_WORDS):
                     action = "accept"
-                elif any(w in text_lower for w in REJECT_WORDS):
+                elif _word_match(text_lower, REJECT_WORDS):
                     action = "decline"
                 else:
-                    st.warning(f"Command not recognised. Heard: \'{text}\'. Say 'swikaar karo' (accept) or 'mana karo' (decline).")
+                    st.warning(f"Command not recognised. Heard: \"{text}\". Say \'swikaar karo\' to accept or \'mana karo\' to decline.")
                     st.rerun()
                     return
 
@@ -1219,7 +1233,9 @@ def _weaver_page() -> None:
                 # Get the first pending order
                 target_order = pending[0]
                 oid = target_order["order_id"]
-                idx = next((i for i, o in enumerate(orders) if o["order_id"] == oid), None)
+                # Re-fetch fresh index from live session state (not stale local list)
+                live_orders = st.session_state["weaver_orders"]
+                idx = next((i for i, o in enumerate(live_orders) if o["order_id"] == oid), None)
 
                 if idx is None:
                     st.error("Order not found in your list. Please refresh.")
@@ -1228,12 +1244,11 @@ def _weaver_page() -> None:
 
                 # --- Perform action ---
                 if action == "accept":
-                    orders[idx]["status"] = "accepted"
+                    live_orders[idx]["status"] = "accepted"
                     for bo in st.session_state.get("buyer_orders", []):
                         if bo["order_id"] == oid:
                             bo["status"] = "In Production"
-                    st.session_state["weaver_orders"] = orders
-                    st.session_state["buyer_orders"] = st.session_state.get("buyer_orders", [])
+                    st.session_state["weaver_orders"] = live_orders
                     st.success(f"✅ Accepted {oid}!")
                     try:
                         if ab := _tts_bytes(f"Order {oid[-4:]} swikaar ho gaya.", lang="hi"):
@@ -1244,13 +1259,28 @@ def _weaver_page() -> None:
                     return
 
                 elif action == "decline":
-                    orders[idx]["status"] = "declined"
-                    for bo in st.session_state.get("buyer_orders", []):
-                        if bo["order_id"] == oid:
-                            bo["status"] = "Declined"
-                    st.session_state["weaver_orders"] = orders
-                    st.session_state["buyer_orders"] = st.session_state.get("buyer_orders", [])
-                    st.warning(f"❌ Declined {oid}.")
+                    live_orders[idx]["status"] = "declined"
+                    st.session_state["weaver_orders"] = live_orders
+                    # Move the declined order to OOAK on the buyer side (same as buyer cancel)
+                    declined_bo = next(
+                        (bo for bo in st.session_state.get("buyer_orders", []) if bo["order_id"] == oid),
+                        None
+                    )
+                    if declined_bo:
+                        st.session_state.setdefault("one_of_a_kind", []).append({
+                            "order_id": declined_bo["order_id"],
+                            "weave_style": declined_bo.get("weave_style", "—"),
+                            "color": declined_bo.get("color", "—"),
+                            "original_price": declined_bo.get("price", 0),
+                            "resale_price": int(declined_bo.get("price", 0) * 0.65),
+                            "weaver_name": declined_bo.get("weaver_name", "—"),
+                            "reason": "Weaver declined the order",
+                        })
+                        st.session_state["buyer_orders"] = [
+                            bo for bo in st.session_state.get("buyer_orders", [])
+                            if bo["order_id"] != oid
+                        ]
+                    st.warning(f"❌ Declined {oid}. Moved to wholesale outlet if buyer had this order.")
                     try:
                         if ab := _tts_bytes(f"Order {oid[-4:]} mana kar diya.", lang="hi"):
                             _autoplay_audio(ab)
@@ -1324,12 +1354,28 @@ def _weaver_page() -> None:
                 st.rerun()
                 return
             if b2.button(get_ui_string("weaver_decline", lang), key=f"dec_{order['order_id']}", use_container_width=True):
+                oid_dec = order["order_id"]
                 orders[idx]["status"] = "declined"
-                for bo in st.session_state.get("buyer_orders", []):
-                    if bo["order_id"] == order["order_id"]:
-                        bo["status"] = "Declined"
                 st.session_state["weaver_orders"] = orders
-                st.session_state["buyer_orders"] = st.session_state.get("buyer_orders", [])
+                # Move buyer order to OOAK instead of leaving it in an unhandled "Declined" state
+                declined_bo = next(
+                    (bo for bo in st.session_state.get("buyer_orders", []) if bo["order_id"] == oid_dec),
+                    None
+                )
+                if declined_bo:
+                    st.session_state.setdefault("one_of_a_kind", []).append({
+                        "order_id": declined_bo["order_id"],
+                        "weave_style": declined_bo.get("weave_style", "—"),
+                        "color": declined_bo.get("color", "—"),
+                        "original_price": declined_bo.get("price", 0),
+                        "resale_price": int(declined_bo.get("price", 0) * 0.65),
+                        "weaver_name": declined_bo.get("weaver_name", "—"),
+                        "reason": "Weaver declined the order",
+                    })
+                    st.session_state["buyer_orders"] = [
+                        bo for bo in st.session_state.get("buyer_orders", [])
+                        if bo["order_id"] != oid_dec
+                    ]
                 st.rerun()
                 return
 
