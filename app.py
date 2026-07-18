@@ -1361,143 +1361,101 @@ def _ooak_page() -> None:
             st.markdown('<div style="height:1.2rem;"></div>', unsafe_allow_html=True)
             if st.button(get_ui_string("btn_buy_now", lang), key=f"buy_{item.get('order_id',idx)}_{idx}", use_container_width=True):
                 st.success(f"#{item.get('order_id','')} added to cart. Delivery in 3-5 days.")
-def _parse_onboarding_text_improved(text: str) -> dict:
-    """
-    Robust extraction for name, cluster, specialty, phone from transcribed voice.
-    Works with Hindi, English, Hinglish, and varying word orders.
-    """
-    result = {"name": "", "cluster": "", "specialty": "", "phone": ""}
-    
-    # Clean and normalize
-    t = text.lower().strip()
-    # Remove extra punctuation
-    t = re.sub(r'[.,;:!?]', ' ', t)
-    
-    # ---- 1. PHONE (10-digit number) ----
-    phone_match = re.search(r'\b(\d{10})\b', t)
-    if phone_match:
-        result["phone"] = phone_match.group(1)
-    
-    # ---- 2. NAME ----
-    # Try multiple patterns
-    name_patterns = [
-        # "main X", "mera naam X", "my name is X", "मेरा नाम X"
-        r'(?:main|mera naam|my name is|name is|naam|मेरा नाम|मैं)\s+([A-Za-z\u0900-\u097F]+(?:\s+[A-Za-z\u0900-\u097F]+)?)',
-        # "X hai", "X is", "X hoon" – capture the word before hai/is
-        r'([A-Za-z\u0900-\u097F]+(?:\s+[A-Za-z\u0900-\u097F]+)?)\s+(?:hai|is|hoon|hun|हूँ|हैं?)\b',
-    ]
-    for pat in name_patterns:
-        m = re.search(pat, t, re.IGNORECASE)
-        if m:
-            raw = m.group(1).strip().title()
-            # Remove common suffixes that might be captured
-            raw = re.sub(r'\s*(?:hai|is|hoon|hun|हूँ|हैं?|ji|भाई|sir|madam)\s*$', '', raw)
-            if raw and len(raw) > 1:
-                result["name"] = raw
-                break
-    
-    # If name still empty, try to take the first two meaningful words
-    if not result["name"]:
-        stopwords = {"main", "mera", "my", "i", "am", "name", "is", "naam", "hai", "है", "मैं", "हूँ", "mera", "naam", "sir", "madam"}
-        words = t.split()
-        # Find the first word that is not a stopword and not a number
-        for i, w in enumerate(words):
-            if w not in stopwords and not w.isdigit():
-                # Take that word and the next one (if available and not a stopword)
-                name_candidate = w.title()
-                if i + 1 < len(words) and words[i+1] not in stopwords and not words[i+1].isdigit():
-                    name_candidate += " " + words[i+1].title()
-                if len(name_candidate) > 1:
-                    result["name"] = name_candidate
-                    break
-    
-    # ---- 3. CLUSTER (village/area) ----
-    # Look for place name patterns
-    cluster_patterns = [
-        # "X se", "X ki", "X from", "X in", "X mein", "X में"
-        r'([A-Za-z\u0900-\u097F]+(?:\s+[A-Za-z\u0900-\u0900-\u097F]+)?)\s+(?:se|ki|के|from|in|at|में|से|की)',
-        # "from X", "in X", "at X", "village X", "cluster X"
-        r'(?:from|in|at|cluster|village|गांव|क्लस्टर|से|में)\s+([A-Za-z\u0900-\u097F]+(?:\s+[A-Za-z\u0900-\u097F]+)?)',
-        # "X village", "X cluster"
-        r'([A-Za-z\u0900-\u097F]+(?:\s+[A-Za-z\u0900-\u097F]+)?)\s+(?:village|cluster|गांव|क्लस्टर)'
-    ]
-    for pat in cluster_patterns:
-        m = re.search(pat, t, re.IGNORECASE)
-        if m:
-            raw = m.group(1).strip().title()
-            # Clean up extra suffixes
-            raw = re.sub(r'\s*(?:hai|is|hoon|hun|हूँ|हैं?|mein|se|ki|से|की|में|wala|wali)\s*$', '', raw)
-            # Remove "main" or "mera" if accidentally captured
-            raw = re.sub(r'^(?:main|mera|my)\s+', '', raw)
-            if raw and len(raw) > 2:
-                result["cluster"] = raw
-                break
-    
-    # Fallback: find any word that looks like a place (capitalized English or Devanagari)
-    if not result["cluster"]:
-        # Look for words that start with uppercase (if English) or are Devanagari
-        place_candidates = re.findall(r'\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?|\u0900-\u097F{3,})\b', text)
-        for cand in place_candidates:
-            cand_clean = cand.strip()
-            if cand_clean.lower() not in ["hello", "hi", "thank", "please", "number", "phone", "main", "mera", "name", "sir", "madam"]:
-                result["cluster"] = cand_clean
-                break
-    
-    # ---- 4. SPECIALTY (weave) ----
-    # Map common Hindi terms to English
-    weave_map = {
-        "टिकट": "ikat",
-        "इकट": "ikat",
-        "बनारसी": "banarasi",
-        "कांचीपुरम": "kanjivaram",
-        "जामदानी": "jamdani",
-        "तुस्सर": "tussar",
-        "चंदेरी": "chanderi",
-        "महेश्वरी": "maheshwari",
-        "पैठणी": "paithani",
-        "पटोला": "patola",
-        "कोटा डोरिया": "kota doria",
-        "संबलपुरी": "sambalpuri",
-        "इलकल": "ilkal",
-        "वेंकटागिरी": "venkatagiri",
-        "जरी": "zari",
-        "कसावु": "kasavu"
-    }
-    
-    # Patterns for weave
-    specialty_patterns = [
-        # "X banati", "X banata", "weave X", "craft X"
-        r'(?:banati|banata|bunati|बनाती|बनाता|weave|craft|work|बुनाई|काम)\s+([A-Za-z\u0900-\u097F]+(?:\s+[A-Za-z\u0900-\u097F]+)?)',
-        r'([A-Za-z\u0900-\u097F]+(?:\s+[A-Za-z\u0900-\u097F]+)?)\s+(?:banati|banata|bunati|बनाती|बनाता)',
-        # Direct catch of known weave names
-        r'\b(' + '|'.join(re.escape(k) for k in weave_map.keys()) + r')\b'
-    ]
-    
-    for pat in specialty_patterns:
-        m = re.search(pat, t, re.IGNORECASE)
-        if m:
-            raw = m.group(1).strip().title() if m.lastindex == 1 else m.group(0).strip().title()
-            # Map if it's a Hindi term
-            for hindi, eng in weave_map.items():
-                if raw.lower() == hindi.lower():
-                    raw = eng
-                    break
-            # Remove common suffixes
-            raw = re.sub(r'\s*(?:hai|is|hoon|hun|हूँ|हैं?)$', '', raw)
-            if raw and len(raw) > 2:
-                result["specialty"] = raw
-                break
-    
-    # If specialty still empty, check if any known English weave appears
-    if not result["specialty"]:
-        english_weaves = ["ikat", "jamdani", "block print", "banarasi", "kanjivaram", "tussar", "chanderi", "maheshwari", "paithani", "patola", "kota doria", "sambalpuri", "ilkal", "venkatagiri", "zari", "kasavu"]
-        for w in english_weaves:
-            if w in t:
-                result["specialty"] = w.title()
-                break
-    
-    return result
+# ---------------------------------------------------------------------------
+# WEAVER ONBOARDING PAGE (bilingual, voice extraction, GPS)
+# ---------------------------------------------------------------------------
 def _onboarding_page() -> None:
+    # ---- Parser function embedded inside ----
+    def _parse_onboarding_text(text: str) -> dict:
+        """Extract name, cluster, specialty, phone from transcribed voice."""
+        # Known weaving clusters (from weaver_profiles.json)
+        KNOWN_CLUSTERS = [
+            "pochampally", "venkatagiri", "kanchipuram", "ilkal", "kota", "chanderi",
+            "maheshwar", "dharmavaram", "mysore", "sambalpuri", "bagru", "sanganer",
+            "kutch", "kerala", "tamil nadu", "andhra pradesh", "telangana", "karnataka",
+            "rajasthan", "west bengal", "odisha", "gujarat", "maharashtra", "bihar",
+            "uttar pradesh", "varanasi", "banaras", "kashi", "paithani", "yeola",
+            "molakalmuru", "uppada", "nuapatna", "arni", "balaramapuram", "coimbatore",
+            "salem", "bishnupur", "murshidabad", "shantipur", "bhagalpur"
+        ]
+        
+        result = {"name": "", "cluster": "", "specialty": "", "phone": ""}
+        
+        # Clean and normalize
+        t = text.lower().strip()
+        t = re.sub(r'[.,;:!?]', ' ', t)
+        
+        # 1. PHONE (10-digit number)
+        phone_match = re.search(r'\b(\d{10})\b', t)
+        if phone_match:
+            result["phone"] = phone_match.group(1)
+        
+        # 2. SPECIALTY (weave)
+        weave_map = {
+            "टिकट": "ikat", "इकट": "ikat",
+            "बनारसी": "banarasi", "कांचीपुरम": "kanjivaram",
+            "जामदानी": "jamdani", "तुस्सर": "tussar",
+            "चंदेरी": "chanderi", "महेश्वरी": "maheshwari",
+            "पैठणी": "paithani", "पटोला": "patola",
+            "कोटा डोरिया": "kota doria", "संबलपुरी": "sambalpuri",
+            "इलकल": "ilkal", "वेंकटागिरी": "venkatagiri",
+            "जरी": "zari", "कसावु": "kasavu"
+        }
+        for hindi, eng in weave_map.items():
+            if hindi in t:
+                result["specialty"] = eng
+                break
+        if not result["specialty"]:
+            english_weaves = ["ikat", "jamdani", "block print", "banarasi", "kanjivaram", 
+                             "tussar", "chanderi", "maheshwari", "paithani", "patola", 
+                             "kota doria", "sambalpuri", "ilkal", "venkatagiri", "zari", "kasavu"]
+            for w in english_weaves:
+                if w in t:
+                    result["specialty"] = w.title()
+                    break
+        
+        # 3. CLUSTER (using known list)
+        cluster_found = None
+        for cluster in KNOWN_CLUSTERS:
+            if cluster in t:
+                cluster_found = cluster.title()
+                break
+        if cluster_found:
+            result["cluster"] = cluster_found
+        
+        # 4. NAME – remove cluster and common words
+        if result["cluster"]:
+            name_text = t
+            name_text = name_text.replace(result["cluster"].lower(), "").strip()
+            name_text = re.sub(r'\b(main|mera|my|name|naam|hai|is|hoon|hun|से|ki|की|में|से)\b', '', name_text)
+            name_text = re.sub(r'\s+', ' ', name_text).strip()
+            if name_text:
+                result["name"] = name_text.title()
+        
+        # Fallback name
+        if not result["name"]:
+            words = t.split()
+            stopwords = {"main", "mera", "my", "name", "naam", "hai", "is", "hoon", "hun", "है", "मैं", "हूँ"}
+            for i, w in enumerate(words):
+                if w not in stopwords and not w.isdigit():
+                    name_candidate = w.title()
+                    if i + 1 < len(words) and words[i+1] not in stopwords and not words[i+1].isdigit():
+                        name_candidate += " " + words[i+1].title()
+                    if len(name_candidate) > 1:
+                        result["name"] = name_candidate
+                        break
+        
+        # Fallback cluster
+        if not result["cluster"]:
+            for cluster in KNOWN_CLUSTERS:
+                if cluster in t:
+                    result["cluster"] = cluster.title()
+                    break
+        
+        return result
+
+    # ---- END OF PARSER ----
+    
     lang = st.session_state.get("language", "en")
     st.markdown(f'<div class="section-label">{get_ui_string("onboard_title", lang)}</div>', unsafe_allow_html=True)
     st.markdown(f"""
@@ -1605,7 +1563,7 @@ def _onboarding_page() -> None:
         st.rerun()
         return
 
-    # Voice input for onboarding — with template guidance
+    # Voice input with template guidance
     st.markdown(f"""
     <div style="background:rgba(244,51,151,0.07);border:2px solid rgba(244,51,151,0.35);
         border-radius:14px;padding:1rem 1.2rem;margin-bottom:1rem;">
@@ -1613,9 +1571,9 @@ def _onboarding_page() -> None:
             {get_ui_string('onboard_speak', lang)}
         </div>
         <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.6;">
-            <strong>Please say in this exact format:</strong><br>
-            <em>"main [your name], [village/cluster] ki hun, [weave] banati hun, number [10-digit phone] hain"</em><br>
-            Example: <em>"main Padmavathi, Pochampally ki hun, Ikat banati hun, number 9876543210 hain"</em>
+            <strong>Please say your name, village, weave, and phone number.</strong><br>
+            Example: <em>"अनिका पोचमपल्ली टिकट 1234567891"</em><br>
+            Or: <em>"main shruti pochampally ki hun ikat banati hun number 9876543210"</em>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -1636,7 +1594,7 @@ def _onboarding_page() -> None:
                     f'Heard: <em>{text}</em></div>',
                     unsafe_allow_html=True
                 )
-                parsed = _parse_onboarding_text_improved(text)
+                parsed = _parse_onboarding_text(text)  # use the embedded parser
                 filled = [k for k, v in parsed.items() if v]
                 for key, val in parsed.items():
                     if val:
