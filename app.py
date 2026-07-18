@@ -1384,9 +1384,10 @@ def _onboarding_page() -> None:
         # Clean and normalize
         t = text.lower().strip()
         t = re.sub(r'[.,;:!?]', ' ', t)
+        t = re.sub(r'\s+', ' ', t)
         
         # 1. PHONE (10-digit number)
-        phone_match = re.search(r'\b(\d{10})\b', t)
+        phone_match = re.search(r'\b(\d{10})\b', re.sub(r'\D', ' ', t))
         if phone_match:
             result["phone"] = phone_match.group(1)
         
@@ -1423,33 +1424,43 @@ def _onboarding_page() -> None:
         if cluster_found:
             result["cluster"] = cluster_found
         
-        # 4. NAME – remove cluster and common words
+        # 4. NAME – remove cluster, phone, and common words
+        name_text = t
+        # Remove phone number
+        if result["phone"]:
+            name_text = name_text.replace(result["phone"], "")
+        # Remove cluster name
         if result["cluster"]:
-            name_text = t
-            name_text = name_text.replace(result["cluster"].lower(), "").strip()
-            name_text = re.sub(r'\b(main|mera|my|name|naam|hai|is|hoon|hun|से|ki|की|में|से)\b', '', name_text)
-            name_text = re.sub(r'\s+', ' ', name_text).strip()
-            if name_text:
-                result["name"] = name_text.title()
+            name_text = name_text.replace(result["cluster"].lower(), "")
+        
+        # Remove common stopwords (English and Hindi)
+        stopwords = {"main", "mera", "my", "name", "naam", "hai", "is", "hoon", "hun", 
+                     "है", "मैं", "हूँ", "से", "ki", "की", "में", "ka", "का", "hu", "hoon",
+                     "hun", "hain", "ho", "raha", "rahi", "banati", "banata", "hoon",
+                     "number", "phone", "mobile", "gav", "gaon", "village", "cluster",
+                     "weave", "weaver", "bunkar", "karigar", "specialty", "speciality"}
+        for sw in stopwords:
+            name_text = re.sub(r'(?:^|\s)' + re.escape(sw) + r'(?:\s|$)', ' ', name_text, flags=re.IGNORECASE)
+        
+        name_text = re.sub(r'\d+', ' ', name_text)
+        name_text = re.sub(r'\s+', ' ', name_text).strip()
+        
+        if name_text:
+            words = [w for w in name_text.split() if len(w) > 1]
+            if words:
+                result["name"] = " ".join(words[:2]).title()
         
         # Fallback name
         if not result["name"]:
             words = t.split()
-            stopwords = {"main", "mera", "my", "name", "naam", "hai", "is", "hoon", "hun", "है", "मैं", "हूँ"}
+            stopwords_fb = {"main", "mera", "my", "name", "naam", "hai", "is", "hoon", "hun", 
+                           "है", "मैं", "हूँ", "से", "ki", "की", "में", "number", "phone"}
             for i, w in enumerate(words):
-                if w not in stopwords and not w.isdigit():
+                if w not in stopwords_fb and not w.isdigit() and len(w) > 1:
                     name_candidate = w.title()
-                    if i + 1 < len(words) and words[i+1] not in stopwords and not words[i+1].isdigit():
+                    if i + 1 < len(words) and words[i+1] not in stopwords_fb and not words[i+1].isdigit():
                         name_candidate += " " + words[i+1].title()
-                    if len(name_candidate) > 1:
-                        result["name"] = name_candidate
-                        break
-        
-        # Fallback cluster
-        if not result["cluster"]:
-            for cluster in KNOWN_CLUSTERS:
-                if cluster in t:
-                    result["cluster"] = cluster.title()
+                    result["name"] = name_candidate
                     break
         
         return result
@@ -1491,11 +1502,10 @@ def _onboarding_page() -> None:
                 {get_ui_string("onboard_submitted", lang)}
             </div>
             <div style="font-size:0.85rem;color:var(--text-primary);line-height:1.7;">
-                {get_ui_string("onboard_submitted", lang)} <strong>{d.get("name","")}</strong>.<br>
+                <strong>{d.get("name","")}</strong> registered successfully.<br>
                 {get_ui_string("onboard_cluster", lang)}: {d.get("cluster","")} · {get_ui_string("onboard_fabric", lang)}: {d.get("fabric","")}<br>
-                {get_ui_string("onboard_submitted", lang)}<br>
                 <span style="color:var(--accent);font-weight:600;">
-                {get_ui_string("onboard_submitted", lang)} {d.get("phone","")} व्हाट्सएप पर भेजा जाएगा।</span>
+                Confirmation will be sent to {d.get("phone","")} via WhatsApp.</span>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1506,15 +1516,18 @@ def _onboarding_page() -> None:
             st.query_params.update({"tab": "Weaver Dashboard"})
             st.rerun()
             return
+
         _oid = d.get("id", "") or st.session_state.get("weaver_id", "")
         if _oid:
             st.success(f"Weaver ID: {_oid} — Switch to 'Weaver Dashboard' tab. Your profile is now in the dropdown and can receive orders immediately.")
+        
         _oc1, _oc2 = st.columns(2)
         if _oc1.button(get_ui_string("onboard_register_another", lang), use_container_width=True):
             st.session_state["onboard_submitted"] = False
             st.session_state["onboard_data"] = {}
             st.rerun()
             return
+
         if _oc2.button("Go to Weaver Dashboard", use_container_width=True):
             st.session_state["onboard_submitted"] = False
             st.session_state["onboard_data"] = {}
@@ -1531,7 +1544,10 @@ def _onboarding_page() -> None:
                 (pos) => {
                     const lat = pos.coords.latitude;
                     const lon = pos.coords.longitude;
-                    window.location.href = window.location.pathname + '?lat=' + lat + '&lon=' + lon;
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('lat', lat);
+                    url.searchParams.set('lon', lon);
+                    window.location.href = url.toString();
                 },
                 (err) => {
                     alert('GPS error: ' + err.message);
@@ -1544,22 +1560,45 @@ def _onboarding_page() -> None:
         """
         st.components.v1.html(gps_js, height=0, width=0)
 
-    lat = st.query_params.get("lat")
-    lon = st.query_params.get("lon")
+    # Handle GPS query params safely
+    try:
+        lat = st.query_params.get("lat")
+        lon = st.query_params.get("lon")
+        # Handle both string and list returns
+        if isinstance(lat, list):
+            lat = lat[0] if lat else None
+        if isinstance(lon, list):
+            lon = lon[0] if lon else None
+    except Exception:
+        lat = lon = None
+
     if lat and lon:
         st.session_state["gps_coords"] = f"{lat}, {lon}"
         try:
             resp = requests.get(
                 f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}&format=json&zoom=10",
-                headers={"User-Agent": "Pakshi-Hackathon"}
+                headers={"User-Agent": "Pakshi-Hackathon"},
+                timeout=10
             )
             if resp.status_code == 200:
                 data = resp.json()
                 if "display_name" in data:
-                    st.session_state["gps_place"] = data["display_name"].split(",")[0].strip()
+                    place = data["display_name"].split(",")[0].strip()
+                    st.session_state["gps_place"] = place
         except Exception:
             pass
-        st.query_params.clear()
+        
+        # Clear only lat/lon from query params, preserve others
+        try:
+            qp = dict(st.query_params)
+            qp.pop("lat", None)
+            qp.pop("lon", None)
+            st.query_params.clear()
+            for k, v in qp.items():
+                st.query_params[k] = v
+        except Exception:
+            pass
+        
         st.rerun()
         return
 
@@ -1668,6 +1707,12 @@ def _onboarding_page() -> None:
                     st.error(e)
             else:
                 new_id = f"CW{random.randint(100,999)}"
+                
+                # Read photo bytes if uploaded (for future use)
+                photo_bytes = None
+                if photo is not None:
+                    photo_bytes = photo.getvalue()
+                
                 new_profile = {
                     "id": new_id,
                     "name": name.strip(),
@@ -1683,17 +1728,26 @@ def _onboarding_page() -> None:
                     "whatsapp": whatsapp,
                     "accepts_custom": custom,
                     "language": lang_pref,
+                    "photo": photo_bytes,  # store for later use
                 }
-                st.session_state.setdefault("live_weavers", []).append(new_profile)
+                # Store in session state
                 st.session_state.setdefault("custom_weavers", []).append(new_profile)
+                # Also store in live_weavers for immediate dropdown display (if used)
+                st.session_state.setdefault("live_weavers", []).append(new_profile)
                 st.session_state["weaver_id"] = new_id
 
                 st.session_state["onboard_data"] = {
-                    "name": name.strip(), "phone": phone.strip(),
-                    "cluster": cluster.strip(), "state": state,
-                    "fabric": ", ".join(fabric), "weave": weave.strip(),
-                    "min_price": min_p, "delivery_days": delivery,
-                    "whatsapp": whatsapp, "accepts_custom": custom,
+                    "id": new_id,
+                    "name": name.strip(),
+                    "phone": phone.strip(),
+                    "cluster": cluster.strip(),
+                    "state": state,
+                    "fabric": ", ".join(fabric),
+                    "weave": weave.strip(),
+                    "min_price": min_p,
+                    "delivery_days": delivery,
+                    "whatsapp": whatsapp,
+                    "accepts_custom": custom,
                     "language": lang_pref,
                 }
                 st.session_state["onboard_submitted"] = True
