@@ -639,6 +639,7 @@ def _init_buyer_state() -> None:
         "reasoning_log": [], "one_of_a_kind": [], "buyer_orders": [], "agent_thinking": False,
         "prefill_text": "", "greeted": False, "last_buyer_audio_hash": None,
         "language": "en",
+        "user_input": "",   # for stable text input
     }
     for k, v in defaults.items():
         if k not in st.session_state: st.session_state[k] = v
@@ -895,6 +896,7 @@ def _buyer_page() -> None:
                                     wo["status"] = "completed"
                             st.success(get_ui_string("common_approved", lang).format(weaver=bo["weaver_name"]))
                             st.rerun()
+                            return
                     with a2:
                         if st.button(get_ui_string("btn_reject", lang), key=f"rej_{bo['order_id']}", use_container_width=True):
                             st.session_state.setdefault("one_of_a_kind", []).append({
@@ -912,6 +914,7 @@ def _buyer_page() -> None:
                                     wo["status"] = "declined"
                             st.warning(get_ui_string("common_cancel", lang))
                             st.rerun()
+                            return
 
                 if status == "In Production":
                     if st.button(get_ui_string("btn_cancel_order", lang), key=f"cancel_{bo['order_id']}", use_container_width=True):
@@ -930,6 +933,7 @@ def _buyer_page() -> None:
                                 wo["status"] = "declined"
                         st.warning(get_ui_string("common_cancel", lang))
                         st.rerun()
+                        return
 
     _step_indicator(st.session_state["current_state"])
     col_chat, col_panel = st.columns([3, 2], gap="large")
@@ -944,11 +948,13 @@ def _buyer_page() -> None:
                     if st.button(f"{get_ui_string('btn_select', lang)} {i+1}", key=f"sel_{i}", use_container_width=True):
                         _send(str(i + 1))
                         st.rerun()
+                        return
             if st.session_state["current_state"] == "retrieved":
                 st.markdown('<div style="height:0.5rem;"></div>', unsafe_allow_html=True)
                 if st.button(get_ui_string("btn_new_search", lang), use_container_width=True, key="none_of_these"):
                     _send("search again", force_new_search=True)
                     st.rerun()
+                    return
 
     with col_chat:
         if st.session_state["history"]:
@@ -965,28 +971,34 @@ def _buyer_page() -> None:
             if c1.button(get_ui_string("btn_yes_alt", lang), use_container_width=True):
                 _send("yes")
                 st.rerun()
+                return
             if c2.button(get_ui_string("btn_no_alt", lang), use_container_width=True):
                 _send("no")
                 st.rerun()
+                return
         elif cur == "swatch_selected":
             c1, c2 = st.columns(2)
             if c1.button(get_ui_string("btn_confirm", lang), use_container_width=True):
                 _send("confirm")
                 st.rerun()
+                return
             if c2.button(get_ui_string("btn_back", lang), use_container_width=True):
                 _send("back")
                 st.rerun()
+                return
         elif cur in ("confirmed", "failed"):
             if st.button(get_ui_string("btn_new_search", lang), use_container_width=True):
                 for k in list(st.session_state.keys()):
                     if k not in ("one_of_a_kind", "buyer_orders", "weaver_orders", "weaver_id", "min_base_price", "audio_work_mode", "custom_weavers", "language"):
                         del st.session_state[k]
                 st.rerun()
+                return
         else:
             if cur == "greeting" and not st.session_state["history"] and not st.session_state["greeted"]:
                 st.session_state["greeted"] = True
                 _send("hi")
                 st.rerun()
+                return
 
             st.markdown(f'<div class="section-label">{get_ui_string("onboard_speak", lang)}</div>', unsafe_allow_html=True)
             audio_file = st.audio_input("Record", label_visibility="collapsed", key="pakshi_buyer_audio")
@@ -1013,15 +1025,20 @@ def _buyer_page() -> None:
                             _send(text)
                         st.session_state["last_buyer_audio_hash"] = None
                         st.rerun()
+                        return
 
-            prefill = st.session_state.pop("prefill_text", "")
-            ui = st.text_input("Msg", value=prefill, placeholder="Type your message...", label_visibility="collapsed", key=f"txt_{len(st.session_state['history'])}")
-            if st.button(get_ui_string("btn_select", lang), key="send_btn", use_container_width=True) and ui.strip():
-                if cur == "retrieved" and not _is_number_selection(ui.strip()):
-                    _send(ui.strip(), force_new_search=True)
-                else:
-                    _send(ui.strip())
-                st.rerun()
+            # Stable text input
+            st.text_input("Type your message...", key="user_input", label_visibility="collapsed")
+            if st.button(get_ui_string("btn_select", lang), key="send_btn", use_container_width=True):
+                ui = st.session_state.get("user_input", "").strip()
+                if ui:
+                    if cur == "retrieved" and not _is_number_selection(ui):
+                        _send(ui, force_new_search=True)
+                    else:
+                        _send(ui)
+                    st.session_state["user_input"] = ""  # Clear after sending
+                    st.rerun()
+                    return
 
 # ---------------------------------------------------------------------------
 # WEAVER PAGE (bilingual, audio controls)
@@ -1097,6 +1114,7 @@ def _weaver_page() -> None:
                                 _autoplay_audio(ab)
                             st.success(f"Voice Command: Accepted {oid}!")
                             st.rerun()
+                            return
                         elif act == "decline":
                             orders[idx]["status"] = "declined"
                             st.session_state["weaver_orders"] = orders
@@ -1105,6 +1123,7 @@ def _weaver_page() -> None:
                                 _autoplay_audio(ab)
                             st.warning(f"Voice Command: Declined {oid}.")
                             st.rerun()
+                            return
                         elif act == "show_buyer":
                             orders[idx]["status"] = "awaiting_approval"
                             orders[idx]["photo"] = "loom_snapshot_auto.jpg"
@@ -1118,6 +1137,7 @@ def _weaver_page() -> None:
                                 _autoplay_audio(ab)
                             st.success(f"Voice Command: Photo sent to buyer for {oid}. Awaiting Approval.")
                             st.rerun()
+                            return
                     else:
                         st.error(f"Order {oid} not found.")
                 else:
@@ -1153,10 +1173,11 @@ def _weaver_page() -> None:
             is_below = int(order.get("price",0)) < st.session_state["min_base_price"]
             bg_card = "order-card below-base" if is_below else "order-card"
             badge = f'<span class="tag-warning">⚠️ Below Base (₹{st.session_state["min_base_price"]})</span>' if is_below else '<span class="tag">✓ Meets Base</span>'
+            # FIX: use var(--text-primary) instead of var(--text-white) for visibility
             st.markdown(f"""
             <div class="order-card">
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                    <div><div style="font-weight:800;font-size:1.05rem;color:var(--text-white);">{order.get("weave_style","—")}</div>
+                    <div><div style="font-weight:800;font-size:1.05rem;color:var(--text-primary);">{order.get("weave_style","—")}</div>
                          <div style="font-size:0.80rem;color:var(--text-muted);">#{order.get("order_id","—")} · {badge}</div></div>
                     <div class="swatch-price">₹{order.get("price",0):,}</div>
                 </div>
@@ -1168,19 +1189,22 @@ def _weaver_page() -> None:
                 if ab := _tts_bytes("Order swikaar kiya", lang="hi"):
                     _autoplay_audio(ab)
                 st.rerun()
+                return
             if b2.button(get_ui_string("weaver_decline", lang), key=f"dec_{order['order_id']}", use_container_width=True):
                 orders[idx]["status"] = "declined"
                 st.session_state["weaver_orders"] = orders
                 st.rerun()
+                return
 
     if accepted:
         st.markdown(f'<div class="section-label" style="margin-top:1rem;">{get_ui_string("weaver_production", lang)}</div>', unsafe_allow_html=True)
         for order in accepted:
             idx = next((i for i, o in enumerate(orders) if o.get("order_id") == order.get("order_id")), None)
+            # FIX: use var(--text-primary) instead of var(--text-white)
             st.markdown(f"""
             <div class="order-card accepted">
                 <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <div><div style="font-weight:700;font-size:0.95rem;color:var(--text-white);">{order.get("weave_style","—")}</div>
+                    <div><div style="font-weight:700;font-size:0.95rem;color:var(--text-primary);">{order.get("weave_style","—")}</div>
                          <div style="font-size:0.80rem;color:var(--text-muted);">#{order.get("order_id","—")}</div></div>
                     <div class="state-badge state-active">{get_ui_string("order_status_production", lang)}</div>
                 </div>
@@ -1204,6 +1228,7 @@ def _weaver_page() -> None:
                         bo["photo_path"] = photo_name
                 st.success(f"Photo sent for #{order['order_id']}. Buyer will be notified.")
                 st.rerun()
+                return
 
     awaiting = [o for o in orders if o.get("status") == "awaiting_approval"]
     if awaiting:
@@ -1304,11 +1329,12 @@ def _ooak_page() -> None:
         tags_html = "".join(f'<span class="tag">{t}</span>' for t in item.get("sensory_tags", [])[:3])
         col_card, col_btn = st.columns([5, 1], gap="small")
         with col_card:
+            # FIX: use var(--text-primary) for title
             st.markdown(f"""
             <div class="card">
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;">
                     <div>
-                        <div style="font-weight:800;font-size:1.05rem;color:var(--text-white);">
+                        <div style="font-weight:800;font-size:1.05rem;color:var(--text-primary);">
                             {item.get("weave_style","—")} &middot; {item.get("color","—")}
                         </div>
                         <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px;">
@@ -1379,6 +1405,7 @@ def _onboarding_page() -> None:
             st.session_state["onboard_data"] = {}
             st.query_params.update({"tab": "Weaver Dashboard"})
             st.rerun()
+            return
         _oid = d.get("id", "") or st.session_state.get("weaver_id", "")
         if _oid:
             st.success(f"Weaver ID: {_oid} — Switch to 'Weaver Dashboard' tab. Your profile is now in the dropdown and can receive orders immediately.")
@@ -1387,12 +1414,13 @@ def _onboarding_page() -> None:
             st.session_state["onboard_submitted"] = False
             st.session_state["onboard_data"] = {}
             st.rerun()
+            return
         if _oc2.button("Go to Weaver Dashboard", use_container_width=True):
             st.session_state["onboard_submitted"] = False
             st.session_state["onboard_data"] = {}
             st.query_params["tab"] = "Weaver Dashboard"
             st.rerun()
-        return
+            return
 
     if st.button(get_ui_string("onboard_gps", lang), use_container_width=False):
         gps_js = """
@@ -1432,6 +1460,7 @@ def _onboarding_page() -> None:
             pass
         st.query_params.clear()
         st.rerun()
+        return
 
     st.markdown(f"""
     <div style="background:rgba(244,51,151,0.07);border:2px solid rgba(244,51,151,0.35);
@@ -1469,6 +1498,7 @@ def _onboarding_page() -> None:
             else:
                 st.warning("Could not extract details. Please type below.")
             st.rerun()
+            return
 
     with st.form("onboard_form"):
         st.markdown(f'<div class="section-label">{get_ui_string("onboard_basic", lang)}</div>', unsafe_allow_html=True)
