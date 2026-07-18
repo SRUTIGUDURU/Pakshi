@@ -414,6 +414,27 @@ h1, h2, h3 { color: var(--text-primary) !important; font-family: 'Inter', sans-s
     margin-bottom: 0.35rem;
     margin-top: 0.1rem;
 }
+.state-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-white);
+    background: var(--text-muted);
+}
+.state-badge.state-active {
+    background: var(--warning);
+    color: var(--text-white);
+}
+.state-badge.state-done {
+    background: var(--success);
+    color: var(--text-white);
+}
+.state-badge.state-pending {
+    background: var(--accent);
+    color: var(--text-white);
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -484,43 +505,80 @@ def _autoplay_audio(audio_bytes: bytes, fmt: str = "mp3", label: str = "") -> No
     if label:
         st.caption(f"{label} — press play if audio did not start.")
 
-def _stt_google(audio_bytes: bytes) -> tuple[str | None, str | None]:
-    if len(audio_bytes) < 8_000:
+def _convert_audio_to_wav(audio_bytes: bytes) -> tuple:
+    """
+    st.audio_input() returns WebM/Opus from the browser — NOT WAV.
+    SpeechRecognition.AudioFile only handles WAV/AIFF/FLAC natively.
+    This converts via pydub+ffmpeg if available, otherwise falls back to
+    writing raw bytes (which works when the browser sends WAV on some platforms).
+    Returns (wav_path, error_string).
+    """
+    raw_tmp = None
+    wav_path = None
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as f:
+            f.write(audio_bytes)
+            raw_tmp = f.name
+        try:
+            from pydub import AudioSegment
+            seg = AudioSegment.from_file(raw_tmp)  # auto-detects webm/opus
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as wf:
+                wav_path = wf.name
+            seg.export(wav_path, format="wav")
+        except (ImportError, Exception):
+            # pydub/ffmpeg not available — write raw bytes; works if browser sent WAV
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as wf:
+                wf.write(audio_bytes)
+                wav_path = wf.name
+        return wav_path, None
+    except Exception as e:
+        return None, f"Audio conversion error: {e}"
+    finally:
+        if raw_tmp:
+            try:
+                os.unlink(raw_tmp)
+            except OSError:
+                pass
+
+
+def _stt_google(audio_bytes: bytes) -> tuple:
+    if len(audio_bytes) < 4_000:
         return None, "Recording too short — please speak clearly for at least 2 seconds."
     try:
         import speech_recognition as sr
     except ImportError:
         return None, "SpeechRecognition library not installed. Please type your request."
 
+    wav_path, conv_err = _convert_audio_to_wav(audio_bytes)
+    if not wav_path:
+        return None, conv_err or "Audio conversion failed."
+
     recognizer = sr.Recognizer()
     recognizer.pause_threshold = 0.8
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
-        tmp.write(audio_bytes)
-        tmp_path = tmp.name
-
     try:
-        with sr.AudioFile(tmp_path) as source:
+        with sr.AudioFile(wav_path) as source:
             recognizer.adjust_for_ambient_noise(source, duration=0.3)
             audio = recognizer.record(source)
 
-        try:
-            text = recognizer.recognize_google(audio, language="hi-IN")
-            if text and len(text.strip()) > 1: return text.strip(), None
-        except sr.UnknownValueError: pass
-        except sr.RequestError as e: return None, f"Speech recognition service unavailable: {e}"
-
-        try:
-            text = recognizer.recognize_google(audio, language="en-IN")
-            if text and len(text.strip()) > 1: return text.strip(), None
-        except sr.UnknownValueError: pass
-        except sr.RequestError as e: return None, f"Speech recognition service unavailable: {e}"
+        # Try Hindi first (returns Devanagari), then English-India (returns romanized)
+        for lang_code in ("hi-IN", "en-IN"):
+            try:
+                text = recognizer.recognize_google(audio, language=lang_code)
+                if text and len(text.strip()) > 1:
+                    return text.strip(), None
+            except sr.UnknownValueError:
+                continue
+            except sr.RequestError as e:
+                return None, f"Speech recognition service unavailable: {e}"
 
         return None, "Could not understand. Please speak clearly in Hindi or English."
     except Exception as e:
         return None, f"Speech recognition error: {e}"
     finally:
-        try: os.unlink(tmp_path)
-        except OSError: pass
+        try:
+            os.unlink(wav_path)
+        except OSError:
+            pass
 
 def _transcribe_audio(audio_file) -> tuple[str | None, str | None]:
     buf = audio_file.getbuffer()
@@ -600,10 +658,6 @@ def _parse_weaver_voice_command(text: str, pending: list, accepted: list) -> dic
         }
 
     return {"action": "error", "message": "Could not identify which order. Please say the 4‑digit order ID (e.g., 2847) or 'first order'."}
-
-# ---------------------------------------------------------------------------
-# Helper to parse onboarding details from voice transcript
-# ---------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------
 # Session state initializers
@@ -830,30 +884,52 @@ def _buyer_page() -> None:
     buyer_orders = st.session_state.get("buyer_orders", [])
     if buyer_orders:
         with st.expander(f"{get_ui_string('section_orders', lang)} ({len(buyer_orders)})", expanded=True):
-            for bo in buyer_orders:
+            # Iterate over a snapshot to allow safe mutation
+            for bo in list(buyer_orders):
                 status = bo.get("status", "In Production")
-                color = {"In Production": "var(--warning)", "Awaiting Approval": "var(--accent)", "Completed": "#22c55e", "Photo Sent — Awaiting Approval": "var(--accent)"}.get(status, "var(--text-muted)")
+                color = {
+                    "In Production": "var(--warning)",
+                    "Awaiting Approval": "var(--accent)",
+                    "Completed": "#22c55e",
+                    "Photo Sent — Awaiting Approval": "var(--accent)",
+                }.get(status, "var(--text-muted)")
                 needs_approval = status in ("Awaiting Approval", "Photo Sent — Awaiting Approval")
-                photo_html = f'<div style="margin-top:10px;"><div style="background:rgba(218,65,103,0.08);border:1px dashed rgba(218,65,103,0.3);border-radius:8px;padding:12px;font-size:0.78rem;color:var(--text-muted);text-align:center;">Fabric swatch image will appear here</div></div>' if bo.get("photo_path") else ""
 
-                status_label = get_ui_string(f"order_status_{status.lower().replace(' ', '_')}", lang) if status.lower().replace(' ', '_') in ["in_production", "awaiting_approval", "completed", "photo_sent_awaiting_approval"] else status
-                if status == "In Production": status_label = get_ui_string("order_status_production", lang)
-                elif status == "Awaiting Approval": status_label = get_ui_string("order_status_approval", lang)
-                elif status == "Completed": status_label = get_ui_string("order_status_completed", lang)
-                elif status == "Photo Sent — Awaiting Approval": status_label = get_ui_string("order_status_photo_sent", lang)
+                if status == "In Production":
+                    status_label = get_ui_string("order_status_production", lang)
+                elif status == "Awaiting Approval":
+                    status_label = get_ui_string("order_status_approval", lang)
+                elif status == "Completed":
+                    status_label = get_ui_string("order_status_completed", lang)
+                elif status == "Photo Sent — Awaiting Approval":
+                    status_label = get_ui_string("order_status_photo_sent", lang)
+                else:
+                    status_label = status
 
                 st.markdown(f"""
                 <div style="background:var(--bg-surface);border:1px solid var(--border-strong);border-radius:10px;padding:1rem;margin-bottom:0.5rem;">
                     <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;">
                         <div>
                             <div style="font-weight:800;font-size:1rem;color:var(--text-primary);">{bo["weave_style"]} · {bo["color"]}</div>
-                            <div style="font-size:0.80rem;color:var(--text-muted);">#{bo["order_id"]} · Artisan: {bo["weaver_name"]} · ₹{bo["price"]:,}</div>
-                            {photo_html}
+                            <div style="font-size:0.80rem;color:var(--text-muted);">#{bo["order_id"]} · Artisan: {bo["weaver_name"]} · ₹{int(bo["price"]):,}</div>
                         </div>
                         <div style="background:rgba(0,0,0,0.05);padding:4px 12px;border-radius:999px;font-size:0.75rem;font-weight:700;color:{color};">{status_label}</div>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
+
+                # Show uploaded photo bytes if present, otherwise show placeholder
+                photo_bytes = bo.get("photo_bytes")
+                if photo_bytes and isinstance(photo_bytes, (bytes, bytearray)):
+                    st.image(photo_bytes, caption=f"Progress photo — #{bo['order_id']}", width=280)
+                elif bo.get("photo_path"):
+                    # photo_path is a filename (no bytes stored) — show placeholder
+                    st.markdown(
+                        '<div style="background:rgba(218,65,103,0.08);border:1px dashed rgba(218,65,103,0.3);'
+                        'border-radius:8px;padding:10px;font-size:0.78rem;color:var(--text-muted);'
+                        'text-align:center;margin:6px 0;">📸 Fabric photo received — preview not available in demo mode</div>',
+                        unsafe_allow_html=True,
+                    )
 
                 if needs_approval:
                     st.markdown(f"""
@@ -883,7 +959,11 @@ def _buyer_page() -> None:
                                 "weaver_name": bo["weaver_name"],
                                 "reason": "Buyer rejected final fabric",
                             })
-                            st.session_state["buyer_orders"].remove(bo)
+                            # Safe removal by order_id, not object reference
+                            st.session_state["buyer_orders"] = [
+                                o for o in st.session_state["buyer_orders"]
+                                if o["order_id"] != bo["order_id"]
+                            ]
                             for wo in st.session_state.get("weaver_orders", []):
                                 if wo["order_id"] == bo["order_id"]:
                                     wo["status"] = "declined"
@@ -902,7 +982,11 @@ def _buyer_page() -> None:
                             "weaver_name": bo["weaver_name"],
                             "reason": "Buyer cancelled before production",
                         })
-                        st.session_state["buyer_orders"].remove(bo)
+                        # Safe removal by order_id
+                        st.session_state["buyer_orders"] = [
+                            o for o in st.session_state["buyer_orders"]
+                            if o["order_id"] != bo["order_id"]
+                        ]
                         for wo in st.session_state.get("weaver_orders", []):
                             if wo["order_id"] == bo["order_id"]:
                                 wo["status"] = "declined"
@@ -1038,6 +1122,27 @@ def _weaver_page() -> None:
         st.warning("Please select a valid weaver profile or register as a new weaver.")
         return
 
+    with col_stat:
+        fabric_list = profile.get("fabric_specialty", [])
+        fabric_str = ", ".join(fabric_list) if isinstance(fabric_list, list) else str(fabric_list)
+        price_range = profile.get("price_range_inr", {})
+        price_str = (
+            f"₹{int(price_range.get('min', 0)):,} – ₹{int(price_range.get('max', 0)):,}"
+            if price_range else "—"
+        )
+        st.markdown(f"""
+        <div style="background:var(--bg-surface);border:1px solid var(--border-strong);border-radius:10px;
+            padding:0.75rem 1rem;font-size:0.82rem;line-height:1.7;">
+            <span style="font-weight:700;color:var(--text-primary);">{profile.get("name","—")}</span>
+            &nbsp;·&nbsp;
+            <span style="color:var(--accent);font-weight:600;">{profile.get("cluster","—")}, {profile.get("state","—")}</span><br>
+            <span style="color:var(--text-muted);">Speciality: {profile.get("weave_style","—")} · {fabric_str}</span><br>
+            <span style="color:var(--text-muted);">Price range: {price_str}</span>
+            &nbsp;·&nbsp;
+            <span style="color:var(--text-muted);">⭐ {profile.get("rating","—")}</span>
+        </div>
+        """, unsafe_allow_html=True)
+
     st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
     c_base, c_audio = st.columns([2, 2], gap="large")
     with c_base:
@@ -1068,23 +1173,36 @@ def _weaver_page() -> None:
                 except Exception as e:
                     text, err = None, f"Transcription error: {e}"
 
-            # DEBUG: show raw text
-            st.write(f"**DEBUG:** Raw transcript = `{text}`" if text else "**DEBUG:** No transcript received.")
-
             if err:
                 st.warning(f"Transcription failed: {err}")
+                st.caption("Tip: If audio keeps failing, install pydub for WebM support: pip install pydub")
                 st.session_state["last_weaver_audio_hash"] = None  # allow retry
             else:
-                # ----- ULTRA‑SIMPLE PARSING: only accept/decline first pending -----
+                st.info(f"Heard: \"{text}\"")
+                # ----- SIMPLE PARSING: accept/decline first pending order -----
                 text_lower = text.lower()
                 action = None
 
-                if any(w in text_lower for w in ["swikaar", "sweekar", "accept", "haan", "ok"]):
+                # Google STT returns Hindi in Devanagari script for hi-IN,
+                # and romanized for en-IN. Match both forms.
+                ACCEPT_WORDS = [
+                    # Devanagari (hi-IN output)
+                    "स्वीकार", "स्वीकृत", "हाँ", "हां", "ठीक",
+                    # Romanized / en-IN output
+                    "swikaar", "sweekar", "swikar", "accept", "haan", "ok", "theek", "sahi",
+                ]
+                REJECT_WORDS = [
+                    # Devanagari (hi-IN output)
+                    "मना", "नहीं", "नही", "अस्वीकार", "रद्द",
+                    # Romanized / en-IN output
+                    "mana", "mana karo", "decline", "reject", "nahi", "na", "no", "cancel",
+                ]
+                if any(w in text_lower for w in ACCEPT_WORDS):
                     action = "accept"
-                elif any(w in text_lower for w in ["mana", "decline", "reject", "na", "no"]):
+                elif any(w in text_lower for w in REJECT_WORDS):
                     action = "decline"
                 else:
-                    st.warning(f"Command not recognised. Heard: '{text}'. Please say 'swikaar karo' or 'mana karo'.")
+                    st.warning(f"Command not recognised. Heard: \'{text}\'. Say 'swikaar karo' (accept) or 'mana karo' (decline).")
                     st.rerun()
                     return
 
@@ -1170,14 +1288,24 @@ def _weaver_page() -> None:
         st.markdown(f'<div class="section-label" style="margin-top:1rem;">{get_ui_string("weaver_pending", lang)}</div>', unsafe_allow_html=True)
         for order in pending:
             idx = next((i for i, o in enumerate(orders) if o.get("order_id") == order.get("order_id")), None)
-            is_below = int(order.get("price",0)) < st.session_state["min_base_price"]
-            badge = f'<span class="tag-warning">⚠️ Below Base (₹{st.session_state["min_base_price"]})</span>' if is_below else '<span class="tag">✓ Meets Base</span>'
+            order_price = int(order.get("price", 0))
+            is_below = order_price < st.session_state["min_base_price"]
+            badge = (
+                f'<span class="tag-warning">⚠️ Below Base (₹{st.session_state["min_base_price"]})</span>'
+                if is_below else
+                '<span class="tag">✓ Meets Base</span>'
+            )
             st.markdown(f"""
             <div class="order-card">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                    <div><div style="font-weight:800;font-size:1.05rem;color:var(--text-primary);">{order.get("weave_style","—")}</div>
-                         <div style="font-size:0.80rem;color:var(--text-muted);">#{order.get("order_id","—")} · {badge}</div></div>
-                    <div class="swatch-price">₹{order.get("price",0):,}</div>
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.4rem;">
+                    <div>
+                        <div style="font-weight:800;font-size:1.05rem;color:var(--text-primary);">{order.get("weave_style","—")}</div>
+                        <div style="font-size:0.80rem;color:var(--text-muted);">#{order.get("order_id","—")}</div>
+                        <div style="margin-top:4px;">{badge}</div>
+                        <div style="font-size:0.80rem;color:var(--text-muted);margin-top:2px;">{order.get("color","—")} · {order.get("occasion","—")}</div>
+                        <div style="font-size:0.78rem;color:var(--text-muted);">Deliver by: {order.get("delivery_by","—")}</div>
+                    </div>
+                    <div class="swatch-price">₹{order_price:,}</div>
                 </div>
             </div>""", unsafe_allow_html=True)
             b1, b2 = st.columns(2)
@@ -1210,33 +1338,40 @@ def _weaver_page() -> None:
         st.markdown(f'<div class="section-label" style="margin-top:1rem;">{get_ui_string("weaver_production", lang)}</div>', unsafe_allow_html=True)
         for order in accepted:
             idx = next((i for i, o in enumerate(orders) if o.get("order_id") == order.get("order_id")), None)
+            production_label = get_ui_string("order_status_production", lang)
             st.markdown(f"""
             <div class="order-card accepted">
                 <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <div><div style="font-weight:700;font-size:0.95rem;color:var(--text-primary);">{order.get("weave_style","—")}</div>
-                         <div style="font-size:0.80rem;color:var(--text-muted);">#{order.get("order_id","—")}</div></div>
-                    <div class="state-badge state-active">{get_ui_string("order_status_production", lang)}</div>
+                    <div>
+                        <div style="font-weight:700;font-size:0.95rem;color:var(--text-primary);">{order.get("weave_style","—")}</div>
+                        <div style="font-size:0.80rem;color:var(--text-muted);">#{order.get("order_id","—")} · ₹{int(order.get("price", 0)):,}</div>
+                    </div>
+                    <div style="background:var(--warning);color:#fff;padding:4px 12px;border-radius:999px;font-size:0.75rem;font-weight:700;">{production_label}</div>
                 </div>
             </div>""", unsafe_allow_html=True)
             uploaded = st.file_uploader(
                 f"Upload progress photo — #{order['order_id']}",
-                type=["jpg","jpeg","png"],
+                type=["jpg", "jpeg", "png"],
                 key=f"photo_{order['order_id']}",
-                label_visibility="collapsed",
+                label_visibility="visible",
             )
             if uploaded:
-                st.image(uploaded, caption=f"Progress photo — {order['order_id']}", width=260)
+                photo_bytes = uploaded.getvalue()
+                st.image(photo_bytes, caption=f"Progress photo — {order['order_id']}", width=260)
             if st.button(f"{get_ui_string('weaver_send_photo', lang)} — #{order['order_id']}", key=f"show_{order['order_id']}"):
                 photo_name = uploaded.name if uploaded else "loom_snapshot.jpg"
+                photo_bytes_to_store = uploaded.getvalue() if uploaded else None
                 orders[idx]["status"] = "awaiting_approval"
                 orders[idx]["photo"] = photo_name
                 for bo in st.session_state.get("buyer_orders", []):
                     if bo["order_id"] == order["order_id"]:
                         bo["status"] = "Awaiting Approval"
                         bo["photo_path"] = photo_name
+                        # Store actual bytes so buyer dashboard can render the image
+                        if photo_bytes_to_store:
+                            bo["photo_bytes"] = photo_bytes_to_store
                 st.session_state["weaver_orders"] = orders
-                st.session_state["buyer_orders"] = st.session_state.get("buyer_orders", [])
-                st.success(f"Photo sent for #{order['order_id']}.")
+                st.success(f"Photo sent for #{order['order_id']}. Buyer will be notified.")
                 st.rerun()
                 return
 
