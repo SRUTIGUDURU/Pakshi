@@ -1387,7 +1387,8 @@ def _onboarding_page() -> None:
         t = re.sub(r'\s+', ' ', t)
         
         # 1. PHONE (10-digit number)
-        phone_match = re.search(r'\b(\d{10})\b', re.sub(r'\D', ' ', t))
+        clean_digits = re.sub(r'\D', '', t)
+        phone_match = re.search(r'(\d{10})', clean_digits)
         if phone_match:
             result["phone"] = phone_match.group(1)
         
@@ -1404,7 +1405,7 @@ def _onboarding_page() -> None:
         }
         for hindi, eng in weave_map.items():
             if hindi in t:
-                result["specialty"] = eng
+                result["specialty"] = eng.title()
                 break
         if not result["specialty"]:
             english_weaves = ["ikat", "jamdani", "block print", "banarasi", "kanjivaram", 
@@ -1426,21 +1427,21 @@ def _onboarding_page() -> None:
         
         # 4. NAME – remove cluster, phone, and common words
         name_text = t
-        # Remove phone number
+        # Remove phone number digits
         if result["phone"]:
-            name_text = name_text.replace(result["phone"], "")
+            name_text = re.sub(r'\d', ' ', name_text)
         # Remove cluster name
         if result["cluster"]:
             name_text = name_text.replace(result["cluster"].lower(), "")
         
         # Remove common stopwords (English and Hindi)
         stopwords = {"main", "mera", "my", "name", "naam", "hai", "is", "hoon", "hun", 
-                     "है", "मैं", "हूँ", "से", "ki", "की", "में", "ka", "का", "hu", "hoon",
-                     "hun", "hain", "ho", "raha", "rahi", "banati", "banata", "hoon",
+                     "है", "मैं", "हूँ", "से", "ki", "की", "में", "ka", "का", "hu",
+                     "hain", "ho", "raha", "rahi", "banati", "banata",
                      "number", "phone", "mobile", "gav", "gaon", "village", "cluster",
                      "weave", "weaver", "bunkar", "karigar", "specialty", "speciality"}
         for sw in stopwords:
-            name_text = re.sub(r'(?:^|\s)' + re.escape(sw) + r'(?:\s|$)', ' ', name_text, flags=re.IGNORECASE)
+            name_text = re.sub(r'(?:^|\s)' + re.escape(sw) + r'(?:\s|$)', ' ', name_text)
         
         name_text = re.sub(r'\d+', ' ', name_text)
         name_text = re.sub(r'\s+', ' ', name_text).strip()
@@ -1515,7 +1516,6 @@ def _onboarding_page() -> None:
             st.session_state["onboard_data"] = {}
             st.query_params.update({"tab": "Weaver Dashboard"})
             st.rerun()
-            return
 
         _oid = d.get("id", "") or st.session_state.get("weaver_id", "")
         if _oid:
@@ -1526,14 +1526,12 @@ def _onboarding_page() -> None:
             st.session_state["onboard_submitted"] = False
             st.session_state["onboard_data"] = {}
             st.rerun()
-            return
 
         if _oc2.button("Go to Weaver Dashboard", use_container_width=True):
             st.session_state["onboard_submitted"] = False
             st.session_state["onboard_data"] = {}
             st.query_params["tab"] = "Weaver Dashboard"
             st.rerun()
-            return
 
     # GPS location button
     if st.button(get_ui_string("onboard_gps", lang), use_container_width=False):
@@ -1590,17 +1588,14 @@ def _onboarding_page() -> None:
         
         # Clear only lat/lon from query params, preserve others
         try:
-            qp = dict(st.query_params)
-            qp.pop("lat", None)
-            qp.pop("lon", None)
-            st.query_params.clear()
-            for k, v in qp.items():
-                st.query_params[k] = v
+            if "lat" in st.query_params:
+                del st.query_params["lat"]
+            if "lon" in st.query_params:
+                del st.query_params["lon"]
         except Exception:
             pass
         
         st.rerun()
-        return
 
     # Voice input with template guidance
     st.markdown(f"""
@@ -1643,7 +1638,6 @@ def _onboarding_page() -> None:
                 else:
                     st.warning("Could not extract details from the audio. Please type the fields manually.")
             st.rerun()
-            return
 
     # Display the form with pre-filled values from session state
     with st.form("onboard_form"):
