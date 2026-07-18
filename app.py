@@ -1052,7 +1052,7 @@ def _weaver_page() -> None:
     st.markdown(f'<div class="section-label">{get_ui_string("weaver_voice_controls", lang)}</div>', unsafe_allow_html=True)
     st.caption(get_ui_string("weaver_voice_caption", lang))
 
-    # -------- AUDIO INPUT SECTION (debugged) --------
+    # -------- AUDIO INPUT SECTION (SIMPLIFIED) --------
     w_audio = st.audio_input("Record Weaver Command", label_visibility="collapsed", key="pakshi_weaver_audio")
     orders = st.session_state.get("weaver_orders", [])
     pending = [o for o in orders if o.get("status") == "pending"]
@@ -1060,7 +1060,6 @@ def _weaver_page() -> None:
 
     if w_audio is not None:
         _w_hash = hash(bytes(w_audio.getbuffer()))
-        # Only process if new audio or we explicitly allow reprocessing
         if st.session_state.get("last_weaver_audio_hash") != _w_hash:
             st.session_state["last_weaver_audio_hash"] = _w_hash
             with st.spinner("Sun rahe hain..."):
@@ -1068,125 +1067,84 @@ def _weaver_page() -> None:
                     text, err = _transcribe_audio(w_audio)
                 except Exception as e:
                     text, err = None, f"Transcription error: {e}"
-            
+
             # DEBUG: show raw text
             st.write(f"**DEBUG:** Raw transcript = `{text}`" if text else "**DEBUG:** No transcript received.")
 
             if err:
                 st.warning(f"Transcription failed: {err}")
-                # Reset hash so the user can try the same clip again
-                st.session_state["last_weaver_audio_hash"] = None
+                st.session_state["last_weaver_audio_hash"] = None  # allow retry
             else:
-                # ----- SIMPLE, RELIABLE PARSING (inline) -----
-                cmd = None
+                # ----- ULTRA‑SIMPLE PARSING: only accept/decline first pending -----
                 text_lower = text.lower()
-                
-                # 1. Try to find an order ID (numeric part)
-                import re
-                ids_in_text = re.findall(r'\b(\d{4})\b', text_lower)  # finds 4-digit numbers
-                
-                # If no 4-digit, look for words like "first", "second", "pehla"
-                if not ids_in_text:
-                    if any(w in text_lower for w in ["first", "pehla", "1st"]):
-                        if pending:
-                            target_id = pending[0].get("order_id")
-                    elif any(w in text_lower for w in ["second", "doosra", "2nd"]) and len(pending) > 1:
-                        target_id = pending[1].get("order_id")
-                    else:
-                        target_id = None
-                else:
-                    # Match the first numeric ID found against our orders
-                    numeric_id = ids_in_text[0]
-                    # Try to find any order containing this number
-                    for o in orders:
-                        if numeric_id in o.get("order_id", ""):
-                            target_id = o["order_id"]
-                            break
-                    else:
-                        target_id = None
-
-                # 2. Determine action
                 action = None
-                if any(w in text_lower for w in ["accept", "swikaar", "sweekar", "accept karo", "haan"]):
+
+                if any(w in text_lower for w in ["swikaar", "sweekar", "accept", "haan", "ok"]):
                     action = "accept"
-                elif any(w in text_lower for w in ["decline", "mana", "reject", "na karo", "no"]):
+                elif any(w in text_lower for w in ["mana", "decline", "reject", "na", "no"]):
                     action = "decline"
-                elif any(w in text_lower for w in ["show", "photo", "tasveer", "send", "bhejo"]):
-                    action = "show_buyer"
                 else:
-                    action = None
+                    st.warning(f"Command not recognised. Heard: '{text}'. Please say 'swikaar karo' or 'mana karo'.")
+                    st.rerun()
+                    return
 
-                if action and target_id:
-                    cmd = {"action": action, "order_id": target_id}
-                else:
-                    cmd = {"action": "error", "message": f"Could not understand. Heard: '{text}'. Try 'accept order 2847' or 'decline first order'."}
+                if not pending:
+                    st.warning("No pending orders to accept or decline.")
+                    try:
+                        if ab := _tts_bytes("Aapke paas koi naya order nahi hai.", lang="hi"):
+                            _autoplay_audio(ab)
+                    except Exception:
+                        pass
+                    st.rerun()
+                    return
 
-                # DEBUG: show parsed command
-                st.write(f"**DEBUG:** Parsed command = {cmd}")
+                # Get the first pending order
+                target_order = pending[0]
+                oid = target_order["order_id"]
+                idx = next((i for i, o in enumerate(orders) if o["order_id"] == oid), None)
 
-                if cmd and cmd.get("action") != "error":
-                    act, oid = cmd["action"], cmd["order_id"]
-                    idx = next((i for i, o in enumerate(orders) if o["order_id"] == oid), None)
-                    if idx is not None:
-                        # --- Perform the action ---
-                        if act == "accept":
-                            orders[idx]["status"] = "accepted"
-                            for bo in st.session_state.get("buyer_orders", []):
-                                if bo["order_id"] == oid:
-                                    bo["status"] = "In Production"
-                            st.session_state["weaver_orders"] = orders
-                            st.session_state["buyer_orders"] = st.session_state.get("buyer_orders", [])
-                            st.success(f"✅ Accepted {oid}!")
-                            try:
-                                if ab := _tts_bytes(f"Order {oid[-4:]} swikaar ho gaya.", lang="hi"):
-                                    _autoplay_audio(ab)
-                            except Exception as e:
-                                st.warning(f"Audio announcement skipped: {e}")
-                            st.rerun()
-                            return
-                        elif act == "decline":
-                            orders[idx]["status"] = "declined"
-                            for bo in st.session_state.get("buyer_orders", []):
-                                if bo["order_id"] == oid:
-                                    bo["status"] = "Declined"
-                            st.session_state["weaver_orders"] = orders
-                            st.session_state["buyer_orders"] = st.session_state.get("buyer_orders", [])
-                            st.warning(f"❌ Declined {oid}.")
-                            try:
-                                if ab := _tts_bytes(f"Order {oid[-4:]} mana kar diya.", lang="hi"):
-                                    _autoplay_audio(ab)
-                            except Exception as e:
-                                st.warning(f"Audio announcement skipped: {e}")
-                            st.rerun()
-                            return
-                        elif act == "show_buyer":
-                            orders[idx]["status"] = "awaiting_approval"
-                            orders[idx]["photo"] = "loom_snapshot_auto.jpg"
-                            for bo in st.session_state.get("buyer_orders", []):
-                                if bo["order_id"] == oid:
-                                    bo["status"] = "Awaiting Approval"
-                                    bo["photo_path"] = "loom_snapshot_auto.jpg"
-                            st.session_state["weaver_orders"] = orders
-                            st.session_state["buyer_orders"] = st.session_state.get("buyer_orders", [])
-                            st.success(f"📸 Photo sent for {oid}.")
-                            try:
-                                if ab := _tts_bytes(f"Fabric tayyar hai. Buyer ko tasveer bhej di gayi.", lang="hi"):
-                                    _autoplay_audio(ab)
-                            except Exception as e:
-                                st.warning(f"Audio announcement skipped: {e}")
-                            st.rerun()
-                            return
-                    else:
-                        st.error(f"Order {oid} not found in your list.")
-                else:
-                    msg = cmd.get("message", "Command not recognised.")
-                    st.warning(msg)
-                    st.caption("Try: 'accept first order' or 'decline order 2847' or 'show order 2847'")
-            
+                if idx is None:
+                    st.error("Order not found in your list. Please refresh.")
+                    st.rerun()
+                    return
+
+                # --- Perform action ---
+                if action == "accept":
+                    orders[idx]["status"] = "accepted"
+                    for bo in st.session_state.get("buyer_orders", []):
+                        if bo["order_id"] == oid:
+                            bo["status"] = "In Production"
+                    st.session_state["weaver_orders"] = orders
+                    st.session_state["buyer_orders"] = st.session_state.get("buyer_orders", [])
+                    st.success(f"✅ Accepted {oid}!")
+                    try:
+                        if ab := _tts_bytes(f"Order {oid[-4:]} swikaar ho gaya.", lang="hi"):
+                            _autoplay_audio(ab)
+                    except Exception as e:
+                        st.warning(f"Audio announcement skipped: {e}")
+                    st.rerun()
+                    return
+
+                elif action == "decline":
+                    orders[idx]["status"] = "declined"
+                    for bo in st.session_state.get("buyer_orders", []):
+                        if bo["order_id"] == oid:
+                            bo["status"] = "Declined"
+                    st.session_state["weaver_orders"] = orders
+                    st.session_state["buyer_orders"] = st.session_state.get("buyer_orders", [])
+                    st.warning(f"❌ Declined {oid}.")
+                    try:
+                        if ab := _tts_bytes(f"Order {oid[-4:]} mana kar diya.", lang="hi"):
+                            _autoplay_audio(ab)
+                    except Exception as e:
+                        st.warning(f"Audio announcement skipped: {e}")
+                    st.rerun()
+                    return
+
             st.rerun()
             return
 
-    # -------- READ ORDERS AUDIO BUTTON (debugged) --------
+    # -------- READ ORDERS AUDIO BUTTON --------
     if st.session_state.get("audio_work_mode") and (pending or accepted):
         if st.button(get_ui_string("weaver_read_orders", lang), use_container_width=False, key="read_orders_btn"):
             lines = []
