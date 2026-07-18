@@ -213,18 +213,18 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-    --bg-deep:        #fef3f0;
+    --bg-deep:        #FBF2F9;
     --bg-surface:     #ffffff;
-    --bg-card:        #fff5f2;
-    --bg-card-2:      #ffded5;
-    --accent:         #F43397;
-    --accent-hover:   #d4287f;
-    --accent-glow:    rgba(244,51,151,0.25);
-    --text-primary:   #2d2d2d;
-    --text-muted:     #6b6b6b;
+    --bg-card:        #FDF5FB;
+    --bg-card-2:      #F3D9ED;
+    --accent:         #9F2089;
+    --accent-hover:   #7A1A6B;
+    --accent-glow:    rgba(159,32,137,0.25);
+    --text-primary:   #353543;
+    --text-muted:     #616173;
     --text-white:     #ffffff;
-    --success:        #22c55e;
-    --warning:        #f59e0b;
+    --success:        #038D63;
+    --warning:        #EE7212;
     --danger:         #ef4444;
     --border:         rgba(0,0,0,0.08);
     --border-strong:  rgba(0,0,0,0.15);
@@ -263,7 +263,7 @@ h1, h2, h3 { color: var(--text-primary) !important; font-family: 'Inter', sans-s
 
 .trust-banner {
     display: flex; gap: 1rem; align-items: center; justify-content: space-around;
-    background: rgba(244,51,151,0.06); border: 1px solid rgba(244,51,151,0.2);
+    background: rgba(159,32,137,0.06); border: 1px solid rgba(159,32,137,0.2);
     border-radius: 10px; padding: 0.6rem 1rem; margin-bottom: 1.2rem;
     font-size: 0.80rem; color: var(--text-primary); font-weight: 600; text-align: center;
 }
@@ -365,7 +365,7 @@ h1, h2, h3 { color: var(--text-primary) !important; font-family: 'Inter', sans-s
 .stTextInput input:focus,
 .stTextArea textarea:focus {
     border-color: var(--accent) !important;
-    box-shadow: 0 0 0 2px rgba(255,107,107,0.2) !important;
+    box-shadow: 0 0 0 2px rgba(159,32,137,0.2) !important;
     outline: none !important;
 }
 
@@ -404,7 +404,7 @@ h1, h2, h3 { color: var(--text-primary) !important; font-family: 'Inter', sans-s
     transition: transform 0.15s ease;
 }
 .order-card:hover { transform: translateY(-1px); }
-.order-card.below-base { border-color: var(--warning); background: rgba(245,158,11,0.04); }
+.order-card.below-base { border-color: var(--warning); background: rgba(238,114,18,0.04); }
 .order-card.accepted { border-color: var(--success); }
 .section-label {
     font-size: 0.68rem;
@@ -718,7 +718,7 @@ def _render_header() -> None:
         f'<div class="meesho-badge">{get_ui_string("meesho_badge", lang)}</div>'
         f'</div>'
         f'<div style="font-size:0.75rem;color:rgba(240,188,212,0.4);font-weight:600;text-align:right;">'
-        f'100% ARTISAN DIRECT<br><span style="color:#22c55e;">CASH ON DELIVERY AVAILABLE</span>'
+        f'100% ARTISAN DIRECT<br><span style="color:#038D63;">CASH ON DELIVERY AVAILABLE</span>'
         f'</div></div>', unsafe_allow_html=True,
     )
 
@@ -742,7 +742,7 @@ def _step_indicator(current: str) -> None:
     for i, (key, label) in enumerate(steps):
         if key in _HIDDEN_STATES: continue
         cls = "done" if i < active else ("active" if i == active else "pending")
-        color = "#22c55e" if cls == "done" else ("var(--accent)" if cls == "active" else "var(--text-muted)")
+        color = "#038D63" if cls == "done" else ("var(--accent)" if cls == "active" else "var(--text-muted)")
         parts.append(
             f'<div class="step-row"><div class="step-dot {cls}"></div>'
             f'<span style="font-size:0.80rem;color:{color};font-weight:600;">{label}</span></div>'
@@ -765,7 +765,7 @@ def _swatch_card(swatch: dict, index: int) -> None:
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
             <span style="background:var(--bg-card);color:var(--text-primary);padding:2px 8px;border-radius:6px;font-size:0.75rem;font-weight:700;">{get_ui_string('common_authentic', lang)}</span>
         </div>
-        <div style="background:rgba(218,65,103,0.08);border:1px dashed rgba(218,65,103,0.3);border-radius:8px;padding:12px;font-size:0.78rem;color:var(--text-muted);text-align:center;">Fabric swatch image will appear here</div>
+        <div style="background:rgba(159,32,137,0.08);border:1px dashed rgba(159,32,137,0.3);border-radius:8px;padding:12px;font-size:0.78rem;color:var(--text-muted);text-align:center;">Fabric swatch image will appear here</div>
         <div style="font-weight:800;font-size:1.05rem;color:var(--text-primary);margin-bottom:2px;">
             {swatch.get('weave_style','—')}
         </div>
@@ -880,7 +880,7 @@ def _buyer_page() -> None:
     st.markdown(f'<div class="trust-banner">{get_ui_string("trust_banner", lang)}</div>', unsafe_allow_html=True)
 
     if st.session_state.get("agent_thinking"):
-        st.markdown(f'<div style="background:rgba(255,107,107,0.12);border-left:4px solid var(--accent);padding:0.8rem 1rem;border-radius:0 8px 8px 0;font-size:0.90rem;font-weight:600;color:var(--text-primary);margin-bottom:0.8rem;">{get_ui_string("agent_thinking", lang)}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div style="background:rgba(159,32,137,0.12);border-left:4px solid var(--accent);padding:0.8rem 1rem;border-radius:0 8px 8px 0;font-size:0.90rem;font-weight:600;color:var(--text-primary);margin-bottom:0.8rem;">{get_ui_string("agent_thinking", lang)}</div>', unsafe_allow_html=True)
 
     buyer_orders = st.session_state.get("buyer_orders", [])
     if buyer_orders:
@@ -891,7 +891,7 @@ def _buyer_page() -> None:
                 color = {
                     "In Production": "var(--warning)",
                     "Awaiting Approval": "var(--accent)",
-                    "Completed": "#22c55e",
+                    "Completed": "#038D63",
                     "Photo Sent — Awaiting Approval": "var(--accent)",
                 }.get(status, "var(--text-muted)")
                 needs_approval = status in ("Awaiting Approval", "Photo Sent — Awaiting Approval")
@@ -926,7 +926,7 @@ def _buyer_page() -> None:
                 elif bo.get("photo_path"):
                     # photo_path is a filename (no bytes stored) — show placeholder
                     st.markdown(
-                        '<div style="background:rgba(218,65,103,0.08);border:1px dashed rgba(218,65,103,0.3);'
+                        '<div style="background:rgba(159,32,137,0.08);border:1px dashed rgba(159,32,137,0.3);'
                         'border-radius:8px;padding:10px;font-size:0.78rem;color:var(--text-muted);'
                         'text-align:center;margin:6px 0;">📸 Fabric photo received — preview not available in demo mode</div>',
                         unsafe_allow_html=True,
@@ -934,7 +934,7 @@ def _buyer_page() -> None:
 
                 if needs_approval:
                     st.markdown(f"""
-                    <div style="background:rgba(255,107,107,0.08);border:2px solid var(--accent);border-radius:12px;padding:1rem;margin:0.6rem 0;">
+                    <div style="background:rgba(159,32,137,0.08);border:2px solid var(--accent);border-radius:12px;padding:1rem;margin:0.6rem 0;">
                         <div style="font-weight:700;font-size:0.95rem;color:var(--text-primary);margin-bottom:4px;">Your fabric is ready for review</div>
                         <div style="font-size:0.82rem;color:var(--text-muted);">The artisan has finished weaving. Approve to ship or reject to move it to the One of a Kind resale outlet at 65% of the original price.</div>
                     </div>
@@ -1608,13 +1608,13 @@ def _ooak_page() -> None:
                             &middot; {item.get("weaver_cluster","—")}, {item.get("weaver_state","—")}
                         </div>
                         <div style="margin-top:6px;">{tags_html}
-                            <span class="tag" style="background:rgba(34,197,94,0.15);color:#22c55e;">{get_ui_string('ooak_ready', lang)}</span>
+                            <span class="tag" style="background:rgba(3,141,99,0.15);color:#038D63;">{get_ui_string('ooak_ready', lang)}</span>
                         </div>
                     </div>
                     <div style="text-align:right;flex-shrink:0;">
                         <div style="font-size:0.78rem;color:var(--text-muted);text-decoration:line-through;">₹{orig:,}</div>
                         <div class="swatch-price">₹{resale:,}</div>
-                        <div style="background:rgba(34,197,94,0.2);color:#22c55e;padding:2px 8px;
+                        <div style="background:rgba(3,141,99,0.2);color:#038D63;padding:2px 8px;
                             border-radius:999px;font-size:0.72rem;font-weight:700;display:inline-block;margin-top:2px;">
                             {discount}% off
                         </div>
@@ -1817,7 +1817,7 @@ def _onboarding_page() -> None:
     lang = st.session_state.get("language", "en")
     st.markdown(f'<div class="section-label">{get_ui_string("onboard_title", lang)}</div>', unsafe_allow_html=True)
     st.markdown(f"""
-    <div style="background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.25);
+    <div style="background:rgba(238,114,18,0.08);border:1px solid rgba(238,114,18,0.25);
         border-radius:10px;padding:0.75rem 1rem;margin-bottom:1rem;font-size:0.82rem;
         color:var(--text-primary);line-height:1.6;">
         {get_ui_string("onboard_desc", lang)}
@@ -1843,9 +1843,9 @@ def _onboarding_page() -> None:
     if st.session_state["onboard_submitted"]:
         d = st.session_state["onboard_data"]
         st.markdown(f"""
-        <div style="background:rgba(34,197,94,0.08);border:1.5px solid #22c55e;
+        <div style="background:rgba(3,141,99,0.08);border:1.5px solid #038D63;
             border-radius:12px;padding:1.4rem;text-align:center;margin-top:1rem;">
-            <div style="font-size:1.3rem;font-weight:800;color:#22c55e;margin-bottom:0.4rem;">
+            <div style="font-size:1.3rem;font-weight:800;color:#038D63;margin-bottom:0.4rem;">
                 {get_ui_string("onboard_submitted", lang)}
             </div>
             <div style="font-size:0.85rem;color:var(--text-primary);line-height:1.7;">
@@ -1943,7 +1943,7 @@ def _onboarding_page() -> None:
 
     # Voice input with template guidance
     st.markdown(f"""
-    <div style="background:rgba(244,51,151,0.07);border:2px solid rgba(244,51,151,0.35);
+    <div style="background:rgba(159,32,137,0.07);border:2px solid rgba(159,32,137,0.35);
         border-radius:14px;padding:1rem 1.2rem;margin-bottom:1rem;">
         <div style="font-weight:700;font-size:1rem;color:var(--text-primary);margin-bottom:4px;">
             {get_ui_string('onboard_speak', lang)}
@@ -1967,7 +1967,7 @@ def _onboarding_page() -> None:
                 st.warning(f"Could not transcribe: {err}. Please type the details below.")
             else:
                 st.markdown(
-                    f'<div style="background:rgba(34,197,94,0.08);border:1px solid #22c55e;'
+                    f'<div style="background:rgba(3,141,99,0.08);border:1px solid #038D63;'
                     f'border-radius:8px;padding:0.6rem 1rem;font-size:0.85rem;margin-bottom:0.5rem;">'
                     f'Heard: <em>{text}</em></div>',
                     unsafe_allow_html=True
@@ -2098,8 +2098,8 @@ def main() -> None:
 
     if "app_loaded" not in st.session_state:
         st.markdown(
-            '<div style="background:rgba(218,65,103,0.1);border:1px solid rgba(218,65,103,0.3);'
-            'border-radius:8px;padding:0.5rem 1rem;font-size:0.82rem;color:#f0bcd4;'
+            '<div style="background:rgba(218,65,103,0.1);border:1px solid rgba(159,32,137,0.3);'
+            'border-radius:8px;padding:0.5rem 1rem;font-size:0.82rem;color:#D9A6D0;'
             'margin-bottom:0.8rem;">Agent is warming up on first load — this takes about '
             '15 seconds. Subsequent responses will be instant.</div>',
             unsafe_allow_html=True,
