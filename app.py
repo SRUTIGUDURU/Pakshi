@@ -1361,6 +1361,83 @@ def _ooak_page() -> None:
             st.markdown('<div style="height:1.2rem;"></div>', unsafe_allow_html=True)
             if st.button(get_ui_string("btn_buy_now", lang), key=f"buy_{item.get('order_id',idx)}_{idx}", use_container_width=True):
                 st.success(f"#{item.get('order_id','')} added to cart. Delivery in 3-5 days.")
+def _parse_onboarding_text_improved(text: str) -> dict:
+    """
+    Extract name, cluster, specialty, phone from a transcribed voice message
+    using multiple fallback patterns for reliability.
+    """
+    result = {"name": "", "cluster": "", "specialty": "", "phone": ""}
+    t = text.lower().strip()
+
+    # 1. NAME: multiple patterns
+    name_patterns = [
+        r'(?:mera naam|my name is|name is|naam|i am|i\'m|मेरा नाम)\s*(.+?)(?:\s+hai|\s+is|\s*$|\.|,|;|\s+from|\s+in|\s+of)',
+        r'(?:my name|name)\s+is\s+(.+?)(?:\s+and|\s+\.|$|,)',
+        r'(?:i am|i\'m)\s+(.+?)(?:\s+from|\s+in|\s+\.|$|,)'
+    ]
+    for pat in name_patterns:
+        m = re.search(pat, t, re.IGNORECASE)
+        if m:
+            raw = m.group(1).strip().title()
+            # Remove common suffixes like "hai" or "is" that might be captured
+            raw = re.sub(r'\s+(hai|is|from)$', '', raw, flags=re.IGNORECASE)
+            if raw and len(raw) > 1:
+                result["name"] = raw
+                break
+
+    # 2. CLUSTER: patterns like "from X", "cluster X", "X mein", "X village"
+    cluster_patterns = [
+        r'(?:from|cluster|village|area|गांव|में|से)\s+(.+?)(?:\s+(?:hai|is|mein|in|cluster|village)|$|\.|,|;)',
+        r'(?:in|at)\s+(.+?)(?:\s+(?:weave|making|banata|work)|$|\.|,)'
+    ]
+    for pat in cluster_patterns:
+        m = re.search(pat, t, re.IGNORECASE)
+        if m:
+            raw = m.group(1).strip().title()
+            if raw and len(raw) > 2:
+                result["cluster"] = raw
+                break
+
+    # 3. SPECIALTY: weave, craft, banata, etc.
+    specialty_patterns = [
+        r'(?:specialty|weave|weaving|बुनाई|craft|work|banata|karate|bunati)\s*(?:is|hai)?\s*(.+?)(?:\s+(?:hai|is|in|from|at|$|\.|,|;))',
+        r'(?:banata|karate|bunati)\s+(.+?)(?:\s+(?:hai|is|from|in|$|\.|,|;))',
+        r'(?:weave|craft)\s+(.+?)(?:\s+(?:is|hai|from|in|$|\.|,|;))'
+    ]
+    for pat in specialty_patterns:
+        m = re.search(pat, t, re.IGNORECASE)
+        if m:
+            raw = m.group(1).strip().title()
+            if raw and len(raw) > 2:
+                result["specialty"] = raw
+                break
+
+    # 4. PHONE: 10-digit number
+    phone_match = re.search(r'\b(\d{10})\b', t)
+    if phone_match:
+        result["phone"] = phone_match.group(1)
+
+    # 5. If no name extracted but we have text, try to get the first two words as name
+    if not result["name"] and len(t.split()) >= 2:
+        # Remove common stopwords at start
+        stopwords = {"mera", "my", "i", "am", "name", "is", "naam", "hai"}
+        words = t.split()
+        # Skip first if it's a stopword
+        start = 0
+        if words[0] in stopwords:
+            start = 1
+        if len(words) > start + 1:
+            result["name"] = " ".join(words[start:start+2]).title()
+
+    # 6. If no cluster but we have "from" or "in" followed by a place, try again with more flexible pattern
+    if not result["cluster"]:
+        m = re.search(r'(?:from|in|at|में|से)\s+([A-Za-z]+(?:\s+[A-Za-z]+)?)', text)
+        if m:
+            raw = m.group(1).strip().title()
+            if len(raw) > 2:
+                result["cluster"] = raw
+
+    return result
 
 # ---------------------------------------------------------------------------
 # WEAVER ONBOARDING PAGE (bilingual, voice extraction, GPS)
@@ -1376,10 +1453,19 @@ def _onboarding_page() -> None:
     </div>
     """, unsafe_allow_html=True)
 
+    # Ensure state keys exist
     if "onboard_submitted" not in st.session_state:
         st.session_state["onboard_submitted"] = False
     if "onboard_data" not in st.session_state:
         st.session_state["onboard_data"] = {}
+    if "reg_name" not in st.session_state:
+        st.session_state["reg_name"] = ""
+    if "reg_cluster" not in st.session_state:
+        st.session_state["reg_cluster"] = ""
+    if "reg_specialty" not in st.session_state:
+        st.session_state["reg_specialty"] = ""
+    if "reg_phone" not in st.session_state:
+        st.session_state["reg_phone"] = ""
 
     if st.session_state["onboard_submitted"]:
         d = st.session_state["onboard_data"]
@@ -1421,6 +1507,7 @@ def _onboarding_page() -> None:
             st.rerun()
             return
 
+    # GPS location button
     if st.button(get_ui_string("onboard_gps", lang), use_container_width=False):
         gps_js = """
         <script>
@@ -1461,6 +1548,7 @@ def _onboarding_page() -> None:
         st.rerun()
         return
 
+    # Voice input for onboarding — prominent card
     st.markdown(f"""
     <div style="background:rgba(244,51,151,0.07);border:2px solid rgba(244,51,151,0.35);
         border-radius:14px;padding:1rem 1.2rem;margin-bottom:1rem;">
@@ -1481,27 +1569,35 @@ def _onboarding_page() -> None:
         if err:
             st.warning(f"Could not transcribe: {err}. Please type the details below.")
         else:
+            # Show the transcript
             st.markdown(
                 f'<div style="background:rgba(34,197,94,0.08);border:1px solid #22c55e;'
                 f'border-radius:8px;padding:0.6rem 1rem;font-size:0.85rem;margin-bottom:0.5rem;">'
                 f'Heard: <em>{text}</em></div>',
                 unsafe_allow_html=True
             )
-            parsed = _parse_onboarding_text(text)
+            # Parse using an improved function
+            parsed = _parse_onboarding_text_improved(text)
             filled = [k for k, v in parsed.items() if v]
+            # Store extracted values into session state so they persist across reruns
             for key, val in parsed.items():
                 if val:
                     st.session_state[f"reg_{key}"] = val
+                else:
+                    # Keep existing value if already set
+                    pass
             if filled:
                 st.success(f"Auto-filled: {', '.join(filled)}. Review and correct below.")
             else:
-                st.warning("Could not extract details. Please type below.")
+                st.warning("Could not extract details from the audio. Please type the fields manually.")
             st.rerun()
             return
 
+    # Display the form with pre-filled values from session state
     with st.form("onboard_form"):
         st.markdown(f'<div class="section-label">{get_ui_string("onboard_basic", lang)}</div>', unsafe_allow_html=True)
         c1, c2 = st.columns(2)
+        # Get values from session state (they persist)
         default_name = st.session_state.get("reg_name", "")
         default_cluster = st.session_state.get("gps_place", "") or st.session_state.get("reg_cluster", "")
         default_specialty = st.session_state.get("reg_specialty", "")
