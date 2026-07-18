@@ -1060,14 +1060,15 @@ def _weaver_page() -> None:
     if w_audio is not None:
         _w_hash = hash(bytes(w_audio.getbuffer()))
         if st.session_state.get("last_weaver_audio_hash") == _w_hash:
-            pass
+            pass   # already processed this clip
         else:
             st.session_state["last_weaver_audio_hash"] = _w_hash
             with st.spinner("Sun rahe hain..."):
                 text, err = _transcribe_audio(w_audio)
             if err:
+                # Clear the hash so the user can retry the same recording
+                st.session_state["last_weaver_audio_hash"] = None
                 st.warning(err)
-                # keep hash set to avoid reprocessing failed clip
             else:
                 st.info(f'Heard: "{text}"')
                 cmd = _parse_weaver_voice_command(text, pending, accepted)
@@ -1077,36 +1078,54 @@ def _weaver_page() -> None:
                     if idx is not None:
                         if act == "accept":
                             orders[idx]["status"] = "accepted"
+                            # update buyer orders
                             for bo in st.session_state.get("buyer_orders", []):
                                 if bo["order_id"] == oid:
                                     bo["status"] = "In Production"
                             st.session_state["weaver_orders"] = orders
+                            st.session_state["buyer_orders"] = st.session_state.get("buyer_orders", [])  # ensure updated
                             hi_txt = f"Order {oid[-4:]} swikaar ho gaya. Loom par bhej diya."
-                            if ab := _tts_bytes(hi_txt, lang="hi"):
-                                _autoplay_audio(ab)
+                            try:
+                                if ab := _tts_bytes(hi_txt, lang="hi"):
+                                    _autoplay_audio(ab)
+                            except Exception as e:
+                                st.warning(f"Audio announcement failed: {e}")
                             st.success(f"Voice Command: Accepted {oid}!")
                             st.rerun()
                             return
                         elif act == "decline":
                             orders[idx]["status"] = "declined"
+                            # update buyer orders
+                            for bo in st.session_state.get("buyer_orders", []):
+                                if bo["order_id"] == oid:
+                                    bo["status"] = "Declined"
                             st.session_state["weaver_orders"] = orders
+                            st.session_state["buyer_orders"] = st.session_state.get("buyer_orders", [])
                             hi_txt = f"Order {oid[-4:]} mana kar diya gaya."
-                            if ab := _tts_bytes(hi_txt, lang="hi"):
-                                _autoplay_audio(ab)
+                            try:
+                                if ab := _tts_bytes(hi_txt, lang="hi"):
+                                    _autoplay_audio(ab)
+                            except Exception as e:
+                                st.warning(f"Audio announcement failed: {e}")
                             st.warning(f"Voice Command: Declined {oid}.")
                             st.rerun()
                             return
                         elif act == "show_buyer":
                             orders[idx]["status"] = "awaiting_approval"
                             orders[idx]["photo"] = "loom_snapshot_auto.jpg"
-                            st.session_state["weaver_orders"] = orders
+                            # update buyer orders
                             for bo in st.session_state.get("buyer_orders", []):
                                 if bo["order_id"] == oid:
                                     bo["status"] = "Awaiting Approval"
                                     bo["photo_path"] = "loom_snapshot_auto.jpg"
+                            st.session_state["weaver_orders"] = orders
+                            st.session_state["buyer_orders"] = st.session_state.get("buyer_orders", [])
                             hi_txt = f"Fabric tayyar hai. Buyer ko tasveer bhej di gayi hai."
-                            if ab := _tts_bytes(hi_txt, lang="hi"):
-                                _autoplay_audio(ab)
+                            try:
+                                if ab := _tts_bytes(hi_txt, lang="hi"):
+                                    _autoplay_audio(ab)
+                            except Exception as e:
+                                st.warning(f"Audio announcement failed: {e}")
                             st.success(f"Voice Command: Photo sent to buyer for {oid}. Awaiting Approval.")
                             st.rerun()
                             return
@@ -1135,10 +1154,13 @@ def _weaver_page() -> None:
             if accepted:
                 lines.append(f"{len(accepted)} order loom par chal rahe hain.")
             full_text = " ".join(lines)
-            if ab := _tts_bytes(full_text, lang="hi"):
-                _autoplay_audio(ab, label="Your orders summary")
-            else:
-                st.warning("Audio unavailable — check edge-tts is installed.")
+            try:
+                if ab := _tts_bytes(full_text, lang="hi"):
+                    _autoplay_audio(ab, label="Your orders summary")
+                else:
+                    st.warning("Audio unavailable — check edge-tts is installed.")
+            except Exception as e:
+                st.warning(f"TTS failed: {e}")
 
     if pending:
         st.markdown(f'<div class="section-label" style="margin-top:1rem;">{get_ui_string("weaver_pending", lang)}</div>', unsafe_allow_html=True)
@@ -1147,7 +1169,6 @@ def _weaver_page() -> None:
             is_below = int(order.get("price",0)) < st.session_state["min_base_price"]
             bg_card = "order-card below-base" if is_below else "order-card"
             badge = f'<span class="tag-warning">⚠️ Below Base (₹{st.session_state["min_base_price"]})</span>' if is_below else '<span class="tag">✓ Meets Base</span>'
-            # FIX: use var(--text-primary) for visibility
             st.markdown(f"""
             <div class="order-card">
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;">
@@ -1160,13 +1181,31 @@ def _weaver_page() -> None:
             if b1.button(get_ui_string("weaver_accept", lang), key=f"acc_{order['order_id']}", use_container_width=True):
                 orders[idx]["status"] = "accepted"
                 st.session_state["weaver_orders"] = orders
-                if ab := _tts_bytes("Order swikaar kiya", lang="hi"):
-                    _autoplay_audio(ab)
+                # update buyer orders
+                for bo in st.session_state.get("buyer_orders", []):
+                    if bo["order_id"] == order["order_id"]:
+                        bo["status"] = "In Production"
+                st.session_state["buyer_orders"] = st.session_state.get("buyer_orders", [])
+                try:
+                    if ab := _tts_bytes("Order swikaar kiya", lang="hi"):
+                        _autoplay_audio(ab)
+                except Exception as e:
+                    st.warning(f"Audio announcement failed: {e}")
                 st.rerun()
                 return
             if b2.button(get_ui_string("weaver_decline", lang), key=f"dec_{order['order_id']}", use_container_width=True):
                 orders[idx]["status"] = "declined"
                 st.session_state["weaver_orders"] = orders
+                # update buyer orders
+                for bo in st.session_state.get("buyer_orders", []):
+                    if bo["order_id"] == order["order_id"]:
+                        bo["status"] = "Declined"
+                st.session_state["buyer_orders"] = st.session_state.get("buyer_orders", [])
+                try:
+                    if ab := _tts_bytes("Order mana kar diya", lang="hi"):
+                        _autoplay_audio(ab)
+                except Exception as e:
+                    st.warning(f"Audio announcement failed: {e}")
                 st.rerun()
                 return
 
@@ -1174,7 +1213,6 @@ def _weaver_page() -> None:
         st.markdown(f'<div class="section-label" style="margin-top:1rem;">{get_ui_string("weaver_production", lang)}</div>', unsafe_allow_html=True)
         for order in accepted:
             idx = next((i for i, o in enumerate(orders) if o.get("order_id") == order.get("order_id")), None)
-            # FIX: use var(--text-primary) for visibility
             st.markdown(f"""
             <div class="order-card accepted">
                 <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -1200,6 +1238,7 @@ def _weaver_page() -> None:
                     if bo["order_id"] == order["order_id"]:
                         bo["status"] = "Awaiting Approval"
                         bo["photo_path"] = photo_name
+                st.session_state["buyer_orders"] = st.session_state.get("buyer_orders", [])
                 st.success(f"Photo sent for #{order['order_id']}. Buyer will be notified.")
                 st.rerun()
                 return
@@ -1244,11 +1283,13 @@ def _weaver_page() -> None:
         }
         st.session_state["weaver_orders"].insert(0, new_order)
         if st.session_state["audio_work_mode"]:
-            if ab := _tts_bytes(f"Naya order aaya hai! Keemat {new_order['price']} rupaye.", lang="hi"):
-                _autoplay_audio(ab)
+            try:
+                if ab := _tts_bytes(f"Naya order aaya hai! Keemat {new_order['price']} rupaye.", lang="hi"):
+                    _autoplay_audio(ab)
+            except Exception as e:
+                st.warning(f"Audio announcement failed: {e}")
         st.rerun()
         return
-
 # ---------------------------------------------------------------------------
 # ONE OF A KIND PAGE
 # ---------------------------------------------------------------------------
