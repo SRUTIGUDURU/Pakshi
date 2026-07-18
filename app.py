@@ -604,30 +604,6 @@ def _parse_weaver_voice_command(text: str, pending: list, accepted: list) -> dic
 # ---------------------------------------------------------------------------
 # Helper to parse onboarding details from voice transcript
 # ---------------------------------------------------------------------------
-def _parse_onboarding_text(text: str) -> dict:
-    result = {"name": "", "cluster": "", "specialty": "", "phone": ""}
-    t = text.lower().strip()
-
-    name_match = re.search(r'(?:mera naam|my name is|name is|naam)\s*(.+?)(?:\s+hai|\s*$|\.)', t, re.IGNORECASE)
-    if name_match:
-        result["name"] = name_match.group(1).strip().title()
-
-    cluster_match = re.search(r'(?:cluster|clusters?|group|area|from|से|में|गांव|vill|village)\s*(.+?)(?:\s+(?:hai|is|mein|क्लस्टर|cluster)|$|\.)', t, re.IGNORECASE)
-    if cluster_match:
-        result["cluster"] = cluster_match.group(1).strip().title()
-
-    specialty_match = re.search(r'(?:specialty|weave|weaving|बुनाई|काम|banata|karate|craft)\s*(.+?)(?:\s+(?:hai|is|करता|banate)|$|\.)', t, re.IGNORECASE)
-    if specialty_match:
-        result["specialty"] = specialty_match.group(1).strip().title()
-
-    phone_match = re.search(r'\b(\d{10})\b', t)
-    if phone_match:
-        result["phone"] = phone_match.group(1)
-
-    if not result["name"] and len(t.split()) >= 2:
-        result["name"] = " ".join(t.split()[:2]).title()
-
-    return result
 
 # ---------------------------------------------------------------------------
 # Session state initializers
@@ -1368,7 +1344,6 @@ def _ooak_page() -> None:
 def _onboarding_page() -> None:
     # ---- Parser function embedded inside ----
     def _parse_onboarding_text(text: str) -> dict:
-        """Extract name, cluster, specialty, phone from transcribed voice."""
         # Known weaving clusters (from weaver_profiles.json)
         KNOWN_CLUSTERS = [
             "pochampally", "venkatagiri", "kanchipuram", "ilkal", "kota", "chanderi",
@@ -1379,6 +1354,24 @@ def _onboarding_page() -> None:
             "molakalmuru", "uppada", "nuapatna", "arni", "balaramapuram", "coimbatore",
             "salem", "bishnupur", "murshidabad", "shantipur", "bhagalpur"
         ]
+        
+        # Define these at the top so they're always available
+        english_weaves = [
+            "ikat", "jamdani", "block print", "banarasi", "kanjivaram",
+            "tussar", "chanderi", "maheshwari", "paithani", "patola",
+            "kota doria", "sambalpuri", "ilkal", "venkatagiri", "zari", "kasavu"
+        ]
+        
+        weave_map = {
+            "टिकट": "ikat", "इकट": "ikat",
+            "बनारसी": "banarasi", "कांचीपुरम": "kanjivaram",
+            "जामदानी": "jamdani", "तुस्सर": "tussar",
+            "चंदेरी": "chanderi", "महेश्वरी": "maheshwari",
+            "पैठणी": "paithani", "पटोला": "patola",
+            "कोटा डोरिया": "kota doria", "संबलपुरी": "sambalpuri",
+            "इलकल": "ilkal", "वेंकटागिरी": "venkatagiri",
+            "जरी": "zari", "कसावु": "kasavu"
+        }
         
         result = {"name": "", "cluster": "", "specialty": "", "phone": ""}
         
@@ -1394,24 +1387,11 @@ def _onboarding_page() -> None:
             result["phone"] = phone_match.group(1)
         
         # 2. SPECIALTY (weave)
-        weave_map = {
-            "टिकट": "ikat", "इकट": "ikat",
-            "बनारसी": "banarasi", "कांचीपुरम": "kanjivaram",
-            "जामदानी": "jamdani", "तुस्सर": "tussar",
-            "चंदेरी": "chanderi", "महेश्वरी": "maheshwari",
-            "पैठणी": "paithani", "पटोला": "patola",
-            "कोटा डोरिया": "kota doria", "संबलपुरी": "sambalpuri",
-            "इलकल": "ilkal", "वेंकटागिरी": "venkatagiri",
-            "जरी": "zari", "कसावु": "kasavu"
-        }
         for hindi, eng in weave_map.items():
             if hindi in t:
                 result["specialty"] = eng.title()
                 break
         if not result["specialty"]:
-            english_weaves = ["ikat", "jamdani", "block print", "banarasi", "kanjivaram", 
-                             "tussar", "chanderi", "maheshwari", "paithani", "patola", 
-                             "kota doria", "sambalpuri", "ilkal", "venkatagiri", "zari", "kasavu"]
             for w in english_weaves:
                 if w in t:
                     result["specialty"] = w.title()
@@ -1429,31 +1409,27 @@ def _onboarding_page() -> None:
         
         # 3b. Unknown village fallback via contextual patterns
         if not result["cluster"]:
-            # Build exclusion set to avoid capturing weaves / stopwords as villages
+            # Build exclusion set – now english_weaves is defined
             english_weaves_lower = [w.lower() for w in english_weaves]
             weave_values_lower = [v.lower() for v in weave_map.values()]
-            stopwords = {"main", "mera", "my", "name", "naam", "hai", "is", "hoon", "hun", 
-                         "है", "मैं", "हूँ", "से", "ki", "की", "में", "ka", "का", "ke", "के",
-                         "hu", "hain", "ho", "raha", "rahi", "banati", "banata", "banate",
-                         "number", "phone", "mobile", "gav", "gaon", "village", "cluster",
-                         "weave", "weaver", "bunkar", "karigar", "specialty", "speciality",
-                         "from", "of", "in", "live", "stay", "at", "i", "am", "meri", "मेरी"}
+            stopwords = {
+                "main", "mera", "my", "name", "naam", "hai", "is", "hoon", "hun",
+                "है", "मैं", "हूँ", "से", "ki", "की", "में", "ka", "का", "ke", "के",
+                "hu", "hain", "ho", "raha", "rahi", "banati", "banata", "banate",
+                "number", "phone", "mobile", "gav", "gaon", "village", "cluster",
+                "weave", "weaver", "bunkar", "karigar", "specialty", "speciality",
+                "from", "of", "in", "live", "stay", "at", "i", "am", "meri", "मेरी"
+            }
             exclusion_set = set(stopwords) | set(english_weaves_lower) | set(weave_values_lower)
             
             village_patterns = [
-                # "main/mera X se hun/hoon"  (Hinglish & Hindi)
                 r'(?:main|mera|मैं|मेरा)\s+([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+){0,2})\s+(?:se|से)\s+(?:hun|hoon|hain|हूँ|हैं|है|raha|रहा|rahi|रही)',
-                # "X gaon / X village / gaon X"
                 r'([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+)?)\s+(?:gaon|गांव|village)',
                 r'(?:gaon|गांव|village)\s+([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+)?)',
-                # English locatives
                 r'(?:from|of|in)\s+([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+){0,2})',
                 r'(?:live|stay)\s+(?:in|at)\s+([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+){0,2})',
-                # "mera gaon X hai"
                 r'(?:mera|मेरा)\s+(?:gaon|गांव|village)\s+([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+)?)\s+(?:hai|है)',
-                # "X ki/kA [weave]"  → X is likely the village
                 r'([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+)?)\s+(?:ki|की|ka|का|ke|के)\s+(?:ikat|इकट|jamdani|जामदानी|banarasi|बनारसी|chanderi|चंदेरी|maheshwari|महेश्वरी|paithani|पैठणी|patola|पटोला|tussar|तुस्सर|zari|जरी|kasavu|कसावु)',
-                # "X [weave] banati/banata hoon"
                 r'([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+)?)\s+(?:ikat|इकट|jamdani|जामदानी|banarasi|बनारसी|chanderi|चंदेरी|maheshwari|महेश्वरी)\s+(?:banati|बनाती|banata|बनाता|banate|बनाते)',
             ]
             
@@ -1461,7 +1437,7 @@ def _onboarding_page() -> None:
                 match = re.search(pattern, t, re.IGNORECASE)
                 if match:
                     candidate = match.group(1).strip().lower()
-                    cand_words = [w for w in candidate.split() 
+                    cand_words = [w for w in candidate.split()
                                   if w not in exclusion_set and len(w) > 2]
                     if cand_words:
                         result["cluster"] = " ".join(cand_words).title()
@@ -1504,7 +1480,12 @@ def _onboarding_page() -> None:
                         name_text = name_text.replace(hindi, " ")
             
             # Remove stopwords
-            for sw in stopwords:
+            stopwords_set = {
+                "main", "mera", "my", "name", "naam", "hai", "is", "hoon", "hun",
+                "है", "मैं", "हूँ", "से", "ki", "की", "में", "ka", "का", "ke", "के",
+                "number", "phone", "hu", "hain", "ho", "raha", "rahi", "banati", "banata"
+            }
+            for sw in stopwords_set:
                 name_text = re.sub(r'(?:^|\s)' + re.escape(sw) + r'(?:\s|$)', ' ', name_text, flags=re.IGNORECASE)
             
             name_text = re.sub(r'\s+', ' ', name_text).strip()
@@ -1519,9 +1500,11 @@ def _onboarding_page() -> None:
         # 4c. Final fallback: first meaningful word not used by cluster/specialty
         if not result["name"]:
             words = t.split()
-            stopwords_fb = {"main", "mera", "my", "name", "naam", "hai", "is", "hoon", "hun", 
-                           "है", "मैं", "हूँ", "से", "ki", "की", "में", "ka", "का", "ke", "के",
-                           "number", "phone", "hu", "hain", "ho", "raha", "rahi", "banati", "banata"}
+            stopwords_fb = {
+                "main", "mera", "my", "name", "naam", "hai", "is", "hoon", "hun",
+                "है", "मैं", "हूँ", "से", "ki", "की", "में", "ka", "का", "ke", "के",
+                "number", "phone", "hu", "hain", "ho", "raha", "rahi", "banati", "banata"
+            }
             for i, w in enumerate(words):
                 w_clean = w.strip('.,;:!?')
                 w_lower = w_clean.lower()
