@@ -29,7 +29,7 @@ import requests  # for reverse geocoding
 # ---------------------------------------------------------------------------
 st.set_page_config(
     page_title="Pakshi — Handloom Direct",
-    page_icon="🪶",
+    page_icon="",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -41,8 +41,8 @@ UI_STRINGS = {
     "en": {
         "app_title": "Pakshi — Handloom Direct",
         "tagline": "Direct from India's Master Weavers · Zero Middlemen Markup",
-        "meesho_badge": "🪢 Meesho Verified Made-to-Order Handloom Vertical",
-        "trust_banner": "✅ 100% Handloom Verified · 💵 Pay on Delivery Available · 🚚 Direct Factory Shipping",
+        "meesho_badge": "Meesho Verified Made-to-Order Handloom Vertical",
+        "trust_banner": "100% Handloom Verified · Pay on Delivery Available · Direct Factory Shipping",
         "nav_buyer": "Buyer Portal",
         "nav_weaver": "Weaver Dashboard",
         "nav_ooak": "One of a Kind",
@@ -55,36 +55,36 @@ UI_STRINGS = {
         "btn_select": "Select Option",
         "btn_confirm": "Confirm Order & Place",
         "btn_back": "Back to Selection",
-        "btn_new_search": "✨ Start New Saree Search",
-        "btn_yes_alt": "✅ Yes, Show Alternatives",
-        "btn_no_alt": "❌ No, Keep Original Specs",
-        "btn_cancel_order": "❌ Cancel Order",
-        "btn_approve": "✅ Approve & Ship",
-        "btn_reject": "❌ Reject Piece",
+        "btn_new_search": "Start New Saree Search",
+        "btn_yes_alt": "Yes, Show Alternatives",
+        "btn_no_alt": "No, Keep Original Specs",
+        "btn_cancel_order": "Cancel Order",
+        "btn_approve": "Approve and Ship",
+        "btn_reject": "Reject Piece",
         "btn_buy_now": "Buy Now",
-        "section_swatches": "🎨 Recommended Artisanal Swatches",
-        "section_orders": "📦 Your Active Orders",
+        "section_swatches": "Recommended Artisanal Swatches",
+        "section_orders": "Your Active Orders",
         "agent_thinking": "⏳ Agent is finding matching artisans for you...",
         "order_status_production": "In Production",
         "order_status_approval": "Awaiting Approval",
         "order_status_completed": "Completed",
         "order_status_photo_sent": "Photo Sent — Awaiting Approval",
-        "weaver_dashboard_title": "🧑‍🎨 Artisan Portal (बुनकर पोर्टल)",
-        "weaver_min_base": "🛡️ Minimum Base Price Threshold",
-        "weaver_audio_mode": "🔊 Hands-Free Loom Audio Mode",
-        "weaver_voice_controls": "🎙️ Voice Loom Controls (हाथों के बिना काम करें)",
+        "weaver_dashboard_title": "Artisan Portal (Bunkar Portal)",
+        "weaver_min_base": "Minimum Base Price Threshold",
+        "weaver_audio_mode": "Hands-Free Loom Audio Mode",
+        "weaver_voice_controls": "Voice Loom Controls (Hands-Free)",
         "weaver_voice_caption": "Say 'Pehla order swikaar karo' (Accept first), 'Order 2847 mana karo' (Reject), or 'Buyer ko dikhao' (Send photo to buyer).",
         "weaver_read_orders": "Read My Orders Aloud",
-        "weaver_pending": "📥 Pending Broadcasts",
-        "weaver_production": "🧵 In Production (लूम पर)",
+        "weaver_pending": "Pending Broadcasts",
+        "weaver_production": "In Production (Loom par)",
         "weaver_awaiting": "⏳ Awaiting Buyer Approval",
-        "weaver_simulate": "📡 Simulate New Incoming Broadcast",
-        "weaver_accept": "✅ Accept",
-        "weaver_decline": "❌ Decline",
+        "weaver_simulate": "Simulate New Incoming Broadcast",
+        "weaver_accept": "Accept",
+        "weaver_decline": "Decline",
         "weaver_send_photo": "Send Photo for Buyer Approval",
         "onboard_title": "Weaver Onboarding — Join the Pakshi Network",
         "onboard_desc": "Powered by Meesho — Once you complete onboarding, your weaver profile goes live on the Pakshi network. Buyers describe what they want, the agent matches you, and orders come directly to your phone. No middlemen. Your craft. Your price.",
-        "onboard_submitted": "✅ Profile Live!",
+        "onboard_submitted": "Profile Live!",
         "onboard_go_dashboard": "Go to Weaver Dashboard",
         "onboard_register_another": "Register Another Weaver",
         "onboard_basic": "Basic Details",
@@ -106,12 +106,12 @@ UI_STRINGS = {
         "onboard_lang": "Preferred Language for Notifications",
         "onboard_photo": "Upload a sample of your work (optional)",
         "onboard_submit": "Submit Profile — Join Pakshi Network",
-        "onboard_speak": "🎤 Speak Your Registration (बोलकर भरें)",
-        "onboard_gps": "📍 Get Current Location",
+        "onboard_speak": "Speak Your Registration",
+        "onboard_gps": "Get Current Location",
         "ooak_title": "One of a Kind — Unique Handloom Pieces",
         "ooak_empty": "No rejected pieces yet — that is a good sign. When a custom order does not meet a buyer's expectation, it lands here at wholesale price. No waste. No loss.",
         "ooak_ready": "ready to ship",
-        "common_authentic": "✓ Authentic Handloom",
+        "common_authentic": "Authentic Handloom",
         "common_master_artisan": "Master Artisan",
         "common_delivery": "Delivery",
         "common_rating": "Rating",
@@ -121,8 +121,8 @@ UI_STRINGS = {
     "hi": {
         "app_title": "पक्षी — हथकरघा डायरेक्ट",
         "tagline": "भारत के मास्टर बुनकरों से सीधे · बिना बिचौलिए के",
-        "meesho_badge": "🪢 मीशो वेरिफाइड मेड-टू-ऑर्डर हथकरघा वर्टिकल",
-        "trust_banner": "✅ 100% हथकरघा प्रमाणित · 💵 कैश ऑन डिलीवरी उपलब्ध · 🚚 डायरेक्ट फैक्ट्री शिपिंग",
+        "meesho_badge": "मीशो वेरिफाइड मेड-टू-ऑर्डर हथकरघा वर्टिकल",
+        "trust_banner": " 100% हथकरघा प्रमाणित ·  कैश ऑन डिलीवरी उपलब्ध ·  डायरेक्ट फैक्ट्री शिपिंग",
         "nav_buyer": "खरीदार पोर्टल",
         "nav_weaver": "बुनकर डैशबोर्ड",
         "nav_ooak": "एक तरह का",
@@ -135,36 +135,36 @@ UI_STRINGS = {
         "btn_select": "विकल्प चुनें",
         "btn_confirm": "ऑर्डर कन्फर्म करें",
         "btn_back": "चयन पर वापस जाएं",
-        "btn_new_search": "✨ नई साड़ी खोज शुरू करें",
-        "btn_yes_alt": "✅ हाँ, विकल्प दिखाएँ",
-        "btn_no_alt": "❌ नहीं, मूल विनिर्देश रखें",
-        "btn_cancel_order": "❌ ऑर्डर रद्द करें",
-        "btn_approve": "✅ स्वीकार करें और भेजें",
-        "btn_reject": "❌ टुकड़ा अस्वीकार करें",
+        "btn_new_search": "नई साड़ी खोज शुरू करें",
+        "btn_yes_alt": "हाँ, विकल्प दिखाएँ",
+        "btn_no_alt": "नहीं, मूल विनिर्देश रखें",
+        "btn_cancel_order": "ऑर्डर रद्द करें",
+        "btn_approve": " स्वीकार करें और भेजें",
+        "btn_reject": " टुकड़ा अस्वीकार करें",
         "btn_buy_now": "अभी खरीदें",
-        "section_swatches": "🎨 अनुशंसित कारीगर स्वैच",
-        "section_orders": "📦 आपके सक्रिय ऑर्डर",
+        "section_swatches": " अनुशंसित कारीगर स्वैच",
+        "section_orders": " आपके सक्रिय ऑर्डर",
         "agent_thinking": "⏳ एजेंट आपके लिए मेल खाते कारीगरों को ढूंढ रहा है...",
         "order_status_production": "उत्पादन में",
         "order_status_approval": "अनुमोदन की प्रतीक्षा",
         "order_status_completed": "पूर्ण",
         "order_status_photo_sent": "फोटो भेजा — अनुमोदन की प्रतीक्षा",
-        "weaver_dashboard_title": "🧑‍🎨 बुनकर पोर्टल",
-        "weaver_min_base": "🛡️ न्यूनतम मूल्य सीमा",
-        "weaver_audio_mode": "🔊 हैंड्स-फ्री लूम ऑडियो मोड",
-        "weaver_voice_controls": "🎙️ वॉइस लूम कंट्रोल (हाथों के बिना काम करें)",
+        "weaver_dashboard_title": " बुनकर पोर्टल",
+        "weaver_min_base": " न्यूनतम मूल्य सीमा",
+        "weaver_audio_mode": " हैंड्स-फ्री लूम ऑडियो मोड",
+        "weaver_voice_controls": " वॉइस लूम कंट्रोल (हाथों के बिना काम करें)",
         "weaver_voice_caption": "कहें 'पहला ऑर्डर स्वीकार करो', 'ऑर्डर 2847 मना करो', या 'बायर को दिखाओ' (फोटो भेजने के लिए)।",
         "weaver_read_orders": "मेरे ऑर्डर पढ़कर सुनाएँ",
-        "weaver_pending": "📥 लंबित प्रसारण",
-        "weaver_production": "🧵 उत्पादन में (लूम पर)",
+        "weaver_pending": " लंबित प्रसारण",
+        "weaver_production": " उत्पादन में (लूम पर)",
         "weaver_awaiting": "⏳ खरीदार की मंजूरी की प्रतीक्षा",
-        "weaver_simulate": "📡 नया आने वाला प्रसारण अनुकरण करें",
-        "weaver_accept": "✅ स्वीकार करें",
-        "weaver_decline": "❌ अस्वीकार करें",
+        "weaver_simulate": " नया आने वाला प्रसारण अनुकरण करें",
+        "weaver_accept": " स्वीकार करें",
+        "weaver_decline": " अस्वीकार करें",
         "weaver_send_photo": "खरीदार की मंजूरी के लिए फोटो भेजें",
         "onboard_title": "बुनकर पंजीकरण — पक्षी नेटवर्क से जुड़ें",
         "onboard_desc": "मीशो द्वारा संचालित — एक बार पंजीकरण पूरा होने पर, आपकी प्रोफ़ाइल पक्षी नेटवर्क पर लाइव हो जाती है। खरीदार बताते हैं कि उन्हें क्या चाहिए, एजेंट आपसे मिलान करता है, और ऑर्डर सीधे आपके फोन पर आते हैं। कोई बिचौलिया नहीं। आपकी कारीगरी। आपकी कीमत।",
-        "onboard_submitted": "✅ प्रोफ़ाइल लाइव!",
+        "onboard_submitted": " प्रोफ़ाइल लाइव!",
         "onboard_go_dashboard": "बुनकर डैशबोर्ड पर जाएँ",
         "onboard_register_another": "दूसरा बुनकर पंजीकृत करें",
         "onboard_basic": "मूल विवरण",
@@ -186,12 +186,12 @@ UI_STRINGS = {
         "onboard_lang": "सूचनाओं के लिए पसंदीदा भाषा",
         "onboard_photo": "अपने काम का नमूना अपलोड करें (वैकल्पिक)",
         "onboard_submit": "प्रोफ़ाइल सबमिट करें — पक्षी नेटवर्क से जुड़ें",
-        "onboard_speak": "🎤 अपना पंजीकरण बोलकर भरें",
-        "onboard_gps": "📍 वर्तमान स्थान प्राप्त करें",
-        "ooak_title": "♻️ एक तरह का — थोक पुनर्विक्रय आउटलेट",
+        "onboard_speak": " अपना पंजीकरण बोलकर भरें",
+        "onboard_gps": " वर्तमान स्थान प्राप्त करें",
+        "ooak_title": " एक तरह का — थोक पुनर्विक्रय आउटलेट",
         "ooak_empty": "अभी तक कोई अस्वीकृत टुकड़ा नहीं — यह अच्छा संकेत है। जब कोई कस्टम ऑर्डर खरीदार की अपेक्षा पर खरा नहीं उतरता, तो यह थोक मूल्य पर यहाँ आता है। कोई बर्बादी नहीं, कोई नुकसान नहीं।",
         "ooak_ready": "शिप करने के लिए तैयार",
-        "common_authentic": "✓ प्रामाणिक हथकरघा",
+        "common_authentic": " प्रामाणिक हथकरघा",
         "common_master_artisan": "मास्टर कारीगर",
         "common_delivery": "डिलीवरी",
         "common_rating": "रेटिंग",
@@ -471,18 +471,13 @@ def _tts_edge(text: str, lang: str = "hi") -> bytes | None:
             await communicate.save(tmp_path)
             return tmp_path
 
-        try:
-            loop = asyncio.get_event_loop()
-        except RuntimeError:
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-
-        tmp_path = loop.run_until_complete(generate())
-        with open(tmp_path, "rb") as f:
-            data = f.read()
-        try: os.unlink(tmp_path)
-        except OSError: pass
-        return data
+        # asyncio.run() is safe in Python 3.7+ and avoids the
+        # get_event_loop() DeprecationWarning/RuntimeError in Python 3.10+.
+        async def _run_and_read():
+            path = await generate()
+            with open(path, "rb") as fh:
+                return fh.read()
+        return asyncio.run(_run_and_read())
     except Exception as e:
         print(f"Edge TTS error: {e}")
         return None
@@ -671,7 +666,7 @@ def _init_buyer_state() -> None:
         "agent": None, "history": [], "current_state": "greeting", "swatches": [],
         "selected_swatch": None, "order": None, "agent_data": {}, "awaiting": None,
         "reasoning_log": [], "one_of_a_kind": [], "buyer_orders": [], "agent_thinking": False,
-        "prefill_text": "", "greeted": False, "audio_counter": 0,
+        "prefill_text": "", "greeted": False, "last_buyer_audio_hash": None,
         "language": "en",  # will be set from agent
     }
     for k, v in defaults.items():
@@ -682,7 +677,7 @@ def _init_weaver_state() -> None:
     if "weaver_id" not in st.session_state: st.session_state["weaver_id"] = "W001"
     if "min_base_price" not in st.session_state: st.session_state["min_base_price"] = 1000
     if "audio_work_mode" not in st.session_state: st.session_state["audio_work_mode"] = False
-    if "weaver_audio_counter" not in st.session_state: st.session_state["weaver_audio_counter"] = 0
+    if "last_weaver_audio_hash" not in st.session_state: st.session_state["last_weaver_audio_hash"] = None
     if "custom_weavers" not in st.session_state: st.session_state["custom_weavers"] = []
 
 def _make_demo_orders() -> list:
@@ -773,8 +768,7 @@ def _swatch_card(swatch: dict, index: int) -> None:
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
             <span style="background:var(--bg-card);color:var(--text-primary);padding:2px 8px;border-radius:6px;font-size:0.75rem;font-weight:700;">{get_ui_string("common_authentic", lang)}</span>
         </div>
-        <img src="https://picsum.photos/seed/{swatch.get('id', 'S001')}/300/180"
-             style="width:100%;height:160px;object-fit:cover;border-radius:10px;margin-bottom:8px;background:var(--bg-card);"/>
+        <div style="background:rgba(218,65,103,0.08);border:1px dashed rgba(218,65,103,0.3);border-radius:8px;padding:12px;font-size:0.78rem;color:var(--text-muted);text-align:center;">Fabric swatch image will appear here</div>
         <div style="font-weight:800;font-size:1.05rem;color:var(--text-primary);margin-bottom:2px;">
             {swatch.get("weave_style","—")}
         </div>
@@ -792,7 +786,7 @@ def _swatch_card(swatch: dict, index: int) -> None:
         <div class="swatch-value">{swatch.get("weaver_name","—")}</div>
         <div style="font-size:0.80rem;color:var(--text-muted);">{location}</div>
         <div style="margin-top:4px;font-size:0.82rem;color:var(--text-primary);font-weight:600;">
-            ⭐ {get_ui_string("common_rating", lang)}: {swatch.get("weaver_rating","?")} &nbsp;·&nbsp; 🚚 {get_ui_string("common_delivery", lang)}: {swatch.get("delivery_days","?")} days
+            ⭐ {get_ui_string("common_rating", lang)}: {swatch.get("weaver_rating","?")} &nbsp;·&nbsp;  {get_ui_string("common_delivery", lang)}: {swatch.get("delivery_days","?")} days
         </div>
         {reviews_html}
     </div>
@@ -891,7 +885,7 @@ def _buyer_page() -> None:
                 status = bo.get("status", "In Production")
                 color = {"In Production": "var(--warning)", "Awaiting Approval": "var(--accent)", "Completed": "#22c55e", "Photo Sent — Awaiting Approval": "var(--accent)"}.get(status, "var(--text-muted)")
                 needs_approval = status in ("Awaiting Approval", "Photo Sent — Awaiting Approval")
-                photo_html = f'<div style="margin-top:10px;"><img src="https://picsum.photos/seed/{bo["order_id"]}/400/200" style="width:100%;max-width:300px;border-radius:8px;border:2px solid var(--accent);"></div>' if bo.get("photo_path") else ""
+                photo_html = f'<div style="margin-top:10px;"><div style="background:rgba(218,65,103,0.08);border:1px dashed rgba(218,65,103,0.3);border-radius:8px;padding:12px;font-size:0.78rem;color:var(--text-muted);text-align:center;">Fabric swatch image will appear here</div></div>' if bo.get("photo_path") else ""
 
                 status_label = get_ui_string(f"order_status_{status.lower().replace(' ', '_')}", lang) if status.lower().replace(' ', '_') in ["in_production", "awaiting_approval", "completed", "photo_sent_awaiting_approval"] else status
                 # Map statuses
@@ -985,7 +979,11 @@ def _buyer_page() -> None:
 
     with col_chat:
         if st.session_state["history"]:
-            st.markdown(f'<div class="chat-wrap">{"".join(f"<div class={chr(34)}{'bubble-agent' if r=='agent' else 'bubble-user'}{chr(34)}>{t}</div>" for r, t in st.session_state["history"])}</div>', unsafe_allow_html=True)
+            _bubbles = ""
+            for _r, _t in st.session_state["history"]:
+                _cls = "bubble-agent" if _r == "agent" else "bubble-user"
+                _bubbles += f'<div class="{_cls}">{_t}</div>'
+            st.markdown(f'<div class="chat-wrap">{_bubbles}</div>', unsafe_allow_html=True)
 
         cur = st.session_state["current_state"]
         if cur == "fallback_pending":
@@ -1007,19 +1005,32 @@ def _buyer_page() -> None:
                 st.session_state["greeted"] = True; _send("hi"); st.rerun()
 
             st.markdown(f'<div class="section-label">{get_ui_string("onboard_speak", lang)}</div>', unsafe_allow_html=True)
-            audio_file = st.audio_input("Record", label_visibility="collapsed", key=f"pakshi_audio_{st.session_state['audio_counter']}")
+            # STATIC key prevents widget reset loop.
+            # Hash guard skips re-processing the same clip on every rerun.
+            audio_file = st.audio_input("Record", label_visibility="collapsed", key="pakshi_buyer_audio")
             if audio_file is not None:
-                with st.spinner("🎧 Transcribing..."):
-                    text, err = _transcribe_audio(audio_file)
-                st.session_state["audio_counter"] += 1
-                if err: st.warning(err); st.rerun()
+                _b_hash = hash(bytes(audio_file.getbuffer()))
+                if st.session_state.get("last_buyer_audio_hash") == _b_hash:
+                    pass  # Same clip — already processed, skip
                 else:
-                    t = text.lower().strip()
-                    nmap = {"one":"1", "two":"2", "three":"3", "first":"1", "second":"2", "third":"3", "ek":"1", "do":"2", "teen":"3", "pehla":"1", "doosra":"2", "teesra":"3"}
-                    if t in nmap and cur == "retrieved": _send(nmap[t])
-                    elif _is_correction(t) and cur == "retrieved": _send(t, force_new_search=True)
-                    else: _send(text)
-                    st.rerun()
+                    st.session_state["last_buyer_audio_hash"] = _b_hash
+                    with st.spinner(" Transcribing..."):
+                        text, err = _transcribe_audio(audio_file)
+                    if err:
+                        st.warning(err)
+                        st.session_state["last_buyer_audio_hash"] = None
+                    else:
+                        t = text.lower().strip()
+                        nmap = {"one":"1","two":"2","three":"3","first":"1","second":"2","third":"3",
+                                "ek":"1","do":"2","teen":"3","pehla":"1","doosra":"2","teesra":"3"}
+                        if t in nmap and cur == "retrieved":
+                            _send(nmap[t])
+                        elif _is_correction(t) and cur == "retrieved":
+                            _send(t, force_new_search=True)
+                        else:
+                            _send(text)
+                        st.session_state["last_buyer_audio_hash"] = None
+                        st.rerun()
 
             prefill = st.session_state.pop("prefill_text", "")
             ui = st.text_input("Msg", value=prefill, placeholder="Type your message...", label_visibility="collapsed", key=f"txt_{len(st.session_state['history'])}")
@@ -1069,21 +1080,27 @@ def _weaver_page() -> None:
     st.markdown(f'<div class="section-label">{get_ui_string("weaver_voice_controls", lang)}</div>', unsafe_allow_html=True)
     st.caption(get_ui_string("weaver_voice_caption", lang))
 
-    w_audio = st.audio_input("Record Weaver Command", label_visibility="collapsed", key=f"w_audio_{st.session_state['weaver_audio_counter']}")
+    # STATIC key + hash guard — same pattern as buyer audio
+    w_audio = st.audio_input("Record Weaver Command", label_visibility="collapsed", key="pakshi_weaver_audio")
 
     orders = st.session_state["weaver_orders"]
     pending = [o for o in orders if o.get("status") == "pending"]
     accepted = [o for o in orders if o.get("status") == "accepted"]
 
     if w_audio is not None:
-        with st.spinner("🎧 Sun rahe hain..."):
-            text, err = _transcribe_audio(w_audio)
-        st.session_state["weaver_audio_counter"] += 1
-
-        if err:
-            st.warning(err)
+        _w_hash = hash(bytes(w_audio.getbuffer()))
+        if st.session_state.get("last_weaver_audio_hash") == _w_hash:
+            pass  # Same clip — already processed, skip
         else:
-            st.info(f'🗣️ Heard: "{text}"')
+            st.session_state["last_weaver_audio_hash"] = _w_hash
+            with st.spinner(" Sun rahe hain..."):
+                text, err = _transcribe_audio(w_audio)
+
+            if err:
+                st.warning(err)
+                st.session_state["last_weaver_audio_hash"] = None
+            else:
+                st.info(f'Heard: "{text}"')
             cmd = _parse_weaver_voice_command(text, pending, accepted)
 
             if cmd and cmd.get("action") != "error":
@@ -1099,7 +1116,7 @@ def _weaver_page() -> None:
                         hi_txt = f"Order {oid[-4:]} swikaar ho gaya. Loom par bhej diya."
                         if ab := _tts_bytes(hi_txt, lang="hi"):
                             _autoplay_audio(ab)
-                        st.success(f"✅ Voice Command: Accepted {oid}!")
+                        st.success(f" Voice Command: Accepted {oid}!")
                         st.rerun()
 
                     elif act == "decline":
@@ -1108,7 +1125,7 @@ def _weaver_page() -> None:
                         hi_txt = f"Order {oid[-4:]} mana kar diya gaya."
                         if ab := _tts_bytes(hi_txt, lang="hi"):
                             _autoplay_audio(ab)
-                        st.warning(f"❌ Voice Command: Declined {oid}.")
+                        st.warning(f" Voice Command: Declined {oid}.")
                         st.rerun()
 
                     elif act == "show_buyer":
@@ -1122,7 +1139,7 @@ def _weaver_page() -> None:
                         hi_txt = f"Fabric tayyar hai. Buyer ko tasveer bhej di gayi hai."
                         if ab := _tts_bytes(hi_txt, lang="hi"):
                             _autoplay_audio(ab)
-                        st.success(f"📸 Voice Command: Photo sent to buyer for {oid}. Awaiting Approval.")
+                        st.success(f" Voice Command: Photo sent to buyer for {oid}. Awaiting Approval.")
                         st.rerun()
                 else:
                     st.error(f"Order {oid} not found.")
@@ -1383,7 +1400,7 @@ def _onboarding_page() -> None:
                 {get_ui_string("onboard_submitted", lang)} <strong>{d.get("name","")}</strong>.<br>
                 {get_ui_string("onboard_cluster", lang)}: {d.get("cluster","")} · {get_ui_string("onboard_fabric", lang)}: {d.get("fabric","")}<br>
                 {get_ui_string("onboard_submitted", lang)}<br>
-                <span style="color:#f5a623;font-weight:600;">
+                <span style="color:var(--accent);font-weight:600;">
                 {get_ui_string("onboard_submitted", lang)} {d.get("phone","")} व्हाट्सएप पर भेजा जाएगा।</span>
             </div>
         </div>
@@ -1394,9 +1411,21 @@ def _onboarding_page() -> None:
             st.session_state["onboard_data"] = {}
             st.query_params.update({"tab": "Weaver Dashboard"})
             st.rerun()
-        if st.button(get_ui_string("onboard_register_another", lang), use_container_width=True):
+        _oid = d.get("id", "") or st.session_state.get("weaver_id", "")
+        if _oid:
+            st.success(
+                f"Weaver ID: {_oid} — Switch to 'Weaver Dashboard' tab. "
+                f"Your profile is now in the dropdown and can receive orders immediately."
+            )
+        _oc1, _oc2 = st.columns(2)
+        if _oc1.button(get_ui_string("onboard_register_another", lang), use_container_width=True):
             st.session_state["onboard_submitted"] = False
             st.session_state["onboard_data"] = {}
+            st.rerun()
+        if _oc2.button("Go to Weaver Dashboard", use_container_width=True):
+            st.session_state["onboard_submitted"] = False
+            st.session_state["onboard_data"] = {}
+            st.query_params["tab"] = "Weaver Dashboard"
             st.rerun()
         return
 
@@ -1560,6 +1589,9 @@ def _onboarding_page() -> None:
                     "accepts_custom": custom,
                     "language": lang_pref,
                 }
+                # Write to live_weavers so _get_all_weavers() returns this weaver
+                # immediately in the Weaver Dashboard dropdown — no page refresh needed
+                st.session_state.setdefault("live_weavers", []).append(new_profile)
                 st.session_state.setdefault("custom_weavers", []).append(new_profile)
                 st.session_state["weaver_id"] = new_id
 
