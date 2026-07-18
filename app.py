@@ -1362,14 +1362,11 @@ def _ooak_page() -> None:
             if st.button(get_ui_string("btn_buy_now", lang), key=f"buy_{item.get('order_id',idx)}_{idx}", use_container_width=True):
                 st.success(f"#{item.get('order_id','')} added to cart. Delivery in 3-5 days.")
 def _parse_onboarding_text_improved(text: str) -> dict:
-    """
-    Extract name, cluster, specialty, phone from a transcribed voice message
-    using multiple fallback patterns for reliability.
-    """
+    """Extract name, cluster, specialty, phone from a transcribed voice message."""
     result = {"name": "", "cluster": "", "specialty": "", "phone": ""}
     t = text.lower().strip()
 
-    # 1. NAME: multiple patterns
+    # 1. NAME
     name_patterns = [
         r'(?:mera naam|my name is|name is|naam|i am|i\'m|मेरा नाम)\s*(.+?)(?:\s+hai|\s+is|\s*$|\.|,|;|\s+from|\s+in|\s+of)',
         r'(?:my name|name)\s+is\s+(.+?)(?:\s+and|\s+\.|$|,)',
@@ -1379,13 +1376,12 @@ def _parse_onboarding_text_improved(text: str) -> dict:
         m = re.search(pat, t, re.IGNORECASE)
         if m:
             raw = m.group(1).strip().title()
-            # Remove common suffixes like "hai" or "is" that might be captured
             raw = re.sub(r'\s+(hai|is|from)$', '', raw, flags=re.IGNORECASE)
             if raw and len(raw) > 1:
                 result["name"] = raw
                 break
 
-    # 2. CLUSTER: patterns like "from X", "cluster X", "X mein", "X village"
+    # 2. CLUSTER
     cluster_patterns = [
         r'(?:from|cluster|village|area|गांव|में|से)\s+(.+?)(?:\s+(?:hai|is|mein|in|cluster|village)|$|\.|,|;)',
         r'(?:in|at)\s+(.+?)(?:\s+(?:weave|making|banata|work)|$|\.|,)'
@@ -1398,7 +1394,7 @@ def _parse_onboarding_text_improved(text: str) -> dict:
                 result["cluster"] = raw
                 break
 
-    # 3. SPECIALTY: weave, craft, banata, etc.
+    # 3. SPECIALTY
     specialty_patterns = [
         r'(?:specialty|weave|weaving|बुनाई|craft|work|banata|karate|bunati)\s*(?:is|hai)?\s*(.+?)(?:\s+(?:hai|is|in|from|at|$|\.|,|;))',
         r'(?:banata|karate|bunati)\s+(.+?)(?:\s+(?:hai|is|from|in|$|\.|,|;))',
@@ -1412,24 +1408,22 @@ def _parse_onboarding_text_improved(text: str) -> dict:
                 result["specialty"] = raw
                 break
 
-    # 4. PHONE: 10-digit number
+    # 4. PHONE
     phone_match = re.search(r'\b(\d{10})\b', t)
     if phone_match:
         result["phone"] = phone_match.group(1)
 
-    # 5. If no name extracted but we have text, try to get the first two words as name
+    # 5. Fallback name
     if not result["name"] and len(t.split()) >= 2:
-        # Remove common stopwords at start
         stopwords = {"mera", "my", "i", "am", "name", "is", "naam", "hai"}
         words = t.split()
-        # Skip first if it's a stopword
         start = 0
         if words[0] in stopwords:
             start = 1
         if len(words) > start + 1:
             result["name"] = " ".join(words[start:start+2]).title()
 
-    # 6. If no cluster but we have "from" or "in" followed by a place, try again with more flexible pattern
+    # 6. Fallback cluster
     if not result["cluster"]:
         m = re.search(r'(?:from|in|at|में|से)\s+([A-Za-z]+(?:\s+[A-Za-z]+)?)', text)
         if m:
@@ -1438,7 +1432,6 @@ def _parse_onboarding_text_improved(text: str) -> dict:
                 result["cluster"] = raw
 
     return result
-
 # ---------------------------------------------------------------------------
 # WEAVER ONBOARDING PAGE (bilingual, voice extraction, GPS)
 # ---------------------------------------------------------------------------
@@ -1466,6 +1459,8 @@ def _onboarding_page() -> None:
         st.session_state["reg_specialty"] = ""
     if "reg_phone" not in st.session_state:
         st.session_state["reg_phone"] = ""
+    if "last_reg_audio_hash" not in st.session_state:
+        st.session_state["last_reg_audio_hash"] = None
 
     if st.session_state["onboard_submitted"]:
         d = st.session_state["onboard_data"]
@@ -1564,32 +1559,32 @@ def _onboarding_page() -> None:
 
     reg_audio = st.audio_input("Speak to fill the form", key="reg_audio", label_visibility="collapsed")
     if reg_audio is not None:
-        with st.spinner("Listening and extracting details..."):
-            text, err = _transcribe_audio(reg_audio)
-        if err:
-            st.warning(f"Could not transcribe: {err}. Please type the details below.")
-        else:
-            # Show the transcript
-            st.markdown(
-                f'<div style="background:rgba(34,197,94,0.08);border:1px solid #22c55e;'
-                f'border-radius:8px;padding:0.6rem 1rem;font-size:0.85rem;margin-bottom:0.5rem;">'
-                f'Heard: <em>{text}</em></div>',
-                unsafe_allow_html=True
-            )
-            # Parse using an improved function
-            parsed = _parse_onboarding_text_improved(text)
-            filled = [k for k, v in parsed.items() if v]
-            # Store extracted values into session state so they persist across reruns
-            for key, val in parsed.items():
-                if val:
-                    st.session_state[f"reg_{key}"] = val
-                else:
-                    # Keep existing value if already set
-                    pass
-            if filled:
-                st.success(f"Auto-filled: {', '.join(filled)}. Review and correct below.")
+        # Compute hash of the audio bytes to avoid re-processing the same clip
+        _audio_hash = hash(bytes(reg_audio.getbuffer()))
+        if st.session_state.get("last_reg_audio_hash") != _audio_hash:
+            st.session_state["last_reg_audio_hash"] = _audio_hash
+            with st.spinner("Listening and extracting details..."):
+                text, err = _transcribe_audio(reg_audio)
+            if err:
+                st.warning(f"Could not transcribe: {err}. Please type the details below.")
             else:
-                st.warning("Could not extract details from the audio. Please type the fields manually.")
+                # Show the transcript
+                st.markdown(
+                    f'<div style="background:rgba(34,197,94,0.08);border:1px solid #22c55e;'
+                    f'border-radius:8px;padding:0.6rem 1rem;font-size:0.85rem;margin-bottom:0.5rem;">'
+                    f'Heard: <em>{text}</em></div>',
+                    unsafe_allow_html=True
+                )
+                # Parse using improved function
+                parsed = _parse_onboarding_text_improved(text)
+                filled = [k for k, v in parsed.items() if v]
+                for key, val in parsed.items():
+                    if val:
+                        st.session_state[f"reg_{key}"] = val
+                if filled:
+                    st.success(f"Auto-filled: {', '.join(filled)}. Review and correct below.")
+                else:
+                    st.warning("Could not extract details from the audio. Please type the fields manually.")
             st.rerun()
             return
 
