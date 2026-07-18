@@ -191,7 +191,7 @@ WEAVE_ALIASES = {
     "patola": "patola", "इकट": "ikat", "टिकट": "ikat", "इकाट": "ikat", "ईकट": "ikat", "पटोला": "patola",
     "block print": "block print", "blockprint": "block print", "block-print": "block print",
     "bagru": "block print", "sanganeri": "block print", "kalamkari": "kalamkari",
-    "블ॉक प्रिंट": "block print", "ब्लाक प्रिंट": "block print", "कलमकारी": "kalamkari",
+    "ब्लॉक प्रिंट": "block print", "ब्लाक प्रिंट": "block print", "कलमकारी": "kalamkari",
     "jamdani": "jamdani", "jhamdani": "jamdani", "dhaakai": "jamdani", "dhakai": "jamdani", "जामदानी": "jamdani",
     "kanjivaram": "kanjivaram", "kanchipuram": "kanjivaram", "pattu": "kanjivaram",
     "कांचीपुरम": "kanjivaram", "कांची": "kanjivaram", "पट्टू": "kanjivaram",
@@ -494,9 +494,15 @@ def parse_intent(raw_text: str) -> IntentResult:
         
     return result
 
-def build_followup_question(missing: list[str]) -> str | None:
+# ---------- FOLLOW-UP QUESTIONS (Bilingual) ----------
+def build_followup_question(missing: list[str], lang: str = "en") -> str | None:
+    """
+    Returns a follow‑up question for the most important missing field.
+    If lang is Hindi (starts with 'hi' or contains 'hindi'), returns Devanagari.
+    """
     priority = ["occasion", "fabric", "feel", "budget", "color", "location", "weave"]
-    questions = {
+    
+    questions_en = {
         "occasion": "What is the primary occasion you are shopping for? (e.g., wedding, festival, daily office wear)",
         "fabric": "Do you prefer lightweight cotton, rich pure silk, or an easy-to-drape blend?",
         "feel": "How would you like the drape to feel? (e.g., light and airy, rich and structured, soft and flowy)",
@@ -505,7 +511,21 @@ def build_followup_question(missing: list[str]) -> str | None:
         "location": "Are you looking for a specific regional weave or weaving cluster? (e.g., Banarasi, Kanjivaram, Chanderi)",
         "weave": "Any preference for the weaving artwork? (e.g., Ikat, Jamdani, Block Print, Zari border)",
     }
-    for field_name in priority:
-        if field_name in missing:
-            return questions[field_name]
+    
+    questions_hi = {
+        "occasion": "आप किस अवसर के लिए खरीदारी कर रहे हैं? (जैसे, शादी, त्योहार, रोज़ाना ऑफिस पहनावा)",
+        "fabric": "आप हल्का सूती, शानदार शुद्ध रेशम, या आसानी से लपेटने वाला मिश्रण पसंद करेंगे?",
+        "feel": "आप कपड़े का एहसास कैसा चाहेंगे? (जैसे, हल्का और हवादार, समृद्ध और संरचित, मुलायम और बहने वाला)",
+        "budget": "आपकी सहज कीमत सीमा या बजट रुपये में क्या है?",
+        "color": "क्या आपके मन में कोई विशेष रंग है, या हम आपको ट्रेंडिंग पैलेट दिखाएँ?",
+        "location": "क्या आप किसी विशिष्ट क्षेत्रीय बुनाई या बुनकर क्लस्टर की तलाश में हैं? (जैसे, बनारसी, कांचीपुरम, चंदेरी)",
+        "weave": "बुनाई की कला के लिए कोई पसंद? (जैसे, इकट, जामदानी, ब्लॉक प्रिंट, जरी किनारी)",
+    }
+    
+    is_hindi = lang.startswith("hi") or "hindi" in lang.lower()
+    questions = questions_hi if is_hindi else questions_en
+    
+    for field in priority:
+        if field in missing:
+            return questions.get(field)
     return None
