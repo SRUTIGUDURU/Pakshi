@@ -1,12 +1,10 @@
 """
 Pakshi - Full Streamlit App (Tier-2/3 Buyer & Artisan Optimized)
-=========================="""
-Pakshi - Full Streamlit App (Tier-2/3 Buyer & Artisan Optimized)
 ================================================================
 Buyer  : Bilingual voice/text input -> agent matches swatches -> trust-first confirmation
 Weaver : Hands-free bidirectional audio commands (Accept/Reject/Show Buyer) + Min Base Filter
 OOAK   : Zero-waste wholesale listing for rejected custom pieces
-Onboard: Voice & GPS-assisted weaver registration with auto‑fill.
+Onboard: Voice & GPS-assisted weaver registration with auto-fill.
 
 Run:
     pip install streamlit chromadb scikit-learn edge-tts SpeechRecognition requests
