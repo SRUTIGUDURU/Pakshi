@@ -1099,9 +1099,6 @@ def _buyer_page() -> None:
 # ---------------------------------------------------------------------------
 # WEAVER PAGE (bilingual, audio controls)
 # ---------------------------------------------------------------------------
-# ---------------------------------------------------------------------------
-# WEAVER PAGE (bilingual, audio controls)
-# ---------------------------------------------------------------------------
 def _weaver_page() -> None:
     _init_weaver_state()
     all_weavers = _get_all_weavers()
@@ -1174,13 +1171,20 @@ def _weaver_page() -> None:
     # Matching uses plain substring `in` — \b word-boundary breaks silently on Unicode.
     # Short ASCII tokens (<=3 chars) get a space-pad to avoid false matches inside longer words.
     ACCEPT_TOKENS = [
+        # Devanagari — base word covers "स्वीकार करो" too since we do substring match
         "स्वीकार", "स्वीकृत", "मंजूर", "हाँ", "हां", "ठीक",
-        "swikaar", "sweekar", "swikar", "manzoor", "theek hai", "theek", "sahi", "haan", "han",
+        # Romanised
+        "swikaar", "sweekar", "swikar", "sweekaro", "sweekaar karo",
+        "manzoor", "manjoor", "theek hai", "theek", "sahi", "haan", "han",
         "accept", "yes", "ok", "okay", "done", "confirm", "approve",
     ]
     DECLINE_TOKENS = [
-        "नहीं", "नही", "मना", "अस्वीकार", "रद्द",
-        "nahi", "nahin", "mana kar", "mana karo",
+        # Devanagari — both short mana (मना) and long māna (माना) as STT returns either
+        "मना", "माना", "मना करो", "माना करो", "मना कर", "माना कर",
+        "नहीं", "नही", "अस्वीकार", "रद्द",
+        # Romanised — both mana and maana
+        "mana kar", "mana karo", "maana kar", "maana karo",
+        "nahi", "nahin",
         "decline", "reject", "cancel",
     ]
     SHOW_TOKENS = [
