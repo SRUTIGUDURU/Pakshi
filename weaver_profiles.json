@@ -3,6 +3,7 @@
     {
       "id": "W001",
       "name": "Sarojamma",
+      "hindi_name": "सरोजम्मा",
       "age": 52,
       "cluster": "Pochampally",
       "district": "Yadadri Bhuvanagiri",
@@ -23,6 +24,7 @@
     {
       "id": "W002",
       "name": "Padmavathi",
+      "hindi_name": "पद्मावती",
       "age": 45,
       "cluster": "Pochampally",
       "district": "Yadadri Bhuvanagiri",
@@ -43,6 +45,7 @@
     {
       "id": "W003",
       "name": "Narsamma",
+      "hindi_name": "नरसम्मा",
       "age": 60,
       "cluster": "Pochampally",
       "district": "Yadadri Bhuvanagiri",
@@ -63,6 +66,7 @@
     {
       "id": "W004",
       "name": "Chandrakala",
+      "hindi_name": "चंद्रकला",
       "age": 38,
       "cluster": "Venkatagiri",
       "district": "Tirupati",
@@ -83,6 +87,7 @@
     {
       "id": "W005",
       "name": "Rukmini",
+      "hindi_name": "रुक्मिणी",
       "age": 49,
       "cluster": "Venkatagiri",
       "district": "Tirupati",
@@ -103,6 +108,7 @@
     {
       "id": "W006",
       "name": "Meenakshi",
+      "hindi_name": "मीनाक्षी",
       "age": 55,
       "cluster": "Kanchipuram",
       "district": "Kanchipuram",
@@ -123,6 +129,7 @@
     {
       "id": "W007",
       "name": "Vasantha",
+      "hindi_name": "वसंथा",
       "age": 42,
       "cluster": "Kanchipuram",
       "district": "Kanchipuram",
@@ -143,6 +150,7 @@
     {
       "id": "W008",
       "name": "Ambika",
+      "hindi_name": "अंबिका",
       "age": 47,
       "cluster": "Kanchipuram",
       "district": "Kanchipuram",
@@ -163,6 +171,7 @@
     {
       "id": "W009",
       "name": "Savithramma",
+      "hindi_name": "सावित्रम्मा",
       "age": 58,
       "cluster": "Molakalmuru",
       "district": "Chitradurga",
@@ -183,6 +192,7 @@
     {
       "id": "W010",
       "name": "Geetha",
+      "hindi_name": "गीता",
       "age": 36,
       "cluster": "Ilkal",
       "district": "Bagalkot",
@@ -203,6 +213,7 @@
     {
       "id": "W011",
       "name": "Sumithra",
+      "hindi_name": "सुमित्रा",
       "age": 44,
       "cluster": "Ilkal",
       "district": "Bagalkot",
@@ -223,6 +234,7 @@
     {
       "id": "W012",
       "name": "Kamala",
+      "hindi_name": "कमला",
       "age": 51,
       "cluster": "Chanderi",
       "district": "Ashoknagar",
@@ -243,6 +255,7 @@
     {
       "id": "W013",
       "name": "Durga Bai",
+      "hindi_name": "दुर्गा बाई",
       "age": 48,
       "cluster": "Chanderi",
       "district": "Ashoknagar",
@@ -263,6 +276,7 @@
     {
       "id": "W014",
       "name": "Savita",
+      "hindi_name": "सविता",
       "age": 40,
       "cluster": "Maheshwar",
       "district": "Khargone",
@@ -283,6 +297,7 @@
     {
       "id": "W015",
       "name": "Parvati Bai",
+      "hindi_name": "पार्वती बाई",
       "age": 56,
       "cluster": "Maheshwar",
       "district": "Khargone",
@@ -303,6 +318,7 @@
     {
       "id": "W016",
       "name": "Annapurna",
+      "hindi_name": "अन्नपूर्णा",
       "age": 43,
       "cluster": "Varanasi",
       "district": "Varanasi",
@@ -323,6 +339,7 @@
     {
       "id": "W017",
       "name": "Sunita",
+      "hindi_name": "सुनीता",
       "age": 37,
       "cluster": "Varanasi",
       "district": "Varanasi",
@@ -343,6 +360,7 @@
     {
       "id": "W018",
       "name": "Rekha",
+      "hindi_name": "रेखा",
       "age": 46,
       "cluster": "Varanasi",
       "district": "Varanasi",
@@ -363,6 +381,7 @@
     {
       "id": "W019",
       "name": "Manju Devi",
+      "hindi_name": "मंजू देवी",
       "age": 50,
       "cluster": "Bhagalpur",
       "district": "Bhagalpur",
@@ -383,6 +402,7 @@
     {
       "id": "W020",
       "name": "Geeta Devi",
+      "hindi_name": "गीता देवी",
       "age": 54,
       "cluster": "Bhagalpur",
       "district": "Bhagalpur",
@@ -403,6 +423,7 @@
     {
       "id": "W021",
       "name": "Shyamali",
+      "hindi_name": "श्यामली",
       "age": 41,
       "cluster": "Murshidabad",
       "district": "Murshidabad",
@@ -423,6 +444,7 @@
     {
       "id": "W022",
       "name": "Sipra",
+      "hindi_name": "सिप्रा",
       "age": 38,
       "cluster": "Shantipur",
       "district": "Nadia",
@@ -443,6 +465,7 @@
     {
       "id": "W023",
       "name": "Malati",
+      "hindi_name": "मालती",
       "age": 45,
       "cluster": "Shantipur",
       "district": "Nadia",
@@ -463,6 +486,7 @@
     {
       "id": "W024",
       "name": "Sabita",
+      "hindi_name": "सबिता",
       "age": 52,
       "cluster": "Bishnupur",
       "district": "Bankura",
@@ -483,6 +507,7 @@
     {
       "id": "W025",
       "name": "Laxmibai",
+      "hindi_name": "लक्ष्मीबाई",
       "age": 48,
       "cluster": "Paithani",
       "district": "Aurangabad",
@@ -503,6 +528,7 @@
     {
       "id": "W026",
       "name": "Vimal",
+      "hindi_name": "विमल",
       "age": 39,
       "cluster": "Yeola",
       "district": "Nashik",
@@ -523,6 +549,7 @@
     {
       "id": "W027",
       "name": "Tarabai",
+      "hindi_name": "ताराबाई",
       "age": 55,
       "cluster": "Yeola",
       "district": "Nashik",
@@ -543,6 +570,7 @@
     {
       "id": "W028",
       "name": "Hansaben",
+      "hindi_name": "हंसाबेन",
       "age": 46,
       "cluster": "Patan",
       "district": "Patan",
@@ -563,6 +591,7 @@
     {
       "id": "W029",
       "name": "Kamlaben",
+      "hindi_name": "कमलाबेन",
       "age": 43,
       "cluster": "Surendranagar",
       "district": "Surendranagar",
@@ -583,6 +612,7 @@
     {
       "id": "W030",
       "name": "Hemlata",
+      "hindi_name": "हेमलता",
       "age": 50,
       "cluster": "Kutch",
       "district": "Kutch",
@@ -603,6 +633,7 @@
     {
       "id": "W031",
       "name": "Lalitha",
+      "hindi_name": "ललिता",
       "age": 44,
       "cluster": "Dharmavaram",
       "district": "Sri Sathya Sai",
@@ -623,6 +654,7 @@
     {
       "id": "W032",
       "name": "Vijayalakshmi",
+      "hindi_name": "विजयलक्ष्मी",
       "age": 48,
       "cluster": "Dharmavaram",
       "district": "Sri Sathya Sai",
@@ -643,6 +675,7 @@
     {
       "id": "W033",
       "name": "Anasuya",
+      "hindi_name": "अनसूया",
       "age": 53,
       "cluster": "Uppada",
       "district": "East Godavari",
@@ -663,6 +696,7 @@
     {
       "id": "W034",
       "name": "Pushpanjali",
+      "hindi_name": "पुष्पांजलि",
       "age": 36,
       "cluster": "Nuapatna",
       "district": "Cuttack",
@@ -683,6 +717,7 @@
     {
       "id": "W035",
       "name": "Sasmita",
+      "hindi_name": "सस्मिता",
       "age": 42,
       "cluster": "Nuapatna",
       "district": "Cuttack",
@@ -703,6 +738,7 @@
     {
       "id": "W036",
       "name": "Minati",
+      "hindi_name": "मिनती",
       "age": 49,
       "cluster": "Sambalpuri",
       "district": "Sambalpur",
@@ -723,6 +759,7 @@
     {
       "id": "W037",
       "name": "Sulochana",
+      "hindi_name": "सुलोचना",
       "age": 57,
       "cluster": "Sambalpuri",
       "district": "Sambalpur",
@@ -743,6 +780,7 @@
     {
       "id": "W038",
       "name": "Prema",
+      "hindi_name": "प्रेमा",
       "age": 40,
       "cluster": "Kota",
       "district": "Kota",
@@ -763,6 +801,7 @@
     {
       "id": "W039",
       "name": "Santosh Devi",
+      "hindi_name": "संतोष देवी",
       "age": 52,
       "cluster": "Kota",
       "district": "Kota",
@@ -783,6 +822,7 @@
     {
       "id": "W040",
       "name": "Kamli Devi",
+      "hindi_name": "कमली देवी",
       "age": 45,
       "cluster": "Bagru",
       "district": "Jaipur",
@@ -803,6 +843,7 @@
     {
       "id": "W041",
       "name": "Rajkumari",
+      "hindi_name": "राजकुमारी",
       "age": 38,
       "cluster": "Sanganer",
       "district": "Jaipur",
@@ -823,6 +864,7 @@
     {
       "id": "W042",
       "name": "Devaki",
+      "hindi_name": "देवकी",
       "age": 47,
       "cluster": "Balaramapuram",
       "district": "Thiruvananthapuram",
@@ -843,6 +885,7 @@
     {
       "id": "W043",
       "name": "Sreedevi",
+      "hindi_name": "श्रीदेवी",
       "age": 53,
       "cluster": "Balaramapuram",
       "district": "Thiruvananthapuram",
@@ -863,6 +906,7 @@
     {
       "id": "W044",
       "name": "Omana",
+      "hindi_name": "ओमना",
       "age": 49,
       "cluster": "Chendamangalam",
       "district": "Ernakulam",
@@ -883,6 +927,7 @@
     {
       "id": "W045",
       "name": "Janaki",
+      "hindi_name": "जानकी",
       "age": 44,
       "cluster": "Coimbatore",
       "district": "Coimbatore",
@@ -903,6 +948,7 @@
     {
       "id": "W046",
       "name": "Nirmala",
+      "hindi_name": "निर्मला",
       "age": 41,
       "cluster": "Salem",
       "district": "Salem",
@@ -923,6 +969,7 @@
     {
       "id": "W047",
       "name": "Rajalakshmi",
+      "hindi_name": "राजलक्ष्मी",
       "age": 58,
       "cluster": "Arni",
       "district": "Tirupattur",
@@ -943,6 +990,7 @@
     {
       "id": "W048",
       "name": "Bhagyamma",
+      "hindi_name": "भाग्यम्मा",
       "age": 46,
       "cluster": "Mysore",
       "district": "Mysore",
@@ -963,6 +1011,7 @@
     {
       "id": "W049",
       "name": "Nagaveni",
+      "hindi_name": "नागवेणी",
       "age": 39,
       "cluster": "Mysore",
       "district": "Mysore",
@@ -983,6 +1032,7 @@
     {
       "id": "W050",
       "name": "Shanthamma",
+      "hindi_name": "शांतम्मा",
       "age": 61,
       "cluster": "Molakalmuru",
       "district": "Chitradurga",
