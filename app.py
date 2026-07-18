@@ -1361,6 +1361,7 @@ def _ooak_page() -> None:
             st.markdown('<div style="height:1.2rem;"></div>', unsafe_allow_html=True)
             if st.button(get_ui_string("btn_buy_now", lang), key=f"buy_{item.get('order_id',idx)}_{idx}", use_container_width=True):
                 st.success(f"#{item.get('order_id','')} added to cart. Delivery in 3-5 days.")
+
 # ---------------------------------------------------------------------------
 # WEAVER ONBOARDING PAGE (bilingual, voice extraction, GPS)
 # ---------------------------------------------------------------------------
@@ -1386,7 +1387,7 @@ def _onboarding_page() -> None:
         t = re.sub(r'[.,;:!?]', ' ', t)
         t = re.sub(r'\s+', ' ', t)
         
-        # 1. PHONE (10-digit number)
+        # 1. PHONE (10-digit number, tolerates spaces/dashes in speech)
         clean_digits = re.sub(r'\D', '', t)
         phone_match = re.search(r'(\d{10})', clean_digits)
         if phone_match:
@@ -1416,7 +1417,8 @@ def _onboarding_page() -> None:
                     result["specialty"] = w.title()
                     break
         
-        # 3. CLUSTER (using known list)
+        # 3. CLUSTER / VILLAGE
+        # 3a. Known clusters first
         cluster_found = None
         for cluster in KNOWN_CLUSTERS:
             if cluster in t:
@@ -1425,42 +1427,115 @@ def _onboarding_page() -> None:
         if cluster_found:
             result["cluster"] = cluster_found
         
-        # 4. NAME – remove cluster, phone, and common words
-        name_text = t
-        # Remove phone number digits
-        if result["phone"]:
-            name_text = re.sub(r'\d', ' ', name_text)
-        # Remove cluster name
-        if result["cluster"]:
-            name_text = name_text.replace(result["cluster"].lower(), "")
+        # 3b. Unknown village fallback via contextual patterns
+        if not result["cluster"]:
+            # Build exclusion set to avoid capturing weaves / stopwords as villages
+            english_weaves_lower = [w.lower() for w in english_weaves]
+            weave_values_lower = [v.lower() for v in weave_map.values()]
+            stopwords = {"main", "mera", "my", "name", "naam", "hai", "is", "hoon", "hun", 
+                         "है", "मैं", "हूँ", "से", "ki", "की", "में", "ka", "का", "ke", "के",
+                         "hu", "hain", "ho", "raha", "rahi", "banati", "banata", "banate",
+                         "number", "phone", "mobile", "gav", "gaon", "village", "cluster",
+                         "weave", "weaver", "bunkar", "karigar", "specialty", "speciality",
+                         "from", "of", "in", "live", "stay", "at", "i", "am", "meri", "मेरी"}
+            exclusion_set = set(stopwords) | set(english_weaves_lower) | set(weave_values_lower)
+            
+            village_patterns = [
+                # "main/mera X se hun/hoon"  (Hinglish & Hindi)
+                r'(?:main|mera|मैं|मेरा)\s+([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+){0,2})\s+(?:se|से)\s+(?:hun|hoon|hain|हूँ|हैं|है|raha|रहा|rahi|रही)',
+                # "X gaon / X village / gaon X"
+                r'([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+)?)\s+(?:gaon|गांव|village)',
+                r'(?:gaon|गांव|village)\s+([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+)?)',
+                # English locatives
+                r'(?:from|of|in)\s+([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+){0,2})',
+                r'(?:live|stay)\s+(?:in|at)\s+([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+){0,2})',
+                # "mera gaon X hai"
+                r'(?:mera|मेरा)\s+(?:gaon|गांव|village)\s+([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+)?)\s+(?:hai|है)',
+                # "X ki/kA [weave]"  → X is likely the village
+                r'([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+)?)\s+(?:ki|की|ka|का|ke|के)\s+(?:ikat|इकट|jamdani|जामदानी|banarasi|बनारसी|chanderi|चंदेरी|maheshwari|महेश्वरी|paithani|पैठणी|patola|पटोला|tussar|तुस्सर|zari|जरी|kasavu|कसावु)',
+                # "X [weave] banati/banata hoon"
+                r'([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+)?)\s+(?:ikat|इकट|jamdani|जामदानी|banarasi|बनारसी|chanderi|चंदेरी|maheshwari|महेश्वरी)\s+(?:banati|बनाती|banata|बनाता|banate|बनाते)',
+            ]
+            
+            for pattern in village_patterns:
+                match = re.search(pattern, t, re.IGNORECASE)
+                if match:
+                    candidate = match.group(1).strip().lower()
+                    cand_words = [w for w in candidate.split() 
+                                  if w not in exclusion_set and len(w) > 2]
+                    if cand_words:
+                        result["cluster"] = " ".join(cand_words).title()
+                        break
         
-        # Remove common stopwords (English and Hindi)
-        stopwords = {"main", "mera", "my", "name", "naam", "hai", "is", "hoon", "hun", 
-                     "है", "मैं", "हूँ", "से", "ki", "की", "में", "ka", "का", "hu",
-                     "hain", "ho", "raha", "rahi", "banati", "banata",
-                     "number", "phone", "mobile", "gav", "gaon", "village", "cluster",
-                     "weave", "weaver", "bunkar", "karigar", "specialty", "speciality"}
-        for sw in stopwords:
-            name_text = re.sub(r'(?:^|\s)' + re.escape(sw) + r'(?:\s|$)', ' ', name_text)
+        # 4. NAME
+        name_found = None
         
-        name_text = re.sub(r'\d+', ' ', name_text)
-        name_text = re.sub(r'\s+', ' ', name_text).strip()
+        # 4a. Explicit name markers first
+        name_markers = [
+            r'(?:mera|मेरा|my)\s+(?:naam|name)\s+([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+)?)',
+            r'(?:naam|name)\s+(?:hai|is)\s+([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+)?)',
+        ]
+        for pattern in name_markers:
+            match = re.search(pattern, t, re.IGNORECASE)
+            if match:
+                candidate = match.group(1).strip()
+                if len(candidate) > 1 and not candidate.isdigit():
+                    name_found = candidate.title()
+                    break
         
-        if name_text:
-            words = [w for w in name_text.split() if len(w) > 1]
-            if words:
-                result["name"] = " ".join(words[:2]).title()
+        # 4b. Residual word approach
+        if not name_found:
+            name_text = t
+            
+            # Remove phone digits
+            if result["phone"]:
+                name_text = re.sub(r'\d', ' ', name_text)
+            
+            # Remove cluster / village
+            if result["cluster"]:
+                name_text = name_text.replace(result["cluster"].lower(), " ")
+            
+            # Remove specialty (English + Hindi equivalents)
+            if result["specialty"]:
+                spec_lower = result["specialty"].lower()
+                name_text = name_text.replace(spec_lower, " ")
+                for hindi, eng in weave_map.items():
+                    if eng.lower() == spec_lower:
+                        name_text = name_text.replace(hindi, " ")
+            
+            # Remove stopwords
+            for sw in stopwords:
+                name_text = re.sub(r'(?:^|\s)' + re.escape(sw) + r'(?:\s|$)', ' ', name_text, flags=re.IGNORECASE)
+            
+            name_text = re.sub(r'\s+', ' ', name_text).strip()
+            
+            if name_text:
+                words = [w for w in name_text.split() if len(w) > 1]
+                if words:
+                    name_found = " ".join(words[:2]).title()
         
-        # Fallback name
+        result["name"] = name_found or ""
+        
+        # 4c. Final fallback: first meaningful word not used by cluster/specialty
         if not result["name"]:
             words = t.split()
             stopwords_fb = {"main", "mera", "my", "name", "naam", "hai", "is", "hoon", "hun", 
-                           "है", "मैं", "हूँ", "से", "ki", "की", "में", "number", "phone"}
+                           "है", "मैं", "हूँ", "से", "ki", "की", "में", "ka", "का", "ke", "के",
+                           "number", "phone", "hu", "hain", "ho", "raha", "rahi", "banati", "banata"}
             for i, w in enumerate(words):
-                if w not in stopwords_fb and not w.isdigit() and len(w) > 1:
-                    name_candidate = w.title()
-                    if i + 1 < len(words) and words[i+1] not in stopwords_fb and not words[i+1].isdigit():
-                        name_candidate += " " + words[i+1].title()
+                w_clean = w.strip('.,;:!?')
+                w_lower = w_clean.lower()
+                if (w_lower not in stopwords_fb and not w_clean.isdigit() and len(w_clean) > 1 and
+                    not (result["cluster"] and w_lower in result["cluster"].lower()) and
+                    not (result["specialty"] and w_lower in result["specialty"].lower())):
+                    name_candidate = w_clean.title()
+                    if i + 1 < len(words):
+                        next_w = words[i+1].strip('.,;:!?')
+                        next_lower = next_w.lower()
+                        if (next_lower not in stopwords_fb and not next_w.isdigit() and len(next_w) > 1 and
+                            not (result["cluster"] and next_lower in result["cluster"].lower()) and
+                            not (result["specialty"] and next_lower in result["specialty"].lower())):
+                            name_candidate += " " + next_w.title()
                     result["name"] = name_candidate
                     break
         
@@ -1562,7 +1637,6 @@ def _onboarding_page() -> None:
     try:
         lat = st.query_params.get("lat")
         lon = st.query_params.get("lon")
-        # Handle both string and list returns
         if isinstance(lat, list):
             lat = lat[0] if lat else None
         if isinstance(lon, list):
@@ -1586,7 +1660,6 @@ def _onboarding_page() -> None:
         except Exception:
             pass
         
-        # Clear only lat/lon from query params, preserve others
         try:
             if "lat" in st.query_params:
                 del st.query_params["lat"]
@@ -1628,7 +1701,7 @@ def _onboarding_page() -> None:
                     f'Heard: <em>{text}</em></div>',
                     unsafe_allow_html=True
                 )
-                parsed = _parse_onboarding_text(text)  # use the embedded parser
+                parsed = _parse_onboarding_text(text)
                 filled = [k for k, v in parsed.items() if v]
                 for key, val in parsed.items():
                     if val:
@@ -1702,7 +1775,6 @@ def _onboarding_page() -> None:
             else:
                 new_id = f"CW{random.randint(100,999)}"
                 
-                # Read photo bytes if uploaded (for future use)
                 photo_bytes = None
                 if photo is not None:
                     photo_bytes = photo.getvalue()
@@ -1722,11 +1794,9 @@ def _onboarding_page() -> None:
                     "whatsapp": whatsapp,
                     "accepts_custom": custom,
                     "language": lang_pref,
-                    "photo": photo_bytes,  # store for later use
+                    "photo": photo_bytes,
                 }
-                # Store in session state
                 st.session_state.setdefault("custom_weavers", []).append(new_profile)
-                # Also store in live_weavers for immediate dropdown display (if used)
                 st.session_state.setdefault("live_weavers", []).append(new_profile)
                 st.session_state["weaver_id"] = new_id
 
@@ -1746,7 +1816,6 @@ def _onboarding_page() -> None:
                 }
                 st.session_state["onboard_submitted"] = True
                 st.rerun()
-
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
