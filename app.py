@@ -1362,15 +1362,37 @@ def _ooak_page() -> None:
             if st.button(get_ui_string("btn_buy_now", lang), key=f"buy_{item.get('order_id',idx)}_{idx}", use_container_width=True):
                 st.success(f"#{item.get('order_id','')} added to cart. Delivery in 3-5 days.")
 def _parse_onboarding_text_improved(text: str) -> dict:
-    """Extract name, cluster, specialty, phone from a transcribed voice message."""
+    """
+    First, try a strict template:
+        main <name>, <area> ki hun, <craft> banati/banata hun, number <phone> hain
+    If that fails, fall back to free‑form extraction.
+    """
     result = {"name": "", "cluster": "", "specialty": "", "phone": ""}
     t = text.lower().strip()
 
+    # ---- TEMPLATE PARSING ----
+    # Example: "main shruti, pochampally ki hun, ikat banati hun, number 1234567891 hain"
+    template_pattern = r'''
+        main\s+                     # "main"
+        ([^,]+)\s*,\s*              # name (until comma)
+        ([^,]+)\s+ki\s+hun\s*,\s*   # area (until "ki hun")
+        ([^,]+)\s+banati(?:|hun)\s*,?\s*   # craft (until "banati" or "banata")
+        number\s+(\d{10})            # phone
+    '''
+    m = re.search(template_pattern, t, re.IGNORECASE | re.VERBOSE)
+    if m:
+        result["name"] = m.group(1).strip().title()
+        result["cluster"] = m.group(2).strip().title()
+        result["specialty"] = m.group(3).strip().title()
+        result["phone"] = m.group(4)
+        return result
+
+    # ---- FREE‑FORM PARSING (fallback) ----
     # 1. NAME
     name_patterns = [
-        r'(?:mera naam|my name is|name is|naam|i am|i\'m|मेरा नाम)\s*(.+?)(?:\s+hai|\s+is|\s*$|\.|,|;|\s+from|\s+in|\s+of)',
+        r'(?:mera naam|my name is|name is|naam|मेरा नाम)\s*(.+?)(?:\s+hai|\s+is|\s*$|\.|,|;|\s+from|\s+in|\s+of)',
         r'(?:my name|name)\s+is\s+(.+?)(?:\s+and|\s+\.|$|,)',
-        r'(?:i am|i\'m)\s+(.+?)(?:\s+from|\s+in|\s+\.|$|,)'
+        r'(?:i am|i\'m|मैं\s+हूँ|मैं)\s+(.+?)(?:\s+from|\s+in|\s+\.|$|,)'
     ]
     for pat in name_patterns:
         m = re.search(pat, t, re.IGNORECASE)
@@ -1381,16 +1403,19 @@ def _parse_onboarding_text_improved(text: str) -> dict:
                 result["name"] = raw
                 break
 
-    # 2. CLUSTER
+    # 2. CLUSTER – capture a place name before/after "से", "from", "in"
     cluster_patterns = [
-        r'(?:from|cluster|village|area|गांव|में|से)\s+(.+?)(?:\s+(?:hai|is|mein|in|cluster|village)|$|\.|,|;)',
-        r'(?:in|at)\s+(.+?)(?:\s+(?:weave|making|banata|work)|$|\.|,)'
+        r'([A-Za-z\u0900-\u097F]+(?:\s+[A-Za-z\u0900-\u097F]+)?)\s+(?:से|from|in|at|में|se)',
+        r'(?:from|in|at|cluster|village|गांव|में|से|se)\s+([A-Za-z\u0900-\u097F]+(?:\s+[A-Za-z\u0900-\u097F]+)?)',
+        r'([A-Za-z\u0900-\u097F]+(?:\s+[A-Za-z\u0900-\u097F]+)?)\s+(?:village|cluster|गांव|क्लस्टर)'
     ]
     for pat in cluster_patterns:
         m = re.search(pat, t, re.IGNORECASE)
         if m:
             raw = m.group(1).strip().title()
+            raw = re.sub(r'\s+(?:hai|is|mein|in|se)$', '', raw, flags=re.IGNORECASE)
             if raw and len(raw) > 2:
+                raw = re.sub(r'\s*(?:हूं|मैं|hoon|main)\s*', '', raw)
                 result["cluster"] = raw
                 break
 
@@ -1398,12 +1423,15 @@ def _parse_onboarding_text_improved(text: str) -> dict:
     specialty_patterns = [
         r'(?:specialty|weave|weaving|बुनाई|craft|work|banata|karate|bunati)\s*(?:is|hai)?\s*(.+?)(?:\s+(?:hai|is|in|from|at|$|\.|,|;))',
         r'(?:banata|karate|bunati)\s+(.+?)(?:\s+(?:hai|is|from|in|$|\.|,|;))',
-        r'(?:weave|craft)\s+(.+?)(?:\s+(?:is|hai|from|in|$|\.|,|;))'
+        r'(?:weave|craft)\s+(.+?)(?:\s+(?:is|hai|from|in|$|\.|,|;))',
+        r'(टिकट|ikat|jamdani|block print|banarasi|kanjivaram|tussar|chanderi|maheshwari|paithani|patola|kota doria|sambalpuri|ilkal|venkatagiri|zari|kasavu)'
     ]
     for pat in specialty_patterns:
         m = re.search(pat, t, re.IGNORECASE)
         if m:
             raw = m.group(1).strip().title()
+            if raw.lower() == "टिकट":
+                raw = "ikat"
             if raw and len(raw) > 2:
                 result["specialty"] = raw
                 break
@@ -1413,9 +1441,9 @@ def _parse_onboarding_text_improved(text: str) -> dict:
     if phone_match:
         result["phone"] = phone_match.group(1)
 
-    # 5. Fallback name
+    # 5. Fallback name if not found
     if not result["name"] and len(t.split()) >= 2:
-        stopwords = {"mera", "my", "i", "am", "name", "is", "naam", "hai"}
+        stopwords = {"mera", "my", "i", "am", "name", "is", "naam", "hai", "मैं", "हूँ"}
         words = t.split()
         start = 0
         if words[0] in stopwords:
@@ -1425,16 +1453,13 @@ def _parse_onboarding_text_improved(text: str) -> dict:
 
     # 6. Fallback cluster
     if not result["cluster"]:
-        m = re.search(r'(?:from|in|at|में|से)\s+([A-Za-z]+(?:\s+[A-Za-z]+)?)', text)
-        if m:
-            raw = m.group(1).strip().title()
-            if len(raw) > 2:
+        place_match = re.search(r'\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\b', text)
+        if place_match:
+            raw = place_match.group(1).strip()
+            if raw not in ["Hello", "Hi", "Thank", "Please", "Number"]:
                 result["cluster"] = raw
 
     return result
-# ---------------------------------------------------------------------------
-# WEAVER ONBOARDING PAGE (bilingual, voice extraction, GPS)
-# ---------------------------------------------------------------------------
 def _onboarding_page() -> None:
     lang = st.session_state.get("language", "en")
     st.markdown(f'<div class="section-label">{get_ui_string("onboard_title", lang)}</div>', unsafe_allow_html=True)
@@ -1543,7 +1568,7 @@ def _onboarding_page() -> None:
         st.rerun()
         return
 
-    # Voice input for onboarding — prominent card
+    # Voice input for onboarding — with template guidance
     st.markdown(f"""
     <div style="background:rgba(244,51,151,0.07);border:2px solid rgba(244,51,151,0.35);
         border-radius:14px;padding:1rem 1.2rem;margin-bottom:1rem;">
@@ -1551,15 +1576,15 @@ def _onboarding_page() -> None:
             {get_ui_string('onboard_speak', lang)}
         </div>
         <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.6;">
-            Say your name, village, weave speciality, and phone number in one sentence.<br>
-            Example: <em>"Mera naam Padmavathi hai, Pochampally se hoon, Ikat banati hoon, number 9876543210 hai."</em>
+            <strong>Please say in this exact format:</strong><br>
+            <em>"main [your name], [village/cluster] ki hun, [weave] banati hun, number [10-digit phone] hain"</em><br>
+            Example: <em>"main Padmavathi, Pochampally ki hun, Ikat banati hun, number 9876543210 hain"</em>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
     reg_audio = st.audio_input("Speak to fill the form", key="reg_audio", label_visibility="collapsed")
     if reg_audio is not None:
-        # Compute hash of the audio bytes to avoid re-processing the same clip
         _audio_hash = hash(bytes(reg_audio.getbuffer()))
         if st.session_state.get("last_reg_audio_hash") != _audio_hash:
             st.session_state["last_reg_audio_hash"] = _audio_hash
@@ -1568,14 +1593,12 @@ def _onboarding_page() -> None:
             if err:
                 st.warning(f"Could not transcribe: {err}. Please type the details below.")
             else:
-                # Show the transcript
                 st.markdown(
                     f'<div style="background:rgba(34,197,94,0.08);border:1px solid #22c55e;'
                     f'border-radius:8px;padding:0.6rem 1rem;font-size:0.85rem;margin-bottom:0.5rem;">'
                     f'Heard: <em>{text}</em></div>',
                     unsafe_allow_html=True
                 )
-                # Parse using improved function
                 parsed = _parse_onboarding_text_improved(text)
                 filled = [k for k, v in parsed.items() if v]
                 for key, val in parsed.items():
@@ -1592,7 +1615,6 @@ def _onboarding_page() -> None:
     with st.form("onboard_form"):
         st.markdown(f'<div class="section-label">{get_ui_string("onboard_basic", lang)}</div>', unsafe_allow_html=True)
         c1, c2 = st.columns(2)
-        # Get values from session state (they persist)
         default_name = st.session_state.get("reg_name", "")
         default_cluster = st.session_state.get("gps_place", "") or st.session_state.get("reg_cluster", "")
         default_specialty = st.session_state.get("reg_specialty", "")
