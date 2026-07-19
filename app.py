@@ -558,6 +558,20 @@ def _enrich_swatch_images(swatches: list) -> list:
             sw["image_url"] = image_map.get(style, "")
     return swatches
 
+@st.cache_data(show_spinner=False, ttl=3600)
+def _fetch_image_bytes(url: str) -> Optional[bytes]:
+    """Fetch image bytes from URL server-side so st.image() gets raw bytes.
+    Cached per URL so each image is only downloaded once per hour."""
+    if not url:
+        return None
+    try:
+        resp = requests.get(url, timeout=8, headers={"User-Agent": "Mozilla/5.0"})
+        if resp.status_code == 200 and resp.content:
+            return resp.content
+    except Exception:
+        pass
+    return None
+
 # ---------------------------------------------------------------------------
 # Edge TTS & STT
 # ---------------------------------------------------------------------------
@@ -851,17 +865,14 @@ def _swatch_card(swatch: dict, index: int) -> None:
     </div>
     """, unsafe_allow_html=True)
 
-    if image_url:
+    img_bytes = _fetch_image_bytes(image_url) if image_url else None
+    if img_bytes:
         try:
-            st.image(image_url, use_container_width=True)
+            st.image(img_bytes, use_container_width=True)
         except Exception:
-            st.markdown(
-                f'<div style="background:rgba(159,32,137,0.08);border:1px dashed rgba(159,32,137,0.3);'
-                f'border-radius:8px;padding:12px;font-size:0.78rem;color:var(--text-muted);'
-                f'text-align:center;">{lbl_placeholder}</div>',
-                unsafe_allow_html=True,
-            )
-    else:
+            img_bytes = None
+
+    if not img_bytes:
         st.markdown(
             f'<div style="background:rgba(159,32,137,0.08);border:1px dashed rgba(159,32,137,0.3);'
             f'border-radius:8px;padding:12px;font-size:0.78rem;color:var(--text-muted);'
