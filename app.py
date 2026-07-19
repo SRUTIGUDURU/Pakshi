@@ -2064,19 +2064,27 @@ def _onboarding_page() -> None:
         if (inputs.length > 0) triggerReactInput(inputs[0], value);
     }}
     function fillStateSelect(state) {{
-        // Streamlit selectbox: find the one whose current value is a state name, set it
-        var selects = window.parent.document.querySelectorAll('select');
-        for (var i=0; i<selects.length; i++) {{
-            var opts = selects[i].options;
-            for (var j=0; j<opts.length; j++) {{
-                if (opts[j].text === state) {{
-                    var setter = Object.getOwnPropertyDescriptor(window.parent.HTMLSelectElement.prototype, 'value').set;
-                    setter.call(selects[i], opts[j].value);
-                    selects[i].dispatchEvent(new window.parent.Event('change', {{bubbles:true}}));
+        // Streamlit selectbox is a React-Select div, NOT a native <select>.
+        // Strategy: find the div showing current state value inside [data-testid="stSelectbox"],
+        // click it to open, then click the matching option.
+        var doc = window.parent.document;
+        var boxes = doc.querySelectorAll('[data-testid="stSelectbox"]');
+        // The state selectbox is the first one on the page (index 0); lang pref is later
+        var box = boxes[0];
+        if (!box) return;
+        // Click the control to open the dropdown
+        var control = box.querySelector('[class*="control"]') || box.querySelector('div[aria-haspopup]') || box;
+        control.click();
+        // Wait for options to render then click matching one
+        setTimeout(function() {{
+            var options = doc.querySelectorAll('[class*="option"]');
+            for (var i=0; i<options.length; i++) {{
+                if (options[i].innerText.trim() === state) {{
+                    options[i].click();
                     break;
                 }}
             }}
-        }}
+        }}, 150);
     }}
     function doGPS() {{
         var btn=document.getElementById('gb'), s=document.getElementById('gs');
