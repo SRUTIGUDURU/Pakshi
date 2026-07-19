@@ -1807,6 +1807,33 @@ def _ooak_page() -> None:
 # ---------------------------------------------------------------------------
 def _onboarding_page() -> None:
 
+    # ── GPS query param catch — must run FIRST before any widget renders ──
+    # Listener st.html catches postMessage from iframe and redirects with params.
+    # Here we read those params, store to session_state, clear them, and rerun
+    # so the form renders with the correct pre-filled values.
+    st.html("""<script>
+    window.addEventListener('message', function(e) {
+        if (!e.data || e.data.type !== 'pakshi_gps') return;
+        var url = new URL(window.location.href);
+        url.searchParams.set('gps_place', e.data.place);
+        url.searchParams.set('gps_state', e.data.state);
+        window.location.href = url.toString();
+    });
+    </script>""")
+    _gps_place_param = st.query_params.get("gps_place")
+    _gps_state_param = st.query_params.get("gps_state")
+    if _gps_place_param:
+        st.session_state["gps_place"] = _gps_place_param
+        if _gps_state_param:
+            st.session_state["gps_state"] = _gps_state_param
+        try:
+            del st.query_params["gps_place"]
+            if "gps_state" in st.query_params:
+                del st.query_params["gps_state"]
+        except Exception:
+            pass
+        st.rerun()
+
     def _parse_onboarding_text(text: str) -> dict:
         KNOWN_CLUSTERS = [
             "pochampally", "venkatagiri", "kanchipuram", "ilkal", "kota", "chanderi",
@@ -2063,31 +2090,7 @@ def _onboarding_page() -> None:
     }}
     </script></body></html>""", height=55)
 
-    # Listener: catches postMessage from the iframe and redirects the top-level page
-    st.html("""<script>
-    window.addEventListener('message', function(e) {
-        if (!e.data || e.data.type !== 'pakshi_gps') return;
-        var url = new URL(window.location.href);
-        url.searchParams.set('gps_place', e.data.place);
-        url.searchParams.set('gps_state', e.data.state);
-        window.location.href = url.toString();
-    });
-    </script>""")
 
-    # Catch GPS result from query params (set by listener redirect above)
-    gps_place_param = st.query_params.get("gps_place")
-    gps_state_param = st.query_params.get("gps_state")
-    if gps_place_param:
-        st.session_state["gps_place"] = gps_place_param
-        if gps_state_param:
-            st.session_state["gps_state"] = gps_state_param
-        try:
-            del st.query_params["gps_place"]
-            if "gps_state" in st.query_params:
-                del st.query_params["gps_state"]
-        except Exception:
-            pass
-        st.rerun()
 
     # Voice fill
     speak_hint_en = "Please say your name, village, weave style, and phone number."
