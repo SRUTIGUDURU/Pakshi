@@ -35,7 +35,10 @@
           "rating": 5,
           "comment": "Ordered for my daughter's college. She gets compliments daily."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1610030470-09fa36b7f6a3?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S002",
@@ -71,7 +74,10 @@
           "rating": 4,
           "comment": "Colour is exactly as shown. Delivery was fast too."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S003",
@@ -108,7 +114,10 @@
           "rating": 5,
           "comment": "Fine weave, lovely texture. Will order again."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1604765200570-4c1b17f6fa9e?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S004",
@@ -145,7 +154,10 @@
           "rating": 4,
           "comment": "Good everyday saree. Simple and elegant."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S005",
@@ -182,7 +194,10 @@
           "rating": 5,
           "comment": "Exactly as described. The zari border is beautiful."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S006",
@@ -219,7 +234,10 @@
           "rating": 4,
           "comment": "Very comfortable in humid weather. Recommend for South India."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S007",
@@ -256,7 +274,10 @@
           "rating": 5,
           "comment": "Weaver did amazing work. The pattern is crisp."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S008",
@@ -293,7 +314,10 @@
           "rating": 4,
           "comment": "Nice colour. Slightly lighter than expected but still lovely."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S009",
@@ -329,7 +353,10 @@
           "rating": 5,
           "comment": "Exactly what I needed for daily wear. Soft and breathable all day."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1602172757767-3d2b8540bc7e?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S010",
@@ -366,7 +393,10 @@
           "rating": 5,
           "comment": "Beautiful colour. Washed well and did not fade at all."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1610030470-09fa36b7f6a3?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S011",
@@ -403,7 +433,10 @@
           "rating": 4,
           "comment": "Good quality cotton. Feels premium for the price."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1620456613046-a3cc3be3f2db?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S012",
@@ -439,7 +472,10 @@
           "rating": 5,
           "comment": "Wore this to office every week. Comfortable and looks neat."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1529958030586-3aae4ca485ff?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S013",
@@ -476,7 +512,10 @@
           "rating": 4,
           "comment": "The border design is very pretty. Drapes well too."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1604765200570-4c1b17f6fa9e?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S014",
@@ -513,7 +552,10 @@
           "rating": 5,
           "comment": "My mother loved this saree. Perfect for casual puja days."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1610030470-09fa36b7f6a3?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S015",
@@ -550,7 +592,10 @@
           "rating": 4,
           "comment": "Light and easy to manage. Great for summer."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S016",
@@ -586,7 +631,10 @@
           "rating": 5,
           "comment": "Ordered for my daughter's college. She gets compliments daily."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1541840031508-326d41f4d9c3?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S017",
@@ -623,7 +671,10 @@
           "rating": 4,
           "comment": "Colour is exactly as shown. Delivery was fast too."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S018",
@@ -659,7 +710,10 @@
           "rating": 5,
           "comment": "Fine weave, lovely texture. Will order again."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S019",
@@ -696,7 +750,10 @@
           "rating": 4,
           "comment": "Good everyday saree. Simple and elegant."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1602172757767-3d2b8540bc7e?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S020",
@@ -733,7 +790,10 @@
           "rating": 5,
           "comment": "Exactly as described. The zari border is beautiful."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S021",
@@ -771,7 +831,10 @@
           "rating": 4,
           "comment": "Nice soft feel. The colour matches the photo perfectly."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1615172282285-31fa42fd88a7?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S022",
@@ -808,7 +871,10 @@
           "rating": 5,
           "comment": "Ordered twice already. This weaver does excellent work."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1615172282285-31fa42fd88a7?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S023",
@@ -846,7 +912,10 @@
           "rating": 4,
           "comment": "Good for both day and evening events. Versatile pick."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1623603906955-c04c3da0e9ef?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S024",
@@ -883,7 +952,10 @@
           "rating": 5,
           "comment": "Perfect blend — light enough for summer but rich enough for weddings."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1623603906955-c04c3da0e9ef?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S025",
@@ -920,7 +992,10 @@
           "rating": 5,
           "comment": "The drape is lovely. Wore this for an evening wedding. Perfect."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1630462985924-f5a9bfbf24c4?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S026",
@@ -957,7 +1032,10 @@
           "rating": 4,
           "comment": "Good weight. Not too heavy, not too light. Just right."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1567401393020-43f54e5f9e47?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S027",
@@ -993,7 +1071,10 @@
           "rating": 5,
           "comment": "Beautiful colour. The cotton-silk mix is exactly what I wanted."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1603189343302-e603f7add05a?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S028",
@@ -1029,7 +1110,10 @@
           "rating": 4,
           "comment": "Flowy and elegant. Got many compliments at the festival."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1578632749014-ca77f0b30f9c?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S029",
@@ -1066,7 +1150,10 @@
           "rating": 5,
           "comment": "Ordered for my daughter's engagement. She looked stunning."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1620456613046-a3cc3be3f2db?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S030",
@@ -1102,7 +1189,10 @@
           "rating": 4,
           "comment": "Good quality. The border design is unique and handloom feel is real."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1615172282285-31fa42fd88a7?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S031",
@@ -1139,7 +1229,10 @@
           "rating": 5,
           "comment": "Semi-formal and beautiful. Easy to manage for long events."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1615172282285-31fa42fd88a7?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S032",
@@ -1175,7 +1268,10 @@
           "rating": 4,
           "comment": "Lovely fabric. Slightly sheer but very elegant for evening."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S033",
@@ -1212,7 +1308,10 @@
           "rating": 5,
           "comment": "The ikat pattern is stunning. Cannot believe this is custom-made."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S034",
@@ -1248,7 +1347,10 @@
           "rating": 4,
           "comment": "Great blend. Breathable yet looks festive. Recommend for summer weddings."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1603189343302-e603f7add05a?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S035",
@@ -1284,7 +1386,10 @@
           "rating": 5,
           "comment": "Chanderi quality at a fair price. The sheen is gorgeous."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1615172282285-31fa42fd88a7?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S036",
@@ -1321,7 +1426,10 @@
           "rating": 4,
           "comment": "Nice soft feel. The colour matches the photo perfectly."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1623603906955-c04c3da0e9ef?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S037",
@@ -1358,7 +1466,10 @@
           "rating": 5,
           "comment": "Ordered twice already. This weaver does excellent work."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S038",
@@ -1394,7 +1505,10 @@
           "rating": 4,
           "comment": "Good for both day and evening events. Versatile pick."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1541840031508-326d41f4d9c3?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S039",
@@ -1431,7 +1545,10 @@
           "rating": 5,
           "comment": "Perfect blend — light enough for summer but rich enough for weddings."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1630462985924-f5a9bfbf24c4?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S040",
@@ -1468,7 +1585,10 @@
           "rating": 5,
           "comment": "The drape is lovely. Wore this for an evening wedding. Perfect."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1615172282285-31fa42fd88a7?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S041",
@@ -1506,7 +1626,10 @@
           "rating": 4,
           "comment": "Rich fabric. Drapes beautifully for formal occasions."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1571513722275-4c4d57e5c1ae?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S042",
@@ -1544,7 +1667,10 @@
           "rating": 5,
           "comment": "Exactly like Kanjivaram quality but more affordable. Loved it."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1571513722275-4c4d57e5c1ae?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S043",
@@ -1582,7 +1708,10 @@
           "rating": 5,
           "comment": "The colour is deep and vibrant. Perfect for reception."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1567401393020-43f54e5f9e47?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S044",
@@ -1620,7 +1749,10 @@
           "rating": 4,
           "comment": "Heavy but very elegant. My mother-in-law approved."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1567401393020-43f54e5f9e47?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S045",
@@ -1658,7 +1790,10 @@
           "rating": 5,
           "comment": "The pallu is gorgeous. Felt like a queen wearing this."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1610116306796-6fea9f4fae38?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S046",
@@ -1696,7 +1831,10 @@
           "rating": 4,
           "comment": "Good silk quality. Slight colour variation from photo but still beautiful."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1610116306796-6fea9f4fae38?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S047",
@@ -1734,7 +1872,10 @@
           "rating": 5,
           "comment": "Ordered for Diwali. Weaver's craftsmanship is outstanding."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S048",
@@ -1772,7 +1913,10 @@
           "rating": 5,
           "comment": "Arrived on time. The zari border is exactly as described."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1623603906955-c04c3da0e9ef?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S049",
@@ -1810,7 +1954,10 @@
           "rating": 4,
           "comment": "Luxurious feel. Would make a great gift too."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S050",
@@ -1848,7 +1995,10 @@
           "rating": 5,
           "comment": "Pure silk smell, beautiful sheen. Very authentic."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1571513722275-4c4d57e5c1ae?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S051",
@@ -1886,7 +2036,10 @@
           "rating": 4,
           "comment": "Traditional and elegant. Perfect for ceremonies."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1571513722275-4c4d57e5c1ae?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S052",
@@ -1924,7 +2077,10 @@
           "rating": 5,
           "comment": "The weave is very fine. Genuinely handloom quality."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1586495777744-4e6232bf5e70?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S053",
@@ -1962,7 +2118,10 @@
           "rating": 5,
           "comment": "Best silk saree I have bought online. Stunning piece."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1586495777744-4e6232bf5e70?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S054",
@@ -2000,7 +2159,10 @@
           "rating": 5,
           "comment": "Wore this for my sister's wedding. Got so many compliments."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S055",
@@ -2038,7 +2200,10 @@
           "rating": 5,
           "comment": "The zari work is breathtaking. Worth every rupee."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1610116306796-6fea9f4fae38?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S056",
@@ -2076,7 +2241,10 @@
           "rating": 4,
           "comment": "Rich fabric. Drapes beautifully for formal occasions."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1541840031508-326d41f4d9c3?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S057",
@@ -2114,7 +2282,10 @@
           "rating": 5,
           "comment": "Exactly like Kanjivaram quality but more affordable. Loved it."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1571513722275-4c4d57e5c1ae?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S058",
@@ -2151,7 +2322,10 @@
           "rating": 5,
           "comment": "The colour is deep and vibrant. Perfect for reception."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1571513722275-4c4d57e5c1ae?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S059",
@@ -2189,7 +2363,10 @@
           "rating": 4,
           "comment": "Heavy but very elegant. My mother-in-law approved."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S060",
@@ -2227,7 +2404,10 @@
           "rating": 5,
           "comment": "The pallu is gorgeous. Felt like a queen wearing this."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S061",
@@ -2265,7 +2445,10 @@
           "rating": 4,
           "comment": "Good silk quality. Slight colour variation from photo but still beautiful."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S062",
@@ -2303,7 +2486,10 @@
           "rating": 5,
           "comment": "Ordered for Diwali. Weaver's craftsmanship is outstanding."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1578632749014-ca77f0b30f9c?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S063",
@@ -2341,7 +2527,10 @@
           "rating": 5,
           "comment": "Arrived on time. The zari border is exactly as described."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1610116306796-6fea9f4fae38?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S064",
@@ -2379,7 +2568,10 @@
           "rating": 4,
           "comment": "Luxurious feel. Would make a great gift too."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S065",
@@ -2416,7 +2608,10 @@
           "rating": 5,
           "comment": "Pure silk smell, beautiful sheen. Very authentic."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1567401393020-43f54e5f9e47?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S066",
@@ -2454,7 +2649,10 @@
           "rating": 4,
           "comment": "Traditional and elegant. Perfect for ceremonies."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S067",
@@ -2492,7 +2690,10 @@
           "rating": 5,
           "comment": "The weave is very fine. Genuinely handloom quality."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1567401393020-43f54e5f9e47?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S068",
@@ -2530,7 +2731,10 @@
           "rating": 5,
           "comment": "Best silk saree I have bought online. Stunning piece."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1567401393020-43f54e5f9e47?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S069",
@@ -2568,7 +2772,10 @@
           "rating": 5,
           "comment": "Wore this for my sister's wedding. Got so many compliments."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1571513722275-4c4d57e5c1ae?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S070",
@@ -2606,7 +2813,10 @@
           "rating": 5,
           "comment": "The zari work is breathtaking. Worth every rupee."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1571513722275-4c4d57e5c1ae?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S071",
@@ -2644,7 +2854,10 @@
           "rating": 4,
           "comment": "Rich fabric. Drapes beautifully for formal occasions."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1630462985924-f5a9bfbf24c4?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S072",
@@ -2682,7 +2895,10 @@
           "rating": 5,
           "comment": "Exactly like Kanjivaram quality but more affordable. Loved it."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1630462985924-f5a9bfbf24c4?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S073",
@@ -2720,7 +2936,10 @@
           "rating": 5,
           "comment": "The colour is deep and vibrant. Perfect for reception."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S074",
@@ -2758,7 +2977,10 @@
           "rating": 4,
           "comment": "Heavy but very elegant. My mother-in-law approved."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1610116306796-6fea9f4fae38?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S075",
@@ -2795,7 +3017,10 @@
           "rating": 5,
           "comment": "The pallu is gorgeous. Felt like a queen wearing this."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1541840031508-326d41f4d9c3?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S076",
@@ -2832,7 +3057,10 @@
           "rating": 5,
           "comment": "Semi-formal and beautiful. Easy to manage for long events."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1567401393020-43f54e5f9e47?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S077",
@@ -2869,7 +3097,10 @@
           "rating": 4,
           "comment": "Lovely fabric. Slightly sheer but very elegant for evening."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1623603906955-c04c3da0e9ef?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S078",
@@ -2905,7 +3136,10 @@
           "rating": 5,
           "comment": "The ikat pattern is stunning. Cannot believe this is custom-made."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S079",
@@ -2942,7 +3176,10 @@
           "rating": 4,
           "comment": "Great blend. Breathable yet looks festive. Recommend for summer weddings."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S080",
@@ -2978,7 +3215,10 @@
           "rating": 5,
           "comment": "Chanderi quality at a fair price. The sheen is gorgeous."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S081",
@@ -3015,7 +3255,10 @@
           "rating": 4,
           "comment": "Nice soft feel. The colour matches the photo perfectly."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1571513722275-4c4d57e5c1ae?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S082",
@@ -3051,7 +3294,10 @@
           "rating": 5,
           "comment": "Ordered twice already. This weaver does excellent work."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1578632749014-ca77f0b30f9c?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S083",
@@ -3088,7 +3334,10 @@
           "rating": 4,
           "comment": "Good for both day and evening events. Versatile pick."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1620456613046-a3cc3be3f2db?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S084",
@@ -3124,7 +3373,10 @@
           "rating": 5,
           "comment": "Perfect blend — light enough for summer but rich enough for weddings."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1603189343302-e603f7add05a?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S085",
@@ -3160,7 +3412,10 @@
           "rating": 5,
           "comment": "The drape is lovely. Wore this for an evening wedding. Perfect."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1529958030586-3aae4ca485ff?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S086",
@@ -3196,7 +3451,10 @@
           "rating": 4,
           "comment": "Good weight. Not too heavy, not too light. Just right."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1615172282285-31fa42fd88a7?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S087",
@@ -3233,7 +3491,10 @@
           "rating": 5,
           "comment": "Beautiful colour. The cotton-silk mix is exactly what I wanted."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1623603906955-c04c3da0e9ef?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S088",
@@ -3270,7 +3531,10 @@
           "rating": 4,
           "comment": "Flowy and elegant. Got many compliments at the festival."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1610116306796-6fea9f4fae38?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S089",
@@ -3306,7 +3570,10 @@
           "rating": 5,
           "comment": "Ordered for my daughter's engagement. She looked stunning."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1603189343302-e603f7add05a?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S090",
@@ -3342,7 +3609,10 @@
           "rating": 4,
           "comment": "Good quality. The border design is unique and handloom feel is real."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1630462985924-f5a9bfbf24c4?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S091",
@@ -3378,7 +3648,10 @@
           "rating": 5,
           "comment": "Semi-formal and beautiful. Easy to manage for long events."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1615172282285-31fa42fd88a7?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S092",
@@ -3414,7 +3687,10 @@
           "rating": 4,
           "comment": "Lovely fabric. Slightly sheer but very elegant for evening."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1578632749014-ca77f0b30f9c?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S093",
@@ -3450,7 +3726,10 @@
           "rating": 5,
           "comment": "The ikat pattern is stunning. Cannot believe this is custom-made."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1578632749014-ca77f0b30f9c?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S094",
@@ -3487,7 +3766,10 @@
           "rating": 4,
           "comment": "Great blend. Breathable yet looks festive. Recommend for summer weddings."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S095",
@@ -3523,7 +3805,10 @@
           "rating": 5,
           "comment": "Chanderi quality at a fair price. The sheen is gorgeous."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1615172282285-31fa42fd88a7?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S096",
@@ -3559,7 +3844,10 @@
           "rating": 4,
           "comment": "Nice soft feel. The colour matches the photo perfectly."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1567401393020-43f54e5f9e47?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S097",
@@ -3595,7 +3883,10 @@
           "rating": 5,
           "comment": "Ordered twice already. This weaver does excellent work."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S098",
@@ -3633,7 +3924,10 @@
           "rating": 5,
           "comment": "Best silk saree I have bought online. Stunning piece."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1623603906955-c04c3da0e9ef?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S099",
@@ -3670,7 +3964,10 @@
           "rating": 5,
           "comment": "Exactly what I needed for daily wear. Soft and breathable all day."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1610030470-09fa36b7f6a3?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     },
     {
       "id": "S100",
@@ -3707,7 +4004,10 @@
           "rating": 5,
           "comment": "Beautiful colour. Washed well and did not fade at all."
         }
-      ]
+      ],
+      "image_url": "https://images.unsplash.com/photo-1620456613046-a3cc3be3f2db?w=600&q=80",
+      "image_license": "Unsplash License (royalty-free, no attribution required)",
+      "image_source": "Unsplash"
     }
   ],
   "metadata": {
@@ -3731,6 +4031,15 @@
       "purple",
       "neutral"
     ],
-    "states_represented": 13
+    "states_represented": 13,
+    "image_info": {
+      "provider": "Unsplash",
+      "license": "Unsplash License",
+      "license_url": "https://unsplash.com/license",
+      "royalty_free": true,
+      "commercial_use_allowed": true,
+      "attribution_required": false,
+      "notes": "Images mapped by weave style for visual accuracy. Unsplash images are free for commercial and non-commercial use."
+    }
   }
 }
