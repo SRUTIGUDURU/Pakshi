@@ -2064,27 +2064,31 @@ def _onboarding_page() -> None:
         if (inputs.length > 0) triggerReactInput(inputs[0], value);
     }}
     function fillStateSelect(state) {{
-        // Streamlit selectbox is a React-Select div, NOT a native <select>.
-        // Strategy: find the div showing current state value inside [data-testid="stSelectbox"],
-        // click it to open, then click the matching option.
         var doc = window.parent.document;
+        // Find the stSelectbox whose label is "State" or "राज्य"
         var boxes = doc.querySelectorAll('[data-testid="stSelectbox"]');
-        // The state selectbox is the first one on the page (index 0); lang pref is later
-        var box = boxes[0];
-        if (!box) return;
-        // Click the control to open the dropdown
-        var control = box.querySelector('[class*="control"]') || box.querySelector('div[aria-haspopup]') || box;
+        var box = null;
+        for (var i=0; i<boxes.length; i++) {{
+            var lbl = boxes[i].querySelector('label');
+            if (lbl && (lbl.innerText.trim() === 'State' || lbl.innerText.trim() === '\u0930\u093E\u091C\u094D\u092F')) {{
+                box = boxes[i]; break;
+            }}
+        }}
+        if (!box) {{ console.warn('State selectbox not found'); return; }}
+        // Click to open dropdown
+        var control = box.querySelector('[class*="control"]') || box.querySelector('[aria-haspopup]') || box;
         control.click();
-        // Wait for options to render then click matching one
+        // Wait for options list to appear, then click the right one
         setTimeout(function() {{
-            var options = doc.querySelectorAll('[class*="option"]');
+            var options = doc.querySelectorAll('[class*="-option"]');
             for (var i=0; i<options.length; i++) {{
                 if (options[i].innerText.trim() === state) {{
                     options[i].click();
-                    break;
+                    return;
                 }}
             }}
-        }}, 150);
+            console.warn('Option not found:', state);
+        }}, 200);
     }}
     function doGPS() {{
         var btn=document.getElementById('gb'), s=document.getElementById('gs');
