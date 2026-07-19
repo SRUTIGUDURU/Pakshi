@@ -2063,33 +2063,7 @@ def _onboarding_page() -> None:
         var inputs = window.parent.document.querySelectorAll('input[placeholder="'+ph+'"]');
         if (inputs.length > 0) triggerReactInput(inputs[0], value);
     }}
-    function fillStateSelect(state) {{
-        var doc = window.parent.document;
-        // Find the stSelectbox whose label is "State" or "राज्य"
-        var boxes = doc.querySelectorAll('[data-testid="stSelectbox"]');
-        var box = null;
-        for (var i=0; i<boxes.length; i++) {{
-            var lbl = boxes[i].querySelector('label');
-            if (lbl && (lbl.innerText.trim() === 'State' || lbl.innerText.trim() === '\u0930\u093E\u091C\u094D\u092F')) {{
-                box = boxes[i]; break;
-            }}
-        }}
-        if (!box) {{ console.warn('State selectbox not found'); return; }}
-        // Click to open dropdown
-        var control = box.querySelector('[class*="control"]') || box.querySelector('[aria-haspopup]') || box;
-        control.click();
-        // Wait for options list to appear, then click the right one
-        setTimeout(function() {{
-            var options = doc.querySelectorAll('[class*="-option"]');
-            for (var i=0; i<options.length; i++) {{
-                if (options[i].innerText.trim() === state) {{
-                    options[i].click();
-                    return;
-                }}
-            }}
-            console.warn('Option not found:', state);
-        }}, 200);
-    }}
+
     function doGPS() {{
         var btn=document.getElementById('gb'), s=document.getElementById('gs');
         if (!navigator.geolocation) {{ s.innerText='Not supported.'; return; }}
@@ -2108,8 +2082,8 @@ def _onboarding_page() -> None:
                 s.innerText='\u2705 '+village+' · '+state;
                 // Fill the actual Village/Cluster input (placeholder "e.g. Pochampally")
                 fillByPlaceholder('e.g. Pochampally', village);
-                // Fill state selectbox
-                fillStateSelect(state);
+                // Fill state text input
+                fillByPlaceholder('e.g. Andhra Pradesh', state);
             }}).catch(function(e) {{
                 btn.disabled=false; s.innerText='Geocode error: '+e.message;
             }});
@@ -2192,14 +2166,9 @@ def _onboarding_page() -> None:
         cluster = c3.text_input(get_ui_string("onboard_cluster", lang), key="_cluster_field", placeholder="e.g. Pochampally")
         if not st.session_state.get("_cluster_field") and default_cluster:
             st.session_state["_cluster_field"] = default_cluster
-        _state_options = [
-            "Andhra Pradesh", "Bihar", "Gujarat", "Jharkhand", "Karnataka",
-            "Kerala", "Madhya Pradesh", "Maharashtra", "Odisha", "Rajasthan",
-            "Tamil Nadu", "Telangana", "Uttar Pradesh", "West Bengal", "Other"
-        ]
-        _gps_state = st.session_state.get("gps_state", "")
-        _state_index = _state_options.index(_gps_state) if _gps_state in _state_options else 0
-        state   = c4.selectbox(get_ui_string("onboard_state", lang), _state_options, index=_state_index)
+        state = c4.text_input(get_ui_string("onboard_state", lang), key="_state_field", placeholder="e.g. Andhra Pradesh")
+        if not st.session_state.get("_state_field") and st.session_state.get("gps_state", ""):
+            st.session_state["_state_field"] = st.session_state["gps_state"]
 
         st.markdown(
             f'<div class="section-label" style="margin-top:0.8rem;">{get_ui_string("onboard_craft", lang)}</div>',
