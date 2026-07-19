@@ -852,36 +852,47 @@ def _swatch_card(swatch: dict, index: int) -> None:
     border_color = "var(--accent)" if index == 0 else "var(--border-strong)"
     image_url = swatch.get("image_url", "")
 
-    # ── Split the card into three st.markdown blocks with st.image() in the middle ──
+    # ── Embed image as base64 so the entire card renders in one st.markdown call ──
     # Streamlit strips external URLs from <img> tags even with unsafe_allow_html,
-    # so we use st.image() (which fetches server-side) for the actual photo.
-
-    st.markdown(f"""
-    <div class="swatch-card" style="border:1.5px solid {border_color};padding-bottom:0;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-            <span style="background:var(--bg-card);color:var(--text-primary);padding:2px 8px;
-                border-radius:6px;font-size:0.75rem;font-weight:700;">{lbl_authentic}</span>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
+    # but a data URI is treated as inline content and always renders correctly.
     img_bytes = _fetch_image_bytes(image_url) if image_url else None
     if img_bytes:
         try:
-            st.image(img_bytes, use_container_width=True)
+            img_b64 = base64.b64encode(img_bytes).decode("utf-8")
+            # Detect mime type from magic bytes (JPEG vs PNG vs WebP)
+            if img_bytes[:2] == b'\xff\xd8':
+                mime = "image/jpeg"
+            elif img_bytes[:8] == b'\x89PNG\r\n\x1a\n':
+                mime = "image/png"
+            elif img_bytes[:4] == b'RIFF' and img_bytes[8:12] == b'WEBP':
+                mime = "image/webp"
+            else:
+                mime = "image/jpeg"
+            img_tag = (
+                f'<img src="data:{mime};base64,{img_b64}" '
+                f'style="width:100%;border-radius:8px;display:block;margin-bottom:10px;" '
+                f'alt="{esc(weave_style)}" loading="lazy">'
+            )
         except Exception:
-            img_bytes = None
-
-    if not img_bytes:
-        st.markdown(
+            img_tag = (
+                f'<div style="background:rgba(159,32,137,0.08);border:1px dashed rgba(159,32,137,0.3);'
+                f'border-radius:8px;padding:12px;font-size:0.78rem;color:var(--text-muted);'
+                f'text-align:center;margin-bottom:10px;">{lbl_placeholder}</div>'
+            )
+    else:
+        img_tag = (
             f'<div style="background:rgba(159,32,137,0.08);border:1px dashed rgba(159,32,137,0.3);'
             f'border-radius:8px;padding:12px;font-size:0.78rem;color:var(--text-muted);'
-            f'text-align:center;">{lbl_placeholder}</div>',
-            unsafe_allow_html=True,
+            f'text-align:center;margin-bottom:10px;">{lbl_placeholder}</div>'
         )
 
     st.markdown(f"""
-    <div class="swatch-card" style="border:1.5px solid {border_color};border-top:none;padding-top:8px;">
+    <div class="swatch-card" style="border:1.5px solid {border_color};">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span style="background:var(--bg-card);color:var(--text-primary);padding:2px 8px;
+                border-radius:6px;font-size:0.75rem;font-weight:700;">{lbl_authentic}</span>
+        </div>
+        {img_tag}
         <div style="font-weight:800;font-size:1.05rem;color:var(--text-primary);
             margin-bottom:2px;">{esc(weave_style)}</div>
         <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:6px;">
