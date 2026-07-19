@@ -931,84 +931,73 @@ def _buyer_page() -> None:
     _init_buyer_state()
     lang = st.session_state.get("language", "en")
 
-    st.markdown(
-        f'<div class="trust-banner">{get_ui_string("trust_banner", lang)}</div>',
-        unsafe_allow_html=True,
-    )
+    # ---------------------------------------------------------------------------
+    # FIX: Clear user input on next run if flag is set
+    # ---------------------------------------------------------------------------
+    if st.session_state.get("clear_user_input", False):
+        st.session_state["user_input"] = ""
+        st.session_state["clear_user_input"] = False
+
+    st.markdown(f'<div class="trust-banner">{get_ui_string("trust_banner", lang)}</div>', unsafe_allow_html=True)
 
     if st.session_state.get("agent_thinking"):
-        st.markdown(
-            f'<div style="background:rgba(159,32,137,0.12);border-left:4px solid var(--accent);'
-            f'padding:0.8rem 1rem;border-radius:0 8px 8px 0;font-size:0.90rem;font-weight:600;'
-            f'color:var(--text-primary);margin-bottom:0.8rem;">'
-            f'{get_ui_string("agent_thinking", lang)}</div>',
-            unsafe_allow_html=True,
-        )
+        st.markdown(f'<div style="background:rgba(159,32,137,0.12);border-left:4px solid var(--accent);padding:0.8rem 1rem;border-radius:0 8px 8px 0;font-size:0.90rem;font-weight:600;color:var(--text-primary);margin-bottom:0.8rem;">{get_ui_string("agent_thinking", lang)}</div>', unsafe_allow_html=True)
 
     buyer_orders = st.session_state.get("buyer_orders", [])
     if buyer_orders:
-        with st.expander(
-            f"{get_ui_string('section_orders', lang)} ({len(buyer_orders)})",
-            expanded=True,
-        ):
+        with st.expander(f"{get_ui_string('section_orders', lang)} ({len(buyer_orders)})", expanded=True):
+            # Iterate over a snapshot to allow safe mutation
             for bo in list(buyer_orders):
                 status = bo.get("status", "In Production")
                 color = {
-                    "In Production":              "var(--warning)",
-                    "Awaiting Approval":          "var(--accent)",
-                    "Completed":                  "#038D63",
+                    "In Production": "var(--warning)",
+                    "Awaiting Approval": "var(--accent)",
+                    "Completed": "#038D63",
                     "Photo Sent — Awaiting Approval": "var(--accent)",
                 }.get(status, "var(--text-muted)")
-
-                status_key_map = {
-                    "In Production":                  "order_status_production",
-                    "Awaiting Approval":              "order_status_approval",
-                    "Completed":                      "order_status_completed",
-                    "Photo Sent — Awaiting Approval": "order_status_photo_sent",
-                }
-                status_label = get_ui_string(status_key_map.get(status, ""), lang) or status
                 needs_approval = status in ("Awaiting Approval", "Photo Sent — Awaiting Approval")
 
+                if status == "In Production":
+                    status_label = get_ui_string("order_status_production", lang)
+                elif status == "Awaiting Approval":
+                    status_label = get_ui_string("order_status_approval", lang)
+                elif status == "Completed":
+                    status_label = get_ui_string("order_status_completed", lang)
+                elif status == "Photo Sent — Awaiting Approval":
+                    status_label = get_ui_string("order_status_photo_sent", lang)
+                else:
+                    status_label = status
+
                 st.markdown(f"""
-                <div style="background:var(--bg-surface);border:1px solid var(--border-strong);
-                    border-radius:10px;padding:1rem;margin-bottom:0.5rem;">
-                    <div style="display:flex;justify-content:space-between;
-                        align-items:flex-start;flex-wrap:wrap;gap:0.5rem;">
+                <div style="background:var(--bg-surface);border:1px solid var(--border-strong);border-radius:10px;padding:1rem;margin-bottom:0.5rem;">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;">
                         <div>
-                            <div style="font-weight:800;font-size:1rem;color:var(--text-primary);">
-                                {bo["weave_style"]} · {bo["color"]}
-                            </div>
-                            <div style="font-size:0.80rem;color:var(--text-muted);">
-                                #{bo["order_id"]} · {'कारीगर' if lang=='hi' else 'Artisan'}: {bo["weaver_name"]} · ₹{int(bo["price"]):,}
-                            </div>
+                            <div style="font-weight:800;font-size:1rem;color:var(--text-primary);">{bo["weave_style"]} · {bo["color"]}</div>
+                            <div style="font-size:0.80rem;color:var(--text-muted);">#{bo["order_id"]} · Artisan: {bo["weaver_name"]} · ₹{int(bo["price"]):,}</div>
                         </div>
-                        <div style="background:rgba(0,0,0,0.05);padding:4px 12px;border-radius:999px;
-                            font-size:0.75rem;font-weight:700;color:{color};">{status_label}</div>
+                        <div style="background:rgba(0,0,0,0.05);padding:4px 12px;border-radius:999px;font-size:0.75rem;font-weight:700;color:{color};">{status_label}</div>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
 
+                # Show uploaded photo bytes if present, otherwise show placeholder
                 photo_bytes = bo.get("photo_bytes")
                 if photo_bytes and isinstance(photo_bytes, (bytes, bytearray)):
-                    st.image(photo_bytes, caption=f"{'प्रगति फोटो' if lang=='hi' else 'Progress photo'} — #{bo['order_id']}", width=280)
+                    st.image(photo_bytes, caption=f"Progress photo — #{bo['order_id']}", width=280)
                 elif bo.get("photo_path"):
+                    # photo_path is a filename (no bytes stored) — show placeholder
                     st.markdown(
-                        f'<div style="background:rgba(159,32,137,0.08);border:1px dashed rgba(159,32,137,0.3);'
-                        f'border-radius:8px;padding:10px;font-size:0.78rem;color:var(--text-muted);'
-                        f'text-align:center;margin:6px 0;">{get_ui_string("photo_sent", lang)}</div>',
+                        '<div style="background:rgba(159,32,137,0.08);border:1px dashed rgba(159,32,137,0.3);'
+                        'border-radius:8px;padding:10px;font-size:0.78rem;color:var(--text-muted);'
+                        'text-align:center;margin:6px 0;">📸 Fabric photo received — preview not available in demo mode</div>',
                         unsafe_allow_html=True,
                     )
 
                 if needs_approval:
                     st.markdown(f"""
-                    <div style="background:rgba(159,32,137,0.08);border:2px solid var(--accent);
-                        border-radius:12px;padding:1rem;margin:0.6rem 0;">
-                        <div style="font-weight:700;font-size:0.95rem;color:var(--text-primary);margin-bottom:4px;">
-                            {get_ui_string("fabric_ready", lang)}
-                        </div>
-                        <div style="font-size:0.82rem;color:var(--text-muted);">
-                            {get_ui_string("fabric_ready_desc", lang)}
-                        </div>
+                    <div style="background:rgba(159,32,137,0.08);border:2px solid var(--accent);border-radius:12px;padding:1rem;margin:0.6rem 0;">
+                        <div style="font-weight:700;font-size:0.95rem;color:var(--text-primary);margin-bottom:4px;">Your fabric is ready for review</div>
+                        <div style="font-size:0.82rem;color:var(--text-muted);">The artisan has finished weaving. Approve to ship or reject to move it to the One of a Kind resale outlet at 65% of the original price.</div>
                     </div>
                     """, unsafe_allow_html=True)
                     a1, a2, _ = st.columns([1, 1, 2])
@@ -1018,20 +1007,21 @@ def _buyer_page() -> None:
                             for wo in st.session_state.get("weaver_orders", []):
                                 if wo["order_id"] == bo["order_id"]:
                                     wo["status"] = "completed"
-                            st.success(get_ui_string("common_approved", lang).format(weaver=bo.get("weaver_name", "—")))
+                            st.success(get_ui_string("common_approved", lang).format(weaver=bo["weaver_name"]))
                             st.rerun()
                             return
                     with a2:
                         if st.button(get_ui_string("btn_reject", lang), key=f"rej_{bo['order_id']}", use_container_width=True):
                             st.session_state.setdefault("one_of_a_kind", []).append({
-                                "order_id":       bo.get("order_id","—"),
-                                "weave_style":    bo.get("weave_style","—"),
-                                "color":          bo.get("color","—"),
-                                "original_price": bo.get("price",0),
-                                "resale_price":   int(bo.get("price",0) * 0.65),
-                                "weaver_name":    bo.get("weaver_name","—"),
-                                "reason":         "Buyer rejected final fabric",
+                                "order_id": bo["order_id"],
+                                "weave_style": bo["weave_style"],
+                                "color": bo["color"],
+                                "original_price": bo["price"],
+                                "resale_price": int(bo["price"] * 0.65),
+                                "weaver_name": bo["weaver_name"],
+                                "reason": "Buyer rejected final fabric",
                             })
+                            # Safe removal by order_id, not object reference
                             st.session_state["buyer_orders"] = [
                                 o for o in st.session_state["buyer_orders"]
                                 if o["order_id"] != bo["order_id"]
@@ -1046,14 +1036,15 @@ def _buyer_page() -> None:
                 if status == "In Production":
                     if st.button(get_ui_string("btn_cancel_order", lang), key=f"cancel_{bo['order_id']}", use_container_width=True):
                         st.session_state.setdefault("one_of_a_kind", []).append({
-                            "order_id":       bo.get("order_id","—"),
-                            "weave_style":    bo.get("weave_style","—"),
-                            "color":          bo.get("color","—"),
-                            "original_price": bo.get("price",0),
-                            "resale_price":   int(bo.get("price",0) * 0.65),
-                            "weaver_name":    bo.get("weaver_name","—"),
-                            "reason":         "Buyer cancelled before production",
+                            "order_id": bo["order_id"],
+                            "weave_style": bo["weave_style"],
+                            "color": bo["color"],
+                            "original_price": bo["price"],
+                            "resale_price": int(bo["price"] * 0.65),
+                            "weaver_name": bo["weaver_name"],
+                            "reason": "Buyer cancelled before production",
                         })
+                        # Safe removal by order_id
                         st.session_state["buyer_orders"] = [
                             o for o in st.session_state["buyer_orders"]
                             if o["order_id"] != bo["order_id"]
@@ -1071,19 +1062,11 @@ def _buyer_page() -> None:
     with col_panel:
         swatches = st.session_state.get("swatches", [])
         if swatches:
-            st.markdown(
-                f'<div class="section-label">{get_ui_string("section_swatches", lang)}</div>',
-                unsafe_allow_html=True,
-            )
+            st.markdown(f'<div class="section-label">{get_ui_string("section_swatches", lang)}</div>', unsafe_allow_html=True)
             for i, sw in enumerate(swatches[:3]):
                 _swatch_card(sw, i)
                 if st.session_state["current_state"] == "retrieved":
-                    btn_label = (
-                        f"{get_ui_string('btn_select', lang)} {i+1}"
-                        if lang == "en"
-                        else f"{get_ui_string('btn_select', lang)} {i+1}"
-                    )
-                    if st.button(btn_label, key=f"sel_{i}", use_container_width=True):
+                    if st.button(f"{get_ui_string('btn_select', lang)} {i+1}", key=f"sel_{i}", use_container_width=True):
                         _send(str(i + 1))
                         st.rerun()
                         return
@@ -1099,7 +1082,7 @@ def _buyer_page() -> None:
             bubbles = ""
             for role, text in st.session_state["history"]:
                 cls = "bubble-agent" if role == "agent" else "bubble-user"
-                text_escaped = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+                text_escaped = text.replace("<", "&lt;").replace(">", "&gt;")
                 bubbles += f'<div class="{cls}">{text_escaped}</div>'
             st.markdown(f'<div class="chat-wrap">{bubbles}</div>', unsafe_allow_html=True)
 
@@ -1127,8 +1110,7 @@ def _buyer_page() -> None:
         elif cur in ("confirmed", "failed"):
             if st.button(get_ui_string("btn_new_search", lang), use_container_width=True):
                 for k in list(st.session_state.keys()):
-                    if k not in ("one_of_a_kind", "buyer_orders", "weaver_orders", "weaver_id",
-                                 "min_base_price", "audio_work_mode", "custom_weavers", "language"):
+                    if k not in ("one_of_a_kind", "buyer_orders", "weaver_orders", "weaver_id", "min_base_price", "audio_work_mode", "custom_weavers", "language"):
                         del st.session_state[k]
                 st.rerun()
                 return
@@ -1139,28 +1121,21 @@ def _buyer_page() -> None:
                 st.rerun()
                 return
 
-            # ── AUDIO INPUT ──
-            st.markdown(
-                f'<div class="section-label">{get_ui_string("onboard_speak", lang)}</div>',
-                unsafe_allow_html=True,
-            )
+            # ---- BUYER AUDIO INPUT (with hash guard) ----
+            st.markdown(f'<div class="section-label">{get_ui_string("onboard_speak", lang)}</div>', unsafe_allow_html=True)
             audio_file = st.audio_input("Record", label_visibility="collapsed", key="pakshi_buyer_audio")
             if audio_file is not None:
                 _b_hash = hash(bytes(audio_file.getbuffer()))
                 if st.session_state.get("last_buyer_audio_hash") != _b_hash:
                     st.session_state["last_buyer_audio_hash"] = _b_hash
-                    with st.spinner(get_ui_string("transcribing", lang)):
+                    with st.spinner("Transcribing..."):
                         text, err = _transcribe_audio(audio_file)
                     if err:
                         st.warning(err)
                     else:
                         t = text.lower().strip()
-                        nmap = {
-                            "one": "1", "two": "2", "three": "3",
-                            "first": "1", "second": "2", "third": "3",
-                            "ek": "1", "do": "2", "teen": "3",
-                            "pehla": "1", "doosra": "2", "teesra": "3",
-                        }
+                        nmap = {"one":"1","two":"2","three":"3","first":"1","second":"2","third":"3",
+                                "ek":"1","do":"2","teen":"3","pehla":"1","doosra":"2","teesra":"3"}
                         if t in nmap and cur == "retrieved":
                             _send(nmap[t])
                         elif _is_correction(t) and cur == "retrieved":
@@ -1170,20 +1145,19 @@ def _buyer_page() -> None:
                     st.rerun()
                     return
 
-            # ── TEXT INPUT ──
-            st.text_input(
-                get_ui_string("type_message", lang),
-                key="user_input",
-                label_visibility="collapsed",
-            )
-            if st.button(get_ui_string("send_btn", lang), key="send_btn", use_container_width=True):
+            # ---- STABLE TEXT INPUT ----
+            st.text_input("Type your message...", key="user_input", label_visibility="collapsed")
+            if st.button(get_ui_string("btn_select", lang), key="send_btn", use_container_width=True):
                 ui = st.session_state.get("user_input", "").strip()
                 if ui:
                     if cur == "retrieved" and not _is_number_selection(ui):
                         _send(ui, force_new_search=True)
                     else:
                         _send(ui)
-                    st.session_state["user_input"] = ""
+                    # -----------------------------------------------------------------------
+                    # FIX: set a flag to clear the input on the next run (instead of assigning now)
+                    # -----------------------------------------------------------------------
+                    st.session_state["clear_user_input"] = True
                     st.rerun()
                     return
 
