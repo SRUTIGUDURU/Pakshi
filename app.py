@@ -1729,7 +1729,10 @@ def _ooak_page() -> None:
             if st.button(buy_label, key=f"buy_{item.get('order_id',idx)}_{idx}", use_container_width=True):
                 added_msg = get_ui_string("order_added", lang)
                 st.success(f"#{item.get('order_id','')} {added_msg}")
-# :::::::::::::::::::::::::::::::::::::::::::::::;;
+
+# ---------------------------------------------------------------------------
+# WEAVER ONBOARDING PAGE
+# ---------------------------------------------------------------------------
 def _onboarding_page() -> None:
 
     def _parse_onboarding_text(text: str) -> dict:
@@ -1754,7 +1757,7 @@ def _onboarding_page() -> None:
             "चंदेरी": "chanderi", "महेश्वरी": "maheshwari",
             "पैठणी": "paithani", "पटोला": "patola",
             "कोटा डोरिया": "kota doria", "संबलपुरी": "sambalpuri",
-            "इलकल": "ilkal", "वेंकटागिरी": "venkatagिरि",
+            "इलकल": "ilkal", "वेंकटागिरी": "venkatagiri",
             "जरी": "zari", "कसावु": "kasavu"
         }
         result = {"name": "", "cluster": "", "specialty": "", "phone": ""}
@@ -1881,22 +1884,6 @@ def _onboarding_page() -> None:
 
     # ── end parser ──
 
-    # ---------- Helper: IP-based location fallback ----------
-    def _get_location_from_ip() -> dict:
-        """Return {'cluster': city, 'state': region} from IP geolocation."""
-        try:
-            resp = requests.get('https://ipapi.co/json/', timeout=5)
-            if resp.status_code == 200:
-                data = resp.json()
-                city = data.get('city', '')
-                region = data.get('region', '')
-                if city and region:
-                    return {'cluster': city.title(), 'state': region}
-        except Exception:
-            pass
-        return {}
-
-    # ---------- Page setup ----------
     lang = st.session_state.get("language", "en")
     st.markdown(
         f'<div class="section-label">{get_ui_string("onboard_title", lang)}</div>',
@@ -1914,8 +1901,6 @@ def _onboarding_page() -> None:
         ("onboard_submitted", False), ("onboard_data", {}),
         ("reg_name", ""), ("reg_cluster", ""), ("reg_specialty", ""),
         ("reg_phone", ""), ("last_reg_audio_hash", None),
-        ("gps_place", ""), ("gps_state", ""), ("gps_coords", ""),
-        ("_last_gps_key", ""),
     ]:
         if key not in st.session_state:
             st.session_state[key] = default
@@ -1956,101 +1941,54 @@ def _onboarding_page() -> None:
             st.rerun()
         return
 
-    # ---------- GPS button (labelled "Give Location") ----------
-    if st.button("Give Location", use_container_width=False, key="btn_give_location"):
+    # GPS
+    if st.button(get_ui_string("onboard_gps", lang), use_container_width=False):
         gps_js = """
         <script>
-        (function() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    function(pos) {
-                        var url = new URL(window.location.href);
-                        url.searchParams.set('lat', pos.coords.latitude);
-                        url.searchParams.set('lon', pos.coords.longitude);
-                        window.location.replace(url.toString());
-                    },
-                    function(err) {
-                        window.location.reload();
-                    }
-                );
-            } else {
-                window.location.reload();
-            }
-        })();
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('lat', pos.coords.latitude);
+                    url.searchParams.set('lon', pos.coords.longitude);
+                    window.location.href = url.toString();
+                },
+                (err) => alert('GPS error: ' + err.message)
+            );
+        } else { alert('Geolocation not supported.'); }
         </script>
         """
-        st.components.v1.html(gps_js, height=0, width=0)
+        st.iframe(gps_js, height=0, width=0)
 
-    # ---------- Process location data (GPS first, then IP) ----------
     try:
         lat = st.query_params.get("lat")
         lon = st.query_params.get("lon")
         if isinstance(lat, list): lat = lat[0] if lat else None
         if isinstance(lon, list): lon = lon[0] if lon else None
-        lat = lat if lat else None
-        lon = lon if lon else None
     except Exception:
         lat = lon = None
 
-    # If we have GPS coords, reverse geocode
     if lat and lon:
-        gps_key = f"{lat},{lon}"
-        # Prevent re-processing the same coordinates in a loop
-        if st.session_state.get("_last_gps_key") != gps_key:
-            st.session_state["_last_gps_key"] = gps_key
-            st.session_state["gps_coords"] = gps_key
-            try:
-                resp = requests.get(
-                    f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}&format=json&zoom=10",
-                    headers={"User-Agent": "Pakshi-Hackathon"}, timeout=10,
-                )
-                if resp.status_code == 200:
-                    data = resp.json()
-                    address = data.get("address", {})
-                    village = (
-                        address.get("village")
-                        or address.get("town")
-                        or address.get("city")
-                        or address.get("hamlet")
-                        or address.get("locality")
-                        or address.get("county")
-                        or ""
-                    )
-                    if village:
-                        st.session_state["gps_place"] = village.strip().title()
-                    state = address.get("state", "")
-                    if state:
-                        st.session_state["gps_state"] = state
-            except Exception:
-                pass
-
-        # Remove params to avoid reprocessing
+        st.session_state["gps_coords"] = f"{lat}, {lon}"
         try:
-            if "lat" in st.query_params:
-                del st.query_params["lat"]
-            if "lon" in st.query_params:
-                del st.query_params["lon"]
+            resp = requests.get(
+                f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}&format=json&zoom=10",
+                headers={"User-Agent": "Pakshi-Hackathon"}, timeout=10,
+            )
+            if resp.status_code == 200:
+                data = resp.json()
+                if "display_name" in data:
+                    st.session_state["gps_place"] = data["display_name"].split(",")[0].strip()
+        except Exception:
+            pass
+        try:
+            if "lat" in st.query_params: del st.query_params["lat"]
+            if "lon" in st.query_params: del st.query_params["lon"]
         except Exception:
             pass
         st.rerun()
 
-    # If GPS didn't give a location, try IP fallback (only once)
-    if not st.session_state.get("gps_place") and not st.session_state.get("gps_state"):
-        ip_loc = _get_location_from_ip()
-        if ip_loc:
-            st.session_state["gps_place"] = ip_loc.get("cluster", "")
-            st.session_state["gps_state"] = ip_loc.get("state", "")
-
-    # Show GPS status indicator
-    gps_place = st.session_state.get("gps_place", "")
-    gps_state = st.session_state.get("gps_state", "")
-    if gps_place or gps_state:
-        loc_parts = [p for p in [gps_place, gps_state] if p]
-        st.success(
-            f"{'स्थान का पता चला' if lang == 'hi' else 'Location detected'}: {', '.join(loc_parts)}"
-        )
-
-    # ---------- Voice fill (unchanged) ----------
+    # Voice fill
     speak_hint_en = "Please say your name, village, weave style, and phone number."
     speak_hint_hi = "कृपया अपना नाम, गाँव, बुनाई शैली और फोन नंबर बोलें।"
     example_en = '"My name is Shruti, I am from Pochampally, I do Ikat, my number is 9876543210"'
@@ -2107,7 +2045,6 @@ def _onboarding_page() -> None:
                     st.warning(no_extract)
             st.rerun()
 
-    # ---------- The onboarding form (unchanged) ----------
     with st.form("onboard_form"):
         st.markdown(
             f'<div class="section-label">{get_ui_string("onboard_basic", lang)}</div>',
@@ -2119,16 +2056,11 @@ def _onboarding_page() -> None:
         phone   = c2.text_input(get_ui_string("onboard_phone", lang),   value=st.session_state.get("reg_phone", ""),   placeholder="10-digit number")
         c3, c4  = st.columns(2)
         cluster = c3.text_input(get_ui_string("onboard_cluster", lang),  value=default_cluster, placeholder="e.g. Pochampally")
-
-        # State dropdown with automatic selection from GPS or IP
-        state_options = [
+        state   = c4.selectbox(get_ui_string("onboard_state", lang), [
             "Andhra Pradesh", "Bihar", "Gujarat", "Jharkhand", "Karnataka",
             "Kerala", "Madhya Pradesh", "Maharashtra", "Odisha", "Rajasthan",
             "Tamil Nadu", "Telangana", "Uttar Pradesh", "West Bengal", "Other"
-        ]
-        gps_state = st.session_state.get("gps_state", "")
-        default_state_index = state_options.index(gps_state) if gps_state in state_options else 0
-        state = c4.selectbox(get_ui_string("onboard_state", lang), state_options, index=default_state_index)
+        ])
 
         st.markdown(
             f'<div class="section-label" style="margin-top:0.8rem;">{get_ui_string("onboard_craft", lang)}</div>',
@@ -2201,6 +2133,7 @@ def _onboarding_page() -> None:
                 }
                 st.session_state["onboard_submitted"] = True
                 st.rerun()
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
