@@ -2039,6 +2039,20 @@ def _onboarding_page() -> None:
     gps_denied = ("अनुमति अस्वीकृत। ब्राउज़र में लोकेशन चालू करें।"
                   if lang == "hi"
                   else "Permission denied — allow location in browser.")
+    # GPS: iframe gets location + geocodes client-side, then fills hidden st.text_inputs
+    # by finding their DOM <input> elements and firing React synthetic change events.
+    # This works on Streamlit Cloud where all window.top/parent navigation is CSP-blocked.
+    gps_receiver = st.text_input("gps_place_hidden", key="gps_place_raw", label_visibility="collapsed")
+    gps_state_receiver = st.text_input("gps_state_hidden", key="gps_state_raw", label_visibility="collapsed")
+
+    if st.session_state.get("gps_place_raw") and st.session_state["gps_place_raw"] != st.session_state.get("gps_place_raw_prev", ""):
+        st.session_state["gps_place"] = st.session_state["gps_place_raw"]
+        st.session_state["_cluster_field"] = st.session_state["gps_place_raw"]
+        st.session_state["gps_place_raw_prev"] = st.session_state["gps_place_raw"]
+    if st.session_state.get("gps_state_raw") and st.session_state["gps_state_raw"] != st.session_state.get("gps_state_raw_prev", ""):
+        st.session_state["gps_state"] = st.session_state["gps_state_raw"]
+        st.session_state["gps_state_raw_prev"] = st.session_state["gps_state_raw"]
+
     st.iframe(f"""<!DOCTYPE html><html><body style="margin:0;padding:4px;background:transparent;">
     <button id="gb" onclick="doGPS()" style="background:#9F2089;color:#fff;border:none;
         border-radius:8px;padding:0.45rem 1.1rem;font-size:0.9rem;font-weight:700;cursor:pointer;">
@@ -2053,6 +2067,24 @@ def _onboarding_page() -> None:
         "rajasthan":"Rajasthan","tamil nadu":"Tamil Nadu","telangana":"Telangana",
         "uttar pradesh":"Uttar Pradesh","west bengal":"West Bengal"
     }};
+    function setStreamlitInput(labelText, value) {{
+        // Find all input elements in parent document, match by aria-label or placeholder
+        var inputs = window.parent.document.querySelectorAll('input[type="text"]');
+        for (var i=0; i<inputs.length; i++) {{
+            var inp = inputs[i];
+            if (inp.getAttribute('aria-label') === labelText ||
+                inp.closest('[data-testid="stTextInput"]') &&
+                inp.closest('[data-testid="stTextInput"]').querySelector('label') &&
+                inp.closest('[data-testid="stTextInput"]').querySelector('label').innerText.trim() === labelText) {{
+                var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.parent.HTMLInputElement.prototype, 'value').set;
+                nativeInputValueSetter.call(inp, value);
+                inp.dispatchEvent(new window.parent.Event('input', {{ bubbles: true }}));
+                inp.dispatchEvent(new window.parent.Event('change', {{ bubbles: true }}));
+                return true;
+            }}
+        }}
+        return false;
+    }}
     function doGPS() {{
         var btn=document.getElementById('gb'), s=document.getElementById('gs');
         if (!navigator.geolocation) {{ s.innerText='Not supported.'; return; }}
@@ -2065,18 +2097,13 @@ def _onboarding_page() -> None:
             .then(r=>r.json()).then(function(d) {{
                 var a=d.address||{{}};
                 var village=a.village||a.hamlet||a.neighbourhood||a.suburb||a.town||a.city||(d.display_name||'').split(',')[0];
+                village = village.trim();
                 var rawState=(a.state||'').toLowerCase();
                 var state=STATE_MAP[rawState]||'Other';
-                s.innerText='\u2705 '+village;
-                try {{
-                    var url=new URL(window.top.location.href);
-                    url.searchParams.set('gps_place',village.trim());
-                    url.searchParams.set('gps_state',state);
-                    window.top.location.href=url.toString();
-                }} catch(ex) {{
-                    // fallback: postMessage if window.top blocked
-                    window.parent.postMessage({{type:'pakshi_gps',place:village.trim(),state:state}},'*');
-                }}
+                s.innerText='\u2705 '+village+' · '+state;
+                // Fill the hidden receiver inputs via React synthetic events
+                setStreamlitInput('gps_place_hidden', village);
+                setTimeout(function() {{ setStreamlitInput('gps_state_hidden', state); }}, 300);
             }}).catch(function(e) {{
                 btn.disabled=false; s.innerText='Geocode error: '+e.message;
             }});
