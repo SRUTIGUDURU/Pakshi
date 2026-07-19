@@ -2170,22 +2170,23 @@ def _onboarding_page() -> None:
                     st.warning(no_extract)
             st.rerun()
 
+    # Pre-fill cluster/state BEFORE the form renders so value= picks them up
+    _pre_cluster = (st.session_state.get("gps_place", "")
+                    or st.session_state.get("reg_cluster", ""))
+    _pre_state   = (st.session_state.get("gps_state", "")
+                    or st.session_state.get("reg_state", ""))
+
     with st.form("onboard_form"):
         st.markdown(
             f'<div class="section-label">{get_ui_string("onboard_basic", lang)}</div>',
             unsafe_allow_html=True,
         )
         c1, c2 = st.columns(2)
-        default_cluster = st.session_state.get("gps_place", "") or st.session_state.get("reg_cluster", "")
         name    = c1.text_input(get_ui_string("onboard_name", lang),    value=st.session_state.get("reg_name", ""),    placeholder="e.g. Padmavathi Devi")
         phone   = c2.text_input(get_ui_string("onboard_phone", lang),   value=st.session_state.get("reg_phone", ""),   placeholder="10-digit number")
         c3, c4  = st.columns(2)
-        cluster = c3.text_input(get_ui_string("onboard_cluster", lang), key="_cluster_field", placeholder="e.g. Pochampally")
-        if not st.session_state.get("_cluster_field") and default_cluster:
-            st.session_state["_cluster_field"] = default_cluster
-        state = c4.text_input(get_ui_string("onboard_state", lang), key="_state_field", placeholder="e.g. Andhra Pradesh")
-        if not st.session_state.get("_state_field") and st.session_state.get("gps_state", ""):
-            st.session_state["_state_field"] = st.session_state["gps_state"]
+        cluster = c3.text_input(get_ui_string("onboard_cluster", lang), value=_pre_cluster, placeholder="e.g. Pochampally")
+        state   = c4.text_input(get_ui_string("onboard_state", lang),   value=_pre_state,   placeholder="e.g. Andhra Pradesh")
 
         st.markdown(
             f'<div class="section-label" style="margin-top:0.8rem;">{get_ui_string("onboard_craft", lang)}</div>',
