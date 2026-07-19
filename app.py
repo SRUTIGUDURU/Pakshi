@@ -2015,99 +2015,68 @@ def _onboarding_page() -> None:
             st.rerun()
         return
 
-    # GPS — st.iframe sets allow="geolocation" on the iframe unlike st.html
-    # which is fully sandboxed. On success redirect window.parent with lat/lon query params.
+    # GPS — iframe does geolocation + Nominatim fetch entirely client-side, then
+    # postMessages village+state back to parent. Parent catches via st.query_params
+    # written by a ?gps_place=...&gps_state=... redirect — one fast reload, no server geocode.
     gps_label  = get_ui_string("onboard_gps", lang)
     gps_wait   = "स्थान मिल रहा है..." if lang == "hi" else "Getting location..."
     gps_denied = ("अनुमति अस्वीकृत। ब्राउज़र में लोकेशन चालू करें।"
                   if lang == "hi"
-                  else "Permission denied — allow location in browser settings.")
+                  else "Permission denied — allow location in browser.")
     st.iframe(f"""<!DOCTYPE html><html><body style="margin:0;padding:4px;background:transparent;">
-    <button id="gps-btn" onclick="getGPS()" style="
-        background:#9F2089;color:#fff;border:none;border-radius:8px;
-        padding:0.45rem 1.1rem;font-size:0.9rem;font-weight:700;cursor:pointer;">
+    <button id="gb" onclick="doGPS()" style="background:#9F2089;color:#fff;border:none;
+        border-radius:8px;padding:0.45rem 1.1rem;font-size:0.9rem;font-weight:700;cursor:pointer;">
         \U0001f4cd {gps_label}
     </button>
-    <span id="gps-st" style="margin-left:0.7rem;font-size:0.8rem;color:#888;"></span>
+    <span id="gs" style="margin-left:0.7rem;font-size:0.8rem;color:#888;"></span>
     <script>
-    function getGPS() {{
-        var btn = document.getElementById('gps-btn');
-        var s   = document.getElementById('gps-st');
+    const STATE_MAP = {{
+        "andhra pradesh":"Andhra Pradesh","bihar":"Bihar","gujarat":"Gujarat",
+        "jharkhand":"Jharkhand","karnataka":"Karnataka","kerala":"Kerala",
+        "madhya pradesh":"Madhya Pradesh","maharashtra":"Maharashtra","odisha":"Odisha",
+        "rajasthan":"Rajasthan","tamil nadu":"Tamil Nadu","telangana":"Telangana",
+        "uttar pradesh":"Uttar Pradesh","west bengal":"West Bengal"
+    }};
+    function doGPS() {{
+        var btn=document.getElementById('gb'), s=document.getElementById('gs');
         if (!navigator.geolocation) {{ s.innerText='Not supported.'; return; }}
-        btn.disabled = true; s.innerText = '{gps_wait}';
-        navigator.geolocation.getCurrentPosition(
-            function(pos) {{
-                var url = new URL(window.parent.location.href);
-                url.searchParams.set('lat', pos.coords.latitude);
-                url.searchParams.set('lon', pos.coords.longitude);
-                window.parent.location.href = url.toString();
-            }},
-            function(err) {{
-                btn.disabled = false;
-                s.innerText = err.code===1 ? '{gps_denied}' : 'Error: '+err.message;
-            }},
-            {{enableHighAccuracy:true, timeout:10000, maximumAge:0}}
-        );
+        btn.disabled=true; s.innerText='{gps_wait}';
+        navigator.geolocation.getCurrentPosition(function(pos) {{
+            var lat=pos.coords.latitude, lon=pos.coords.longitude;
+            s.innerText='Fetching address...';
+            fetch('https://nominatim.openstreetmap.org/reverse?lat='+lat+'&lon='+lon+'&format=json&zoom=14&addressdetails=1',
+                {{headers:{{'User-Agent':'Pakshi-App'}}}})
+            .then(r=>r.json()).then(function(d) {{
+                var a=d.address||{{}};
+                var village=a.village||a.hamlet||a.neighbourhood||a.suburb||a.town||a.city||(d.display_name||'').split(',')[0];
+                var rawState=(a.state||'').toLowerCase();
+                var state=STATE_MAP[rawState]||'Other';
+                var url=new URL(window.parent.location.href);
+                url.searchParams.set('gps_place', village.trim());
+                url.searchParams.set('gps_state', state);
+                s.innerText='\u2705 '+village;
+                window.parent.location.href=url.toString();
+            }}).catch(function(e) {{
+                btn.disabled=false; s.innerText='Geocode error: '+e.message;
+            }});
+        }}, function(err) {{
+            btn.disabled=false;
+            s.innerText=err.code===1?'{gps_denied}':'Error: '+err.message;
+        }}, {{enableHighAccuracy:true,timeout:8000,maximumAge:0}});
     }}
     </script></body></html>""", height=55)
 
-
-    try:
-        lat = st.query_params.get("lat")
-        lon = st.query_params.get("lon")
-        if isinstance(lat, list): lat = lat[0] if lat else None
-        if isinstance(lon, list): lon = lon[0] if lon else None
-    except Exception:
-        lat = lon = None
-
-    if lat and lon:
-        st.session_state["gps_coords"] = f"{lat}, {lon}"
+    # Catch GPS result from query params (set by iframe redirect above)
+    gps_place_param = st.query_params.get("gps_place")
+    gps_state_param = st.query_params.get("gps_state")
+    if gps_place_param:
+        st.session_state["gps_place"] = gps_place_param
+        if gps_state_param:
+            st.session_state["gps_state"] = gps_state_param
         try:
-            resp = requests.get(
-                f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}&format=json&zoom=14&addressdetails=1",
-                headers={"User-Agent": "Pakshi-Handloom-App"}, timeout=10,
-            )
-            if resp.status_code == 200:
-                data = resp.json()
-                addr = data.get("address", {})
-                # Extract the most specific locality name (village > suburb > town > city)
-                village = (
-                    addr.get("village")
-                    or addr.get("hamlet")
-                    or addr.get("neighbourhood")
-                    or addr.get("suburb")
-                    or addr.get("town")
-                    or addr.get("city")
-                    or data.get("display_name", "").split(",")[0]
-                ).strip()
-                if village:
-                    st.session_state["gps_place"] = village
-                # Extract and map state to the selectbox options
-                STATE_MAP = {
-                    "andhra pradesh": "Andhra Pradesh",
-                    "bihar": "Bihar",
-                    "gujarat": "Gujarat",
-                    "jharkhand": "Jharkhand",
-                    "karnataka": "Karnataka",
-                    "kerala": "Kerala",
-                    "madhya pradesh": "Madhya Pradesh",
-                    "maharashtra": "Maharashtra",
-                    "odisha": "Odisha",
-                    "rajasthan": "Rajasthan",
-                    "tamil nadu": "Tamil Nadu",
-                    "telangana": "Telangana",
-                    "uttar pradesh": "Uttar Pradesh",
-                    "west bengal": "West Bengal",
-                }
-                raw_state = addr.get("state", "").strip()
-                matched_state = STATE_MAP.get(raw_state.lower(), "Other" if raw_state else None)
-                if matched_state:
-                    st.session_state["gps_state"] = matched_state
-        except Exception:
-            pass
-        try:
-            if "lat" in st.query_params: del st.query_params["lat"]
-            if "lon" in st.query_params: del st.query_params["lon"]
+            del st.query_params["gps_place"]
+            if "gps_state" in st.query_params:
+                del st.query_params["gps_state"]
         except Exception:
             pass
         st.rerun()
