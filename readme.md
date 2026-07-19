@@ -98,7 +98,7 @@ _Note: For voice & GPS features, allow microphone and location permissions when 
 
 bash
 
-git clone <https://github.com/your-username/pakshi.git>
+git clone <https://github.com/SRUTIGUDURU/pakshi.git>
 
 cd pakshi
 
