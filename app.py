@@ -1824,149 +1824,166 @@ def _onboarding_page() -> None:
         st.rerun()
 
     def _parse_onboarding_text(text: str) -> dict:
+        # ── Weave/fabric skill keywords (Hindi script + Romanised + STT variants) ──
+        WEAVE_MAP = {
+            # Hindi script — covers common Google STT outputs for Hindi speech
+            "इकत": "Ikat", "इकट": "Ikat", "इक्कट": "Ikat", "इकड़": "Ikat",
+            "जामदानी": "Jamdani",
+            "बनारसी": "Banarasi",
+            "कांजीवरम": "Kanjivaram", "कांचीपुरम": "Kanjivaram",
+            "पैठणी": "Paithani",
+            "चंदेरी": "Chanderi",
+            "महेश्वरी": "Maheshwari",
+            "पटोला": "Patola",
+            "संबलपुरी": "Sambalpuri",
+            "इलकल": "Ilkal",
+            "जरी": "Zari",
+            "कोटा डोरिया": "Kota Doria",
+            "वेंकटागिरी": "Venkatagiri",
+            "कसावु": "Kasavu",
+            "ब्लॉक प्रिंट": "Block Print",
+            "कलमकारी": "Kalamkari",
+            # Romanised / English (sorted longer first so multi-word matches before single-word)
+            "kota doria": "Kota Doria",
+            "block print": "Block Print", "blockprint": "Block Print",
+            "ikat": "Ikat", "ikkat": "Ikat", "ikad": "Ikat", "ikath": "Ikat",
+            "jamdani": "Jamdani",
+            "banarasi": "Banarasi", "banaras": "Banarasi", "benarasi": "Banarasi",
+            "kanjivaram": "Kanjivaram", "kanchipuram": "Kanjivaram", "kanjipuram": "Kanjivaram",
+            "paithani": "Paithani",
+            "chanderi": "Chanderi",
+            "maheshwari": "Maheshwari",
+            "patola": "Patola",
+            "sambalpuri": "Sambalpuri",
+            "ilkal": "Ilkal",
+            "zari": "Zari",
+            "venkatagiri": "Venkatagiri",
+            "kasavu": "Kasavu",
+            "kalamkari": "Kalamkari",
+            "tussar": "Tussar", "tasar": "Tussar",
+        }
+
         KNOWN_CLUSTERS = [
             "pochampally", "venkatagiri", "kanchipuram", "ilkal", "kota", "chanderi",
             "maheshwar", "dharmavaram", "mysore", "sambalpuri", "bagru", "sanganer",
-            "kutch", "kerala", "tamil nadu", "andhra pradesh", "telangana", "karnataka",
-            "rajasthan", "west bengal", "odisha", "gujarat", "maharashtra", "bihar",
-            "uttar pradesh", "varanasi", "banaras", "kashi", "paithani", "yeola",
-            "molakalmuru", "uppada", "nuapatna", "arni", "balaramapuram", "coimbatore",
-            "salem", "bishnupur", "murshidabad", "shantipur", "bhagalpur"
+            "kutch", "varanasi", "banaras", "kashi", "yeola", "molakalmuru",
+            "uppada", "nuapatna", "arni", "balaramapuram", "coimbatore", "salem",
+            "bishnupur", "murshidabad", "shantipur", "bhagalpur",
         ]
-        english_weaves = [
-            "ikat", "jamdani", "block print", "banarasi", "kanjivaram",
-            "tussar", "chanderi", "maheshwari", "paithani", "patola",
-            "kota doria", "sambalpuri", "ilkal", "venkatagiri", "zari", "kasavu"
-        ]
-        weave_map = {
-            "टिकट": "ikat", "इकट": "ikat",
-            "बनारसी": "banarasi", "कांचीपुरम": "kanjivaram",
-            "जामदानी": "jamdani", "तुस्सर": "tussar",
-            "चंदेरी": "chanderi", "महेश्वरी": "maheshwari",
-            "पैठणी": "paithani", "पटोला": "patola",
-            "कोटा डोरिया": "kota doria", "संबलपुरी": "sambalpuri",
-            "इलकल": "ilkal", "वेंकटागिरी": "venkatagiri",
-            "जरी": "zari", "कसावु": "kasavu"
+
+        # Stopwords used when doing fallback name extraction
+        STOPWORDS = {
+            # Hindi script
+            "मेरा","मेरी","मैं","नाम","है","हूं","हूँ","से","की","में","का","के",
+            "बनाती","बनाता","बुनती","बुनता","करती","करता","नंबर","मोबाइल","और",
+            # Romanised Hindi
+            "mera","meri","main","naam","hai","hoon","hun","hain","se","ki",
+            "ka","ke","banati","banata","bunti","bunta","karta","karti","aur",
+            "number","mobile","phone","no",
+            # English
+            "my","name","is","am","i","do","from","in","at","of","and","the",
+            "weave","weaver","fabric","specialty","skill","craft","saree","sari",
         }
+
         result = {"name": "", "cluster": "", "specialty": "", "phone": ""}
-        t = text.lower().strip()
-        t = re.sub(r'[.,;:!?]', ' ', t)
-        t = re.sub(r'\s+', ' ', t)
+        # Keep original case for name extraction; work on lowercase for matching
+        t_orig = re.sub(r'[.,;:!?।]', ' ', text.strip())
+        t_orig = re.sub(r'\s+', ' ', t_orig).strip()
+        t = t_orig.lower()
 
-        clean_digits = re.sub(r'\D', '', t)
-        phone_match  = re.search(r'(\d{10})', clean_digits)
-        if phone_match:
-            result["phone"] = phone_match.group(1)
+        # ── 1. Phone: 10 consecutive digits ──
+        digits_only = re.sub(r'\D', '', t)
+        phone_m = re.search(r'(\d{10})', digits_only)
+        if phone_m:
+            result["phone"] = phone_m.group(1)
 
-        for hindi, eng in weave_map.items():
-            if hindi in t:
-                result["specialty"] = eng.title()
+        # ── 2. Weave/fabric skill ──
+        # Longer keys checked first to avoid "kota" matching before "kota doria"
+        weave_found = None
+        for kw in sorted(WEAVE_MAP, key=len, reverse=True):
+            if kw in t:
+                weave_found = WEAVE_MAP[kw]
                 break
-        if not result["specialty"]:
-            for w in english_weaves:
-                if w in t:
-                    result["specialty"] = w.title()
-                    break
+        if weave_found:
+            result["specialty"] = weave_found
 
+        # ── 3. Village/cluster ──
         cluster_found = None
-        for cluster in KNOWN_CLUSTERS:
-            if cluster in t:
-                cluster_found = cluster.title()
+        for cl in KNOWN_CLUSTERS:
+            if cl in t:
+                cluster_found = cl.title()
                 break
         if cluster_found:
             result["cluster"] = cluster_found
 
-        if not result["cluster"]:
-            english_weaves_lower = [w.lower() for w in english_weaves]
-            weave_values_lower   = [v.lower() for v in weave_map.values()]
-            stopwords = {
-                "main", "mera", "my", "name", "naam", "hai", "is", "hoon", "hun",
-                "है", "मैं", "हूँ", "से", "ki", "की", "में", "ka", "का", "ke", "के",
-                "hu", "hain", "ho", "raha", "rahi", "banati", "banata", "banate",
-                "number", "phone", "mobile", "gav", "gaon", "village", "cluster",
-                "weave", "weaver", "bunkar", "karigar", "specialty", "speciality",
-                "from", "of", "in", "live", "stay", "at", "i", "am", "meri", "मेरी"
-            }
-            exclusion_set = set(stopwords) | set(english_weaves_lower) | set(weave_values_lower)
-            village_patterns = [
-                r'(?:main|mera|मैं|मेरा)\s+([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+){0,2})\s+(?:se|से)\s+(?:hun|hoon|hain|हूँ|हैं|है|raha|रहा|rahi|रही)',
-                r'([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+)?)\s+(?:gaon|गांव|village)',
-                r'(?:gaon|गांव|village)\s+([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+)?)',
-                r'(?:from|of|in)\s+([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+){0,2})',
-                r'(?:live|stay)\s+(?:in|at)\s+([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+){0,2})',
-            ]
-            for pattern in village_patterns:
-                match = re.search(pattern, t, re.IGNORECASE)
-                if match:
-                    candidate  = match.group(1).strip().lower()
-                    cand_words = [w for w in candidate.split() if w not in exclusion_set and len(w) > 2]
-                    if cand_words:
-                        result["cluster"] = " ".join(cand_words).title()
-                        break
-
-        name_found = None
-        name_markers = [
-            r'(?:mera|मेरा|my)\s+(?:naam|name)\s+([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+)?)',
-            r'(?:naam|name)\s+(?:hai|is)\s+([a-zA-Z\u0900-\u097F]+(?:\s+[a-zA-Z\u0900-\u097F]+)?)',
+        # ── 4. Name ──
+        # Pattern A: explicit markers (handles "hai"/"है" bleeding into group)
+        NAME_TOKEN = r'([\u0900-\u097Fa-zA-Z]+(?:\s+[\u0900-\u097Fa-zA-Z]+)??)'
+        STOP_BOUNDARY = r'(?=\s|$|\d|[,।]|(?:hai|है|hoon|हूं|hूँ|mera|my|number|नंबर|phone|mobile)\b)'
+        name_patterns = [
+            # "mera naam <Name> hai" / "मेरा नाम <Name> है"
+            rf'(?:mera|मेरा|my)\s+(?:naam|नाम|name)\s+{NAME_TOKEN}\s+(?:hai|है|is)',
+            # "naam <Name> hai" / "नाम <Name> है"
+            rf'(?:naam|नाम|name)\s+{NAME_TOKEN}\s+(?:hai|है|is)',
+            # "my name is <Name>"
+            rf'(?:my\s+name\s+is|naam\s+(?:hai|है))\s+{NAME_TOKEN}',
+            # "mera naam <Name>" (no hai at end)
+            rf'(?:mera|मेरा|my)\s+(?:naam|नाम|name)\s+{NAME_TOKEN}',
+            # bare "naam <Name>" at word boundary
+            rf'(?:^|\s)(?:naam|नाम|name)\s+{NAME_TOKEN}',
         ]
-        for pattern in name_markers:
-            match = re.search(pattern, t, re.IGNORECASE)
-            if match:
-                candidate = match.group(1).strip()
-                if len(candidate) > 1 and not candidate.isdigit():
-                    name_found = candidate.title()
+        name_found = None
+        for pat in name_patterns:
+            m = re.search(pat, t, re.IGNORECASE)
+            if m:
+                # Take only the first token — stops before stopwords like "hai"
+                raw_words = m.group(1).strip().split()
+                good_words = []
+                for w in raw_words[:2]:
+                    if w.lower() in STOPWORDS or w.isdigit():
+                        break
+                    good_words.append(w)
+                if good_words:
+                    # Recover original-case version from t_orig
+                    orig_lower_words = t_orig.lower().split()
+                    orig_words = t_orig.split()
+                    recovered = []
+                    for gw in good_words:
+                        try:
+                            idx = orig_lower_words.index(gw.lower())
+                            recovered.append(orig_words[idx])
+                            orig_lower_words[idx] = "\x00"  # mark used
+                        except ValueError:
+                            recovered.append(gw.title())
+                    name_found = " ".join(recovered).title()
                     break
 
+        # Pattern B: fallback — scrub everything known, take first remaining alpha token
         if not name_found:
-            name_text = t
+            scrub = t_orig
             if result["phone"]:
-                name_text = re.sub(r'\d', ' ', name_text)
-            if result["cluster"]:
-                name_text = name_text.replace(result["cluster"].lower(), " ")
-            if result["specialty"]:
-                spec_lower = result["specialty"].lower()
-                name_text  = name_text.replace(spec_lower, " ")
-                for hindi, eng in weave_map.items():
-                    if eng.lower() == spec_lower:
-                        name_text = name_text.replace(hindi, " ")
-            sw_set = {
-                "main","mera","my","name","naam","hai","is","hoon","hun",
-                "है","मैं","हूँ","से","ki","की","में","ka","का","ke","के",
-                "number","phone","hu","hain","ho","raha","rahi","banati","banata"
-            }
-            for sw in sw_set:
-                name_text = re.sub(r'(?:^|\s)' + re.escape(sw) + r'(?:\s|$)', ' ', name_text, flags=re.IGNORECASE)
-            name_text = re.sub(r'\s+', ' ', name_text).strip()
-            if name_text:
-                words = [w for w in name_text.split() if len(w) > 1]
-                if words:
-                    name_found = " ".join(words[:2]).title()
-
-        result["name"] = name_found or ""
-
-        if not result["name"]:
-            words = t.split()
-            sw_fb = {
-                "main","mera","my","name","naam","hai","is","hoon","hun",
-                "है","मैं","हूँ","से","ki","की","में","ka","का","ke","के",
-                "number","phone","hu","hain","ho","raha","rahi","banati","banata"
-            }
-            for i, w in enumerate(words):
-                w_clean = w.strip('.,;:!?')
-                w_lower = w_clean.lower()
-                if (w_lower not in sw_fb and not w_clean.isdigit() and len(w_clean) > 1
-                        and not (result["cluster"] and w_lower in result["cluster"].lower())
-                        and not (result["specialty"] and w_lower in result["specialty"].lower())):
-                    cand = w_clean.title()
-                    if i + 1 < len(words):
-                        nw      = words[i+1].strip('.,;:!?')
-                        nw_low  = nw.lower()
-                        if (nw_low not in sw_fb and not nw.isdigit() and len(nw) > 1
-                                and not (result["cluster"] and nw_low in result["cluster"].lower())
-                                and not (result["specialty"] and nw_low in result["specialty"].lower())):
-                            cand += " " + nw.title()
-                    result["name"] = cand
+                scrub = scrub.replace(result["phone"], " ")
+            scrub = re.sub(r'\d+', ' ', scrub)
+            if weave_found:
+                for kw, v in WEAVE_MAP.items():
+                    if v == weave_found:
+                        scrub = re.sub(re.escape(kw), ' ', scrub, flags=re.IGNORECASE)
+            if cluster_found:
+                scrub = re.sub(re.escape(cluster_found), ' ', scrub, flags=re.IGNORECASE)
+            for sw in STOPWORDS:
+                scrub = re.sub(r'(?<![\u0900-\u097Fa-zA-Z])' + re.escape(sw) + r'(?![\u0900-\u097Fa-zA-Z])',
+                               ' ', scrub, flags=re.IGNORECASE)
+            scrub = re.sub(r'\s+', ' ', scrub).strip()
+            # Prefer a word that starts with uppercase (proper noun) in original
+            candidates = [w for w in scrub.split() if len(w) > 1 and re.search(r'[a-zA-Z\u0900-\u097F]', w)]
+            for w in candidates:
+                clean = re.sub(r'[^a-zA-Z\u0900-\u097F]', '', w)
+                if clean and clean.lower() not in STOPWORDS:
+                    name_found = clean.title()
                     break
+
+        if name_found:
+            result["name"] = name_found
 
         return result
 
