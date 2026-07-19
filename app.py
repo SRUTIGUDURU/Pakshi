@@ -1958,7 +1958,7 @@ def _onboarding_page() -> None:
         } else { alert('Geolocation not supported.'); }
         </script>
         """
-        st.iframe(gps_js, height=0, width=0)
+        st.html(gps_js)
 
     try:
         lat = st.query_params.get("lat")
