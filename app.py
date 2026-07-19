@@ -2005,6 +2005,8 @@ def _onboarding_page() -> None:
         if oc1.button(get_ui_string("onboard_register_another", lang), use_container_width=True):
             st.session_state["onboard_submitted"] = False
             st.session_state["onboard_data"] = {}
+            st.session_state.pop("gps_place", None)
+            st.session_state.pop("gps_state", None)
             st.rerun()
         if oc2.button(get_ui_string("onboard_go_dashboard", lang), use_container_width=True):
             st.session_state["onboard_submitted"] = False
@@ -2044,13 +2046,45 @@ def _onboarding_page() -> None:
         st.session_state["gps_coords"] = f"{lat}, {lon}"
         try:
             resp = requests.get(
-                f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}&format=json&zoom=10",
-                headers={"User-Agent": "Pakshi-Hackathon"}, timeout=10,
+                f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}&format=json&zoom=14&addressdetails=1",
+                headers={"User-Agent": "Pakshi-Handloom-App"}, timeout=10,
             )
             if resp.status_code == 200:
                 data = resp.json()
-                if "display_name" in data:
-                    st.session_state["gps_place"] = data["display_name"].split(",")[0].strip()
+                addr = data.get("address", {})
+                # Extract the most specific locality name (village > suburb > town > city)
+                village = (
+                    addr.get("village")
+                    or addr.get("hamlet")
+                    or addr.get("neighbourhood")
+                    or addr.get("suburb")
+                    or addr.get("town")
+                    or addr.get("city")
+                    or data.get("display_name", "").split(",")[0]
+                ).strip()
+                if village:
+                    st.session_state["gps_place"] = village
+                # Extract and map state to the selectbox options
+                STATE_MAP = {
+                    "andhra pradesh": "Andhra Pradesh",
+                    "bihar": "Bihar",
+                    "gujarat": "Gujarat",
+                    "jharkhand": "Jharkhand",
+                    "karnataka": "Karnataka",
+                    "kerala": "Kerala",
+                    "madhya pradesh": "Madhya Pradesh",
+                    "maharashtra": "Maharashtra",
+                    "odisha": "Odisha",
+                    "rajasthan": "Rajasthan",
+                    "tamil nadu": "Tamil Nadu",
+                    "telangana": "Telangana",
+                    "uttar pradesh": "Uttar Pradesh",
+                    "west bengal": "West Bengal",
+                }
+                raw_state = addr.get("state", "").strip()
+                matched_state = STATE_MAP.get(raw_state.lower(), "Other" if raw_state else None)
+                if matched_state:
+                    st.session_state["gps_state"] = matched_state
         except Exception:
             pass
         try:
@@ -2128,11 +2162,14 @@ def _onboarding_page() -> None:
         phone   = c2.text_input(get_ui_string("onboard_phone", lang),   value=st.session_state.get("reg_phone", ""),   placeholder="10-digit number")
         c3, c4  = st.columns(2)
         cluster = c3.text_input(get_ui_string("onboard_cluster", lang),  value=default_cluster, placeholder="e.g. Pochampally")
-        state   = c4.selectbox(get_ui_string("onboard_state", lang), [
+        _state_options = [
             "Andhra Pradesh", "Bihar", "Gujarat", "Jharkhand", "Karnataka",
             "Kerala", "Madhya Pradesh", "Maharashtra", "Odisha", "Rajasthan",
             "Tamil Nadu", "Telangana", "Uttar Pradesh", "West Bengal", "Other"
-        ])
+        ]
+        _gps_state = st.session_state.get("gps_state", "")
+        _state_index = _state_options.index(_gps_state) if _gps_state in _state_options else 0
+        state   = c4.selectbox(get_ui_string("onboard_state", lang), _state_options, index=_state_index)
 
         st.markdown(
             f'<div class="section-label" style="margin-top:0.8rem;">{get_ui_string("onboard_craft", lang)}</div>',
