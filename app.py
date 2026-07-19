@@ -1729,10 +1729,7 @@ def _ooak_page() -> None:
             if st.button(buy_label, key=f"buy_{item.get('order_id',idx)}_{idx}", use_container_width=True):
                 added_msg = get_ui_string("order_added", lang)
                 st.success(f"#{item.get('order_id','')} {added_msg}")
-
-# ---------------------------------------------------------------------------
-# WEAVER ONBOARDING PAGE
-# ---------------------------------------------------------------------------
+# ONBOARDING_PAGE:::::::::::::::::::::::::::::::::::::::::::::::;;
 def _onboarding_page() -> None:
 
     def _parse_onboarding_text(text: str) -> dict:
@@ -1941,8 +1938,8 @@ def _onboarding_page() -> None:
             st.rerun()
         return
 
-    # GPS
-    if st.button(get_ui_string("onboard_gps", lang), use_container_width=False):
+    # -------- GPS Location Button (now labelled "Give Location") --------
+    if st.button("Give Location", use_container_width=False):
         gps_js = """
         <script>
         if (navigator.geolocation) {
@@ -1968,6 +1965,7 @@ def _onboarding_page() -> None:
     except Exception:
         lat = lon = None
 
+    # Process GPS coordinates if present
     if lat and lon:
         st.session_state["gps_coords"] = f"{lat}, {lon}"
         try:
@@ -1977,10 +1975,23 @@ def _onboarding_page() -> None:
             )
             if resp.status_code == 200:
                 data = resp.json()
+                # Extract village/cluster (try village, town, city, or display_name first part)
                 if "display_name" in data:
-                    st.session_state["gps_place"] = data["display_name"].split(",")[0].strip()
+                    display_parts = data["display_name"].split(",")
+                    if display_parts:
+                        st.session_state["gps_place"] = display_parts[0].strip()
+                # Get more precise location from address object
+                address = data.get("address", {})
+                village = address.get("village") or address.get("town") or address.get("city") or ""
+                if village:
+                    st.session_state["gps_place"] = village.strip()
+                # Extract state
+                state = address.get("state", "")
+                if state:
+                    st.session_state["gps_state"] = state
         except Exception:
             pass
+        # Clean up query params to avoid reprocessing
         try:
             if "lat" in st.query_params: del st.query_params["lat"]
             if "lon" in st.query_params: del st.query_params["lon"]
@@ -2056,11 +2067,16 @@ def _onboarding_page() -> None:
         phone   = c2.text_input(get_ui_string("onboard_phone", lang),   value=st.session_state.get("reg_phone", ""),   placeholder="10-digit number")
         c3, c4  = st.columns(2)
         cluster = c3.text_input(get_ui_string("onboard_cluster", lang),  value=default_cluster, placeholder="e.g. Pochampally")
-        state   = c4.selectbox(get_ui_string("onboard_state", lang), [
+
+        # State dropdown with automatic selection from GPS
+        state_options = [
             "Andhra Pradesh", "Bihar", "Gujarat", "Jharkhand", "Karnataka",
             "Kerala", "Madhya Pradesh", "Maharashtra", "Odisha", "Rajasthan",
             "Tamil Nadu", "Telangana", "Uttar Pradesh", "West Bengal", "Other"
-        ])
+        ]
+        gps_state = st.session_state.get("gps_state", "")
+        default_state_index = state_options.index(gps_state) if gps_state in state_options else 0
+        state = c4.selectbox(get_ui_string("onboard_state", lang), state_options, index=default_state_index)
 
         st.markdown(
             f'<div class="section-label" style="margin-top:0.8rem;">{get_ui_string("onboard_craft", lang)}</div>',
