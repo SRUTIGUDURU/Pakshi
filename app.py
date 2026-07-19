@@ -1732,8 +1732,6 @@ def _ooak_page() -> None:
 # :::::::::::::::::::::::::::::::::::::::::::::::;;
 def _onboarding_page() -> None:
 
-    def _onboarding_page() -> None:
-
     def _parse_onboarding_text(text: str) -> dict:
         KNOWN_CLUSTERS = [
             "pochampally", "venkatagiri", "kanchipuram", "ilkal", "kota", "chanderi",
