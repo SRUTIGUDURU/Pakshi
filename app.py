@@ -2015,24 +2015,47 @@ def _onboarding_page() -> None:
             st.rerun()
         return
 
-    # GPS
-    if st.button(get_ui_string("onboard_gps", lang), use_container_width=False):
-        gps_js = """
-        <script>
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    const url = new URL(window.location.href);
-                    url.searchParams.set('lat', pos.coords.latitude);
-                    url.searchParams.set('lon', pos.coords.longitude);
-                    window.location.href = url.toString();
-                },
-                (err) => alert('GPS error: ' + err.message)
-            );
-        } else { alert('Geolocation not supported.'); }
-        </script>
-        """
-        st.html(gps_js)
+    # GPS — nuclear fix: st.html renders always (not gated behind st.button which reruns Python
+    # before the JS can execute). The button lives inside the HTML block itself and uses
+    # window.parent.location to escape the iframe Streamlit renders st.html inside.
+    gps_label = get_ui_string("onboard_gps", lang)
+    gps_wait  = "स्थान मिल रहा है..." if lang == "hi" else "Getting location..."
+    gps_denied = ("अनुमति अस्वीकृत। ब्राउज़र में लोकेशन चालू करें।" if lang == "hi"
+                  else "Permission denied — please allow location in your browser settings.")
+    st.html(f"""
+    <button id="pakshi-gps-btn" onclick="pakshiGetGPS()" style="
+        background:#9F2089;color:#fff;border:none;border-radius:8px;
+        padding:0.5rem 1.2rem;font-size:0.9rem;font-weight:700;cursor:pointer;">
+        📍 {gps_label}
+    </button>
+    <span id="pakshi-gps-status" style="margin-left:0.7rem;font-size:0.82rem;color:#aaa;"></span>
+    <script>
+    function pakshiGetGPS() {{
+        var btn = document.getElementById('pakshi-gps-btn');
+        var status = document.getElementById('pakshi-gps-status');
+        if (!navigator.geolocation) {{
+            status.innerText = 'Geolocation not supported.';
+            return;
+        }}
+        btn.disabled = true;
+        status.innerText = '{gps_wait}';
+        navigator.geolocation.getCurrentPosition(
+            function(pos) {{
+                var url = new URL(window.parent.location.href);
+                url.searchParams.set('lat', pos.coords.latitude);
+                url.searchParams.set('lon', pos.coords.longitude);
+                window.parent.location.href = url.toString();
+            }},
+            function(err) {{
+                btn.disabled = false;
+                status.innerText = err.code === 1 ? '{gps_denied}' : 'GPS error: ' + err.message;
+            }},
+            {{enableHighAccuracy: true, timeout: 10000, maximumAge: 0}}
+        );
+    }}
+    </script>
+    """)
+
 
     try:
         lat = st.query_params.get("lat")
