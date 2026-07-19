@@ -2015,30 +2015,27 @@ def _onboarding_page() -> None:
             st.rerun()
         return
 
-    # GPS — nuclear fix: st.html renders always (not gated behind st.button which reruns Python
-    # before the JS can execute). The button lives inside the HTML block itself and uses
-    # window.parent.location to escape the iframe Streamlit renders st.html inside.
-    gps_label = get_ui_string("onboard_gps", lang)
-    gps_wait  = "स्थान मिल रहा है..." if lang == "hi" else "Getting location..."
-    gps_denied = ("अनुमति अस्वीकृत। ब्राउज़र में लोकेशन चालू करें।" if lang == "hi"
-                  else "Permission denied — please allow location in your browser settings.")
-    st.html(f"""
-    <button id="pakshi-gps-btn" onclick="pakshiGetGPS()" style="
+    # GPS — st.components.v1.html sets allow="geolocation" on the iframe unlike st.html
+    # which is fully sandboxed. On success redirect window.parent with lat/lon query params.
+    import streamlit.components.v1 as _stc
+    gps_label  = get_ui_string("onboard_gps", lang)
+    gps_wait   = "स्थान मिल रहा है..." if lang == "hi" else "Getting location..."
+    gps_denied = ("अनुमति अस्वीकृत। ब्राउज़र में लोकेशन चालू करें।"
+                  if lang == "hi"
+                  else "Permission denied — allow location in browser settings.")
+    _stc.html(f"""<!DOCTYPE html><html><body style="margin:0;padding:4px;background:transparent;">
+    <button id="gps-btn" onclick="getGPS()" style="
         background:#9F2089;color:#fff;border:none;border-radius:8px;
-        padding:0.5rem 1.2rem;font-size:0.9rem;font-weight:700;cursor:pointer;">
-        📍 {gps_label}
+        padding:0.45rem 1.1rem;font-size:0.9rem;font-weight:700;cursor:pointer;">
+        \U0001f4cd {gps_label}
     </button>
-    <span id="pakshi-gps-status" style="margin-left:0.7rem;font-size:0.82rem;color:#aaa;"></span>
+    <span id="gps-st" style="margin-left:0.7rem;font-size:0.8rem;color:#888;"></span>
     <script>
-    function pakshiGetGPS() {{
-        var btn = document.getElementById('pakshi-gps-btn');
-        var status = document.getElementById('pakshi-gps-status');
-        if (!navigator.geolocation) {{
-            status.innerText = 'Geolocation not supported.';
-            return;
-        }}
-        btn.disabled = true;
-        status.innerText = '{gps_wait}';
+    function getGPS() {{
+        var btn = document.getElementById('gps-btn');
+        var s   = document.getElementById('gps-st');
+        if (!navigator.geolocation) {{ s.innerText='Not supported.'; return; }}
+        btn.disabled = true; s.innerText = '{gps_wait}';
         navigator.geolocation.getCurrentPosition(
             function(pos) {{
                 var url = new URL(window.parent.location.href);
@@ -2048,13 +2045,12 @@ def _onboarding_page() -> None:
             }},
             function(err) {{
                 btn.disabled = false;
-                status.innerText = err.code === 1 ? '{gps_denied}' : 'GPS error: ' + err.message;
+                s.innerText = err.code===1 ? '{gps_denied}' : 'Error: '+err.message;
             }},
-            {{enableHighAccuracy: true, timeout: 10000, maximumAge: 0}}
+            {{enableHighAccuracy:true, timeout:10000, maximumAge:0}}
         );
     }}
-    </script>
-    """)
+    </script></body></html>""", height=55)
 
 
     try:
