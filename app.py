@@ -1815,8 +1815,6 @@ def _onboarding_page() -> None:
         st.session_state["_cluster_field"] = _gps_place_param
         if _gps_state_param:
             st.session_state["gps_state"] = _gps_state_param
-            # Force selectbox to pick up the GPS state on next render
-            st.session_state["_state_select"] = _gps_state_param
         try:
             del st.query_params["gps_place"]
             if "gps_state" in st.query_params:
@@ -2025,7 +2023,6 @@ def _onboarding_page() -> None:
             st.session_state["onboard_data"] = {}
             st.session_state.pop("gps_place", None)
             st.session_state.pop("gps_state", None)
-            st.session_state.pop("_state_select", None)
             st.rerun()
         if oc2.button(get_ui_string("onboard_go_dashboard", lang), use_container_width=True):
             st.session_state["onboard_submitted"] = False
@@ -2056,6 +2053,31 @@ def _onboarding_page() -> None:
         "rajasthan":"Rajasthan","tamil nadu":"Tamil Nadu","telangana":"Telangana",
         "uttar pradesh":"Uttar Pradesh","west bengal":"West Bengal"
     }};
+    function triggerReactInput(inp, value) {{
+        var setter = Object.getOwnPropertyDescriptor(window.parent.HTMLInputElement.prototype, 'value').set;
+        setter.call(inp, value);
+        inp.dispatchEvent(new window.parent.Event('input', {{bubbles:true}}));
+        inp.dispatchEvent(new window.parent.Event('change', {{bubbles:true}}));
+    }}
+    function fillByPlaceholder(ph, value) {{
+        var inputs = window.parent.document.querySelectorAll('input[placeholder="'+ph+'"]');
+        if (inputs.length > 0) triggerReactInput(inputs[0], value);
+    }}
+    function fillStateSelect(state) {{
+        // Streamlit selectbox: find the one whose current value is a state name, set it
+        var selects = window.parent.document.querySelectorAll('select');
+        for (var i=0; i<selects.length; i++) {{
+            var opts = selects[i].options;
+            for (var j=0; j<opts.length; j++) {{
+                if (opts[j].text === state) {{
+                    var setter = Object.getOwnPropertyDescriptor(window.parent.HTMLSelectElement.prototype, 'value').set;
+                    setter.call(selects[i], opts[j].value);
+                    selects[i].dispatchEvent(new window.parent.Event('change', {{bubbles:true}}));
+                    break;
+                }}
+            }}
+        }}
+    }}
     function doGPS() {{
         var btn=document.getElementById('gb'), s=document.getElementById('gs');
         if (!navigator.geolocation) {{ s.innerText='Not supported.'; return; }}
@@ -2068,18 +2090,14 @@ def _onboarding_page() -> None:
             .then(r=>r.json()).then(function(d) {{
                 var a=d.address||{{}};
                 var village=a.village||a.hamlet||a.neighbourhood||a.suburb||a.town||a.city||(d.display_name||'').split(',')[0];
+                village = village.trim();
                 var rawState=(a.state||'').toLowerCase();
                 var state=STATE_MAP[rawState]||'Other';
-                s.innerText='\u2705 '+village;
-                try {{
-                    var url=new URL(window.top.location.href);
-                    url.searchParams.set('gps_place',village.trim());
-                    url.searchParams.set('gps_state',state);
-                    window.top.location.href=url.toString();
-                }} catch(ex) {{
-                    // fallback: postMessage if window.top blocked
-                    window.parent.postMessage({{type:'pakshi_gps',place:village.trim(),state:state}},'*');
-                }}
+                s.innerText='\u2705 '+village+' · '+state;
+                // Fill the actual Village/Cluster input (placeholder "e.g. Pochampally")
+                fillByPlaceholder('e.g. Pochampally', village);
+                // Fill state selectbox
+                fillStateSelect(state);
             }}).catch(function(e) {{
                 btn.disabled=false; s.innerText='Geocode error: '+e.message;
             }});
@@ -2159,7 +2177,9 @@ def _onboarding_page() -> None:
         name    = c1.text_input(get_ui_string("onboard_name", lang),    value=st.session_state.get("reg_name", ""),    placeholder="e.g. Padmavathi Devi")
         phone   = c2.text_input(get_ui_string("onboard_phone", lang),   value=st.session_state.get("reg_phone", ""),   placeholder="10-digit number")
         c3, c4  = st.columns(2)
-        cluster = c3.text_input(get_ui_string("onboard_cluster", lang), value=default_cluster, placeholder="e.g. Pochampally")
+        cluster = c3.text_input(get_ui_string("onboard_cluster", lang), key="_cluster_field", placeholder="e.g. Pochampally")
+        if not st.session_state.get("_cluster_field") and default_cluster:
+            st.session_state["_cluster_field"] = default_cluster
         _state_options = [
             "Andhra Pradesh", "Bihar", "Gujarat", "Jharkhand", "Karnataka",
             "Kerala", "Madhya Pradesh", "Maharashtra", "Odisha", "Rajasthan",
@@ -2167,13 +2187,7 @@ def _onboarding_page() -> None:
         ]
         _gps_state = st.session_state.get("gps_state", "")
         _state_index = _state_options.index(_gps_state) if _gps_state in _state_options else 0
-        # Sync session state key so GPS value survives the form's keyed widget ownership
-        if "_state_select" not in st.session_state or (
-            _gps_state and st.session_state.get("_state_select") != _gps_state
-        ):
-            st.session_state["_state_select"] = _gps_state or _state_options[0]
-        state   = c4.selectbox(get_ui_string("onboard_state", lang), _state_options,
-                               index=_state_index, key="_state_select")
+        state   = c4.selectbox(get_ui_string("onboard_state", lang), _state_options, index=_state_index)
 
         st.markdown(
             f'<div class="section-label" style="margin-top:0.8rem;">{get_ui_string("onboard_craft", lang)}</div>',
