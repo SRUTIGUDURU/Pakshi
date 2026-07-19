@@ -532,6 +532,32 @@ def _load_weaver_profiles():
     except Exception:
         return []
 
+@st.cache_data(show_spinner=False)
+def _load_swatch_images() -> dict:
+    """Return a dict mapping weave_style -> image_url from fabric_swatches.json."""
+    try:
+        p = Path(__file__).parent / "fabric_swatches.json"
+        with open(p, encoding="utf-8") as f:
+            data = json.load(f)
+        mapping = {}
+        for sw in data.get("fabric_swatches", []):
+            style = sw.get("weave_style", "")
+            url   = sw.get("image_url", "")
+            if style and url and style not in mapping:
+                mapping[style] = url
+        return mapping
+    except Exception:
+        return {}
+
+def _enrich_swatch_images(swatches: list) -> list:
+    """Attach image_url to each swatch dict if not already present, by weave_style lookup."""
+    image_map = _load_swatch_images()
+    for sw in swatches:
+        if not sw.get("image_url"):
+            style = sw.get("weave_style", "")
+            sw["image_url"] = image_map.get(style, "")
+    return swatches
+
 # ---------------------------------------------------------------------------
 # Edge TTS & STT
 # ---------------------------------------------------------------------------
@@ -916,7 +942,7 @@ def _send(user_text: str, *, force_new_search: bool = False) -> None:
 
     # Replace swatches on every retrieval (never append stale ones)
     if data.get("swatches"):
-        st.session_state["swatches"] = data["swatches"]
+        st.session_state["swatches"] = _enrich_swatch_images(data["swatches"])
     if data.get("order"):
         st.session_state["order"] = data["order"]
 
