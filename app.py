@@ -1807,23 +1807,12 @@ def _ooak_page() -> None:
 # ---------------------------------------------------------------------------
 def _onboarding_page() -> None:
 
-    # ── GPS query param catch — must run FIRST before any widget renders ──
-    # Listener st.html catches postMessage from iframe and redirects with params.
-    # Here we read those params, store to session_state, clear them, and rerun
-    # so the form renders with the correct pre-filled values.
-    st.html("""<script>
-    window.addEventListener('message', function(e) {
-        if (!e.data || e.data.type !== 'pakshi_gps') return;
-        var url = new URL(window.location.href);
-        url.searchParams.set('gps_place', e.data.place);
-        url.searchParams.set('gps_state', e.data.state);
-        window.location.href = url.toString();
-    });
-    </script>""")
+    # ── GPS query param catch — runs FIRST before any widget renders ──
     _gps_place_param = st.query_params.get("gps_place")
     _gps_state_param = st.query_params.get("gps_state")
     if _gps_place_param:
         st.session_state["gps_place"] = _gps_place_param
+        st.session_state["_cluster_field"] = _gps_place_param
         if _gps_state_param:
             st.session_state["gps_state"] = _gps_state_param
         try:
@@ -2079,7 +2068,15 @@ def _onboarding_page() -> None:
                 var rawState=(a.state||'').toLowerCase();
                 var state=STATE_MAP[rawState]||'Other';
                 s.innerText='\u2705 '+village;
-                window.parent.postMessage({{type:'pakshi_gps',place:village.trim(),state:state}},'*');
+                try {{
+                    var url=new URL(window.top.location.href);
+                    url.searchParams.set('gps_place',village.trim());
+                    url.searchParams.set('gps_state',state);
+                    window.top.location.href=url.toString();
+                }} catch(ex) {{
+                    // fallback: postMessage if window.top blocked
+                    window.parent.postMessage({{type:'pakshi_gps',place:village.trim(),state:state}},'*');
+                }}
             }}).catch(function(e) {{
                 btn.disabled=false; s.innerText='Geocode error: '+e.message;
             }});
@@ -2159,7 +2156,9 @@ def _onboarding_page() -> None:
         name    = c1.text_input(get_ui_string("onboard_name", lang),    value=st.session_state.get("reg_name", ""),    placeholder="e.g. Padmavathi Devi")
         phone   = c2.text_input(get_ui_string("onboard_phone", lang),   value=st.session_state.get("reg_phone", ""),   placeholder="10-digit number")
         c3, c4  = st.columns(2)
-        cluster = c3.text_input(get_ui_string("onboard_cluster", lang),  value=default_cluster, placeholder="e.g. Pochampally")
+        cluster = c3.text_input(get_ui_string("onboard_cluster", lang), key="_cluster_field", placeholder="e.g. Pochampally")
+        if not st.session_state.get("_cluster_field") and default_cluster:
+            st.session_state["_cluster_field"] = default_cluster
         _state_options = [
             "Andhra Pradesh", "Bihar", "Gujarat", "Jharkhand", "Karnataka",
             "Kerala", "Madhya Pradesh", "Maharashtra", "Odisha", "Rajasthan",
