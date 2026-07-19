@@ -2051,11 +2051,8 @@ def _onboarding_page() -> None:
                 var village=a.village||a.hamlet||a.neighbourhood||a.suburb||a.town||a.city||(d.display_name||'').split(',')[0];
                 var rawState=(a.state||'').toLowerCase();
                 var state=STATE_MAP[rawState]||'Other';
-                var url=new URL(window.parent.location.href);
-                url.searchParams.set('gps_place', village.trim());
-                url.searchParams.set('gps_state', state);
                 s.innerText='\u2705 '+village;
-                window.parent.location.href=url.toString();
+                window.parent.postMessage({{type:'pakshi_gps',place:village.trim(),state:state}},'*');
             }}).catch(function(e) {{
                 btn.disabled=false; s.innerText='Geocode error: '+e.message;
             }});
@@ -2066,7 +2063,18 @@ def _onboarding_page() -> None:
     }}
     </script></body></html>""", height=55)
 
-    # Catch GPS result from query params (set by iframe redirect above)
+    # Listener: catches postMessage from the iframe and redirects the top-level page
+    st.html("""<script>
+    window.addEventListener('message', function(e) {
+        if (!e.data || e.data.type !== 'pakshi_gps') return;
+        var url = new URL(window.location.href);
+        url.searchParams.set('gps_place', e.data.place);
+        url.searchParams.set('gps_state', e.data.state);
+        window.location.href = url.toString();
+    });
+    </script>""")
+
+    # Catch GPS result from query params (set by listener redirect above)
     gps_place_param = st.query_params.get("gps_place")
     gps_state_param = st.query_params.get("gps_state")
     if gps_place_param:
