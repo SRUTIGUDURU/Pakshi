@@ -1729,7 +1729,7 @@ def _ooak_page() -> None:
             if st.button(buy_label, key=f"buy_{item.get('order_id',idx)}_{idx}", use_container_width=True):
                 added_msg = get_ui_string("order_added", lang)
                 st.success(f"#{item.get('order_id','')} {added_msg}")
-# ONBOARDING_PAGE:::::::::::::::::::::::::::::::::::::::::::::::;;
+# :::::::::::::::::::::::::::::::::::::::::::::::;;
 def _onboarding_page() -> None:
 
     def _parse_onboarding_text(text: str) -> dict:
@@ -1881,6 +1881,22 @@ def _onboarding_page() -> None:
 
     # ── end parser ──
 
+    # ---------- Helper: IP-based location fallback ----------
+    def _get_location_from_ip() -> dict:
+        """Return {'cluster': city, 'state': region} from IP geolocation."""
+        try:
+            resp = requests.get('https://ipapi.co/json/', timeout=5)
+            if resp.status_code == 200:
+                data = resp.json()
+                city = data.get('city', '')
+                region = data.get('region', '')
+                if city and region:
+                    return {'cluster': city.title(), 'state': region}
+        except Exception:
+            pass
+        return {}
+
+    # ---------- Page setup ----------
     lang = st.session_state.get("language", "en")
     st.markdown(
         f'<div class="section-label">{get_ui_string("onboard_title", lang)}</div>',
@@ -1938,7 +1954,7 @@ def _onboarding_page() -> None:
             st.rerun()
         return
 
-    # -------- GPS Location Button (now labelled "Give Location") --------
+    # ---------- GPS button (labelled "Give Location") ----------
     if st.button("Give Location", use_container_width=False):
         gps_js = """
         <script>
@@ -1950,13 +1966,20 @@ def _onboarding_page() -> None:
                     url.searchParams.set('lon', pos.coords.longitude);
                     window.location.href = url.toString();
                 },
-                (err) => alert('GPS error: ' + err.message)
+                (err) => {
+                    // On GPS error, reload to trigger IP fallback
+                    window.location.href = window.location.href;
+                }
             );
-        } else { alert('Geolocation not supported.'); }
+        } else {
+            // No geolocation support, reload to trigger IP fallback
+            window.location.href = window.location.href;
+        }
         </script>
         """
         st.components.v1.html(gps_js, height=0, width=0)
 
+    # ---------- Process location data (GPS first, then IP) ----------
     try:
         lat = st.query_params.get("lat")
         lon = st.query_params.get("lon")
@@ -1965,7 +1988,7 @@ def _onboarding_page() -> None:
     except Exception:
         lat = lon = None
 
-    # Process GPS coordinates if present
+    # If we have GPS coords, reverse geocode
     if lat and lon:
         st.session_state["gps_coords"] = f"{lat}, {lon}"
         try:
@@ -1975,23 +1998,16 @@ def _onboarding_page() -> None:
             )
             if resp.status_code == 200:
                 data = resp.json()
-                # Extract village/cluster (try village, town, city, or display_name first part)
-                if "display_name" in data:
-                    display_parts = data["display_name"].split(",")
-                    if display_parts:
-                        st.session_state["gps_place"] = display_parts[0].strip()
-                # Get more precise location from address object
                 address = data.get("address", {})
                 village = address.get("village") or address.get("town") or address.get("city") or ""
                 if village:
                     st.session_state["gps_place"] = village.strip()
-                # Extract state
                 state = address.get("state", "")
                 if state:
                     st.session_state["gps_state"] = state
         except Exception:
             pass
-        # Clean up query params to avoid reprocessing
+        # Remove params to avoid reprocessing
         try:
             if "lat" in st.query_params: del st.query_params["lat"]
             if "lon" in st.query_params: del st.query_params["lon"]
@@ -1999,7 +2015,14 @@ def _onboarding_page() -> None:
             pass
         st.rerun()
 
-    # Voice fill
+    # If GPS didn't give a location, try IP fallback (only once)
+    if not st.session_state.get("gps_place") and not st.session_state.get("gps_state"):
+        ip_loc = _get_location_from_ip()
+        if ip_loc:
+            st.session_state["gps_place"] = ip_loc.get("cluster", "")
+            st.session_state["gps_state"] = ip_loc.get("state", "")
+
+    # ---------- Voice fill (unchanged) ----------
     speak_hint_en = "Please say your name, village, weave style, and phone number."
     speak_hint_hi = "कृपया अपना नाम, गाँव, बुनाई शैली और फोन नंबर बोलें।"
     example_en = '"My name is Shruti, I am from Pochampally, I do Ikat, my number is 9876543210"'
@@ -2056,6 +2079,7 @@ def _onboarding_page() -> None:
                     st.warning(no_extract)
             st.rerun()
 
+    # ---------- The onboarding form (unchanged) ----------
     with st.form("onboard_form"):
         st.markdown(
             f'<div class="section-label">{get_ui_string("onboard_basic", lang)}</div>',
@@ -2068,7 +2092,7 @@ def _onboarding_page() -> None:
         c3, c4  = st.columns(2)
         cluster = c3.text_input(get_ui_string("onboard_cluster", lang),  value=default_cluster, placeholder="e.g. Pochampally")
 
-        # State dropdown with automatic selection from GPS
+        # State dropdown with automatic selection from GPS or IP
         state_options = [
             "Andhra Pradesh", "Bihar", "Gujarat", "Jharkhand", "Karnataka",
             "Kerala", "Madhya Pradesh", "Maharashtra", "Odisha", "Rajasthan",
@@ -2149,7 +2173,6 @@ def _onboarding_page() -> None:
                 }
                 st.session_state["onboard_submitted"] = True
                 st.rerun()
-
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
