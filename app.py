@@ -811,15 +811,32 @@ def _swatch_card(swatch: dict, index: int) -> None:
 
     border_color = "var(--accent)" if index == 0 else "var(--border-strong)"
 
+    # ── Swatch image: use image_url from JSON if present, else show placeholder ──
+    image_url = swatch.get("image_url", "")
+    if image_url:
+        image_html = (
+            f'<img src="{esc(image_url)}" alt="{esc(weave_style)}" '
+            f'style="width:100%;height:180px;object-fit:cover;border-radius:8px;'
+            f'margin-bottom:2px;display:block;" '
+            f'onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\';">'
+            f'<div style="display:none;background:rgba(159,32,137,0.08);border:1px dashed rgba(159,32,137,0.3);'
+            f'border-radius:8px;padding:12px;font-size:0.78rem;color:var(--text-muted);'
+            f'text-align:center;">{lbl_placeholder}</div>'
+        )
+    else:
+        image_html = (
+            f'<div style="background:rgba(159,32,137,0.08);border:1px dashed rgba(159,32,137,0.3);'
+            f'border-radius:8px;padding:12px;font-size:0.78rem;color:var(--text-muted);'
+            f'text-align:center;">{lbl_placeholder}</div>'
+        )
+
     html = f"""
     <div class="swatch-card" style="border:1.5px solid {border_color};">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
             <span style="background:var(--bg-card);color:var(--text-primary);padding:2px 8px;
                 border-radius:6px;font-size:0.75rem;font-weight:700;">{lbl_authentic}</span>
         </div>
-        <div style="background:rgba(159,32,137,0.08);border:1px dashed rgba(159,32,137,0.3);
-            border-radius:8px;padding:12px;font-size:0.78rem;color:var(--text-muted);
-            text-align:center;">{lbl_placeholder}</div>
+        {image_html}
         <div style="font-weight:800;font-size:1.05rem;color:var(--text-primary);
             margin-bottom:2px;margin-top:8px;">{esc(weave_style)}</div>
         <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:6px;">
