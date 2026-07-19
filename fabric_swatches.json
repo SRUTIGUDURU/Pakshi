@@ -8,18 +8,35 @@
       "color": "white",
       "color_family": "neutral",
       "pattern": "plain with gold zari border",
-      "occasion_tags": ["casual", "daily_wear", "work"],
-      "sensory_tags": ["light", "airy", "breathable", "soft"],
+      "occasion_tags": [
+        "casual",
+        "daily_wear",
+        "work"
+      ],
+      "sensory_tags": [
+        "light",
+        "airy",
+        "breathable",
+        "soft"
+      ],
       "price_inr": 650,
       "available": true,
       "delivery_days": 6,
       "description": "This handwoven Venkatagiri cotton saree is prized for its fine thread count and light drape. The plain with gold zari border is woven directly into the fabric — not printed. Lightweight and breathable, it keeps you cool through long days. Ideal for casual.",
       "description_hi": "यह हाथ से बुनी वेंकटगिरी सूती साड़ी अपने बारीक धागों और हल्के ड्रेप के लिए जानी जाती है। सादे कपड़े में सोने की जरी की किनारी सीधे बुनाई में शामिल है — मुद्रित नहीं। हल्की और सांस लेने योग्य, यह लंबे दिनों में ठंडक देती है। सामान्य पहनावे के लिए आदर्श।",
       "reviews": [
-        {"user": "Meena R.", "rating": 5, "comment": "Exactly what I needed for daily wear. Soft and breathable all day."},
-        {"user": "Bharathi K.", "rating": 5, "comment": "Ordered for my daughter's college. She gets compliments daily."}
+        {
+          "user": "Meena R.",
+          "rating": 5,
+          "comment": "Exactly what I needed for daily wear. Soft and breathable all day."
+        },
+        {
+          "user": "Bharathi K.",
+          "rating": 5,
+          "comment": "Ordered for my daughter's college. She gets compliments daily."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Venkatagiri_saree.jpg/800px-Venkatagiri_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S002",
@@ -29,18 +46,34 @@
       "color": "pale yellow",
       "color_family": "yellow",
       "pattern": "thin stripe",
-      "occasion_tags": ["casual", "daily_wear"],
-      "sensory_tags": ["light", "soft", "everyday", "cool"],
+      "occasion_tags": [
+        "casual",
+        "daily_wear"
+      ],
+      "sensory_tags": [
+        "light",
+        "soft",
+        "everyday",
+        "cool"
+      ],
       "price_inr": 420,
       "available": true,
       "delivery_days": 4,
       "description": "Woven in the Shantipur tradition of West Bengal, this Tant cotton saree is prized for its fine weave and light drape. The thin stripe adds subtle elegance. Tant cotton breathes extremely well — a favourite for daily wear in all seasons.",
       "description_hi": "पश्चिम बंगाल की शांतिपुर परंपरा में बुनी यह तांत सूती साड़ी अपनी बारीक बुनाई और हल्के ड्रेप के लिए जानी जाती है। पतली धारियाँ सूक्ष्म सुंदरता बढ़ाती हैं। तांत कॉटन बहुत अच्छी तरह सांस लेता है — सभी मौसमों में दैनिक पहनावे के लिए पसंदीदा।",
       "reviews": [
-        {"user": "Sudha V.", "rating": 5, "comment": "Beautiful colour. Washed well and did not fade at all."},
-        {"user": "Lalitha T.", "rating": 4, "comment": "Colour is exactly as shown. Delivery was fast too."}
+        {
+          "user": "Sudha V.",
+          "rating": 5,
+          "comment": "Beautiful colour. Washed well and did not fade at all."
+        },
+        {
+          "user": "Lalitha T.",
+          "rating": 4,
+          "comment": "Colour is exactly as shown. Delivery was fast too."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Tant_saree.jpg/800px-Tant_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sambalpuri_Saree.jpg?width=600"
     },
     {
       "id": "S003",
@@ -50,18 +83,35 @@
       "color": "white with indigo print",
       "color_family": "blue",
       "pattern": "floral block print",
-      "occasion_tags": ["casual", "college", "work"],
-      "sensory_tags": ["light", "airy", "casual", "fresh"],
+      "occasion_tags": [
+        "casual",
+        "college",
+        "work"
+      ],
+      "sensory_tags": [
+        "light",
+        "airy",
+        "casual",
+        "fresh"
+      ],
       "price_inr": 550,
       "available": true,
       "delivery_days": 5,
       "description": "Hand block-printed in Sanganer, Jaipur, this cotton saree features a floral block print made using natural or vegetable dyes. Each print is slightly unique — a mark of genuine handcraft. Light and casual-ready.",
       "description_hi": "जयपुर के सांगानेर में हाथ से ब्लॉक प्रिंट की गई यह सूती साड़ी प्राकृतिक या वनस्पति रंगों से बने फूलों के ब्लॉक प्रिंट को दर्शाती है। हर प्रिंट थोड़ा अलग होता है — यह वास्तविक हस्तशिल्प की पहचान है। हल्की और सामान्य पहनावे के लिए तैयार।",
       "reviews": [
-        {"user": "Kavitha N.", "rating": 4, "comment": "Good quality cotton. Feels premium for the price."},
-        {"user": "Padma A.", "rating": 5, "comment": "Fine weave, lovely texture. Will order again."}
+        {
+          "user": "Kavitha N.",
+          "rating": 4,
+          "comment": "Good quality cotton. Feels premium for the price."
+        },
+        {
+          "user": "Padma A.",
+          "rating": 5,
+          "comment": "Fine weave, lovely texture. Will order again."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Sanganer_block_print_saree.jpg/800px-Sanganer_block_print_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S004",
@@ -71,18 +121,35 @@
       "color": "rust and cream",
       "color_family": "orange",
       "pattern": "geometric block print",
-      "occasion_tags": ["casual", "college", "work"],
-      "sensory_tags": ["light", "casual", "comfortable", "everyday"],
+      "occasion_tags": [
+        "casual",
+        "college",
+        "work"
+      ],
+      "sensory_tags": [
+        "light",
+        "casual",
+        "comfortable",
+        "everyday"
+      ],
       "price_inr": 620,
       "available": true,
       "delivery_days": 6,
       "description": "This cotton saree from Bagru, Rajasthan uses the traditional dabu resist printing method. The geometric block print is earthy and distinctive. Lightweight and light, each piece carries the character of natural dye craft.",
       "description_hi": "राजस्थान के बागरू की यह सूती साड़ी पारंपरिक दाबू रेजिस्ट प्रिंटिंग विधि का उपयोग करती है। ज्यामितीय ब्लॉक प्रिंट मिट्टी जैसा और विशिष्ट है। हल्की और हल्की, हर टुकड़ा प्राकृतिक रंग शिल्प का गुण रखता है।",
       "reviews": [
-        {"user": "Rekha P.", "rating": 5, "comment": "Wore this to office every week. Comfortable and looks neat."},
-        {"user": "Rohini B.", "rating": 4, "comment": "Good everyday saree. Simple and elegant."}
+        {
+          "user": "Rekha P.",
+          "rating": 5,
+          "comment": "Wore this to office every week. Comfortable and looks neat."
+        },
+        {
+          "user": "Rohini B.",
+          "rating": 4,
+          "comment": "Good everyday saree. Simple and elegant."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Bagru_block_print_saree.jpg/800px-Bagru_block_print_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S005",
@@ -92,18 +159,35 @@
       "color": "light green",
       "color_family": "green",
       "pattern": "plain with contrast border",
-      "occasion_tags": ["casual", "daily_wear", "festival"],
-      "sensory_tags": ["light", "soft", "breathable", "cool"],
+      "occasion_tags": [
+        "casual",
+        "daily_wear",
+        "festival"
+      ],
+      "sensory_tags": [
+        "light",
+        "soft",
+        "breathable",
+        "cool"
+      ],
       "price_inr": 480,
       "available": true,
       "delivery_days": 5,
       "description": "Woven in the Shantipur tradition of West Bengal, this Tant cotton saree is prized for its fine weave and light drape. The plain with contrast border adds subtle elegance. Tant cotton breathes extremely well — a favourite for daily wear in all seasons.",
       "description_hi": "पश्चिम बंगाल की शांतिपुर परंपरा में बुनी यह तांत सूती साड़ी अपनी बारीक बुनाई और हल्के ड्रेप के लिए जानी जाती है। विपरीत किनारे वाला सादा कपड़ा सूक्ष्म सुंदरता जोड़ता है। तांत कॉटन बहुत अच्छी तरह सांस लेता है — सभी मौसमों में दैनिक पहनावे के लिए पसंदीदा।",
       "reviews": [
-        {"user": "Annapurna D.", "rating": 4, "comment": "The border design is very pretty. Drapes well too."},
-        {"user": "Saritha C.", "rating": 5, "comment": "Exactly as described. The zari border is beautiful."}
+        {
+          "user": "Annapurna D.",
+          "rating": 4,
+          "comment": "The border design is very pretty. Drapes well too."
+        },
+        {
+          "user": "Saritha C.",
+          "rating": 5,
+          "comment": "Exactly as described. The zari border is beautiful."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Tant_saree.jpg/800px-Tant_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sambalpuri_Saree.jpg?width=600"
     },
     {
       "id": "S006",
@@ -113,18 +197,35 @@
       "color": "cream",
       "color_family": "neutral",
       "pattern": "fine count plain",
-      "occasion_tags": ["casual", "daily_wear", "work"],
-      "sensory_tags": ["soft", "light", "breathable", "comfortable"],
+      "occasion_tags": [
+        "casual",
+        "daily_wear",
+        "work"
+      ],
+      "sensory_tags": [
+        "soft",
+        "light",
+        "breathable",
+        "comfortable"
+      ],
       "price_inr": 520,
       "available": true,
       "delivery_days": 7,
       "description": "Woven in the historically significant Chendamangalam cluster of Kerala, this cotton saree has a fine count plain that is quietly elegant. Fine thread count, soft texture, and understated beauty make it ideal for casual.",
       "description_hi": "केरल के ऐतिहासिक चेंदमंगलम क्लस्टर में बुनी यह सूती साड़ी में बारीक काउंट का सादा कपड़ा है जो शांत सुंदरता रखता है। बारीक धागों की संख्या, मुलायम बनावट और कम दिखने वाली सुंदरता इसे सामान्य पहनावे के लिए आदर्श बनाती है।",
       "reviews": [
-        {"user": "Sujata M.", "rating": 5, "comment": "My mother loved this saree. Perfect for casual puja days."},
-        {"user": "Nirmala J.", "rating": 4, "comment": "Very comfortable in humid weather. Recommend for South India."}
+        {
+          "user": "Sujata M.",
+          "rating": 5,
+          "comment": "My mother loved this saree. Perfect for casual puja days."
+        },
+        {
+          "user": "Nirmala J.",
+          "rating": 4,
+          "comment": "Very comfortable in humid weather. Recommend for South India."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Venkatagiri_saree.jpg/800px-Venkatagiri_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S007",
@@ -134,18 +235,35 @@
       "color": "pastel pink",
       "color_family": "pink",
       "pattern": "plain",
-      "occasion_tags": ["casual", "daily_wear", "college"],
-      "sensory_tags": ["light", "soft", "cool", "comfortable"],
+      "occasion_tags": [
+        "casual",
+        "daily_wear",
+        "college"
+      ],
+      "sensory_tags": [
+        "light",
+        "soft",
+        "cool",
+        "comfortable"
+      ],
       "price_inr": 400,
       "available": true,
       "delivery_days": 5,
       "description": "A high-quality Coimbatore cotton saree with a plain. Coimbatore is known for producing India's finest cotton — and this piece shows why. Durable, light, and very comfortable for daily or casual use.",
       "description_hi": "सादा कपड़े वाली उच्च गुणवत्ता की कोयंबटूर सूती साड़ी। कोयंबटूर भारत के बेहतरीन कपास के लिए जाना जाता है — और यह टुकड़ा बताता है क्यों। टिकाऊ, हल्की और दैनिक या सामान्य उपयोग के लिए बहुत आरामदायक।",
       "reviews": [
-        {"user": "Geetha S.", "rating": 4, "comment": "Light and easy to manage. Great for summer."},
-        {"user": "Kamala E.", "rating": 5, "comment": "Weaver did amazing work. The pattern is crisp."}
+        {
+          "user": "Geetha S.",
+          "rating": 4,
+          "comment": "Light and easy to manage. Great for summer."
+        },
+        {
+          "user": "Kamala E.",
+          "rating": 5,
+          "comment": "Weaver did amazing work. The pattern is crisp."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Salem_cotton_saree.jpg/800px-Salem_cotton_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S008",
@@ -155,18 +273,35 @@
       "color": "teal",
       "color_family": "blue",
       "pattern": "plain with woven border",
-      "occasion_tags": ["casual", "work", "college"],
-      "sensory_tags": ["light", "breathable", "comfortable", "everyday"],
+      "occasion_tags": [
+        "casual",
+        "work",
+        "college"
+      ],
+      "sensory_tags": [
+        "light",
+        "breathable",
+        "comfortable",
+        "everyday"
+      ],
       "price_inr": 550,
       "available": true,
       "delivery_days": 6,
       "description": "This Salem cotton saree features a plain with woven border. Salem weaves are known for excellent colour retention and durability. A practical, light saree that holds up beautifully through regular wear.",
       "description_hi": "इस सेलम सूती साड़ी में बुने हुए किनारे के साथ सादा कपड़ा है। सेलम की बुनाई रंग धारण क्षमता और टिकाऊपन के लिए जानी जाती है। एक व्यावहारिक, हल्की साड़ी जो नियमित पहनावे में भी बहुत अच्छी रहती है।",
       "reviews": [
-        {"user": "Bharathi K.", "rating": 5, "comment": "Ordered for my daughter's college. She gets compliments daily."},
-        {"user": "Vasantha F.", "rating": 4, "comment": "Nice colour. Slightly lighter than expected but still lovely."}
+        {
+          "user": "Bharathi K.",
+          "rating": 5,
+          "comment": "Ordered for my daughter's college. She gets compliments daily."
+        },
+        {
+          "user": "Vasantha F.",
+          "rating": 4,
+          "comment": "Nice colour. Slightly lighter than expected but still lovely."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Salem_cotton_saree.jpg/800px-Salem_cotton_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S009",
@@ -176,18 +311,34 @@
       "color": "bright red",
       "color_family": "red",
       "pattern": "mirror work embellishment",
-      "occasion_tags": ["festival", "casual_formal"],
-      "sensory_tags": ["light", "festive", "casual", "vibrant"],
+      "occasion_tags": [
+        "festival",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "light",
+        "festive",
+        "casual",
+        "vibrant"
+      ],
       "price_inr": 850,
       "available": true,
       "delivery_days": 7,
       "description": "From the vibrant Kutch cluster of Gujarat, this cotton saree features a mirror work embellishment that reflects the bold aesthetic of the region. Bright, light, and full of character — perfect for festival occasions.",
       "description_hi": "गुजरात के जीवंत कच्छ क्षेत्र से, यह सूती साड़ी दर्पण कढ़ाई के साथ आती है जो क्षेत्र की बोल्ड सौंदर्यशैली को दर्शाती है। चमकीली, हल्की और चरित्र से भरपूर — त्योहारों के लिए बिल्कुल उपयुक्त।",
       "reviews": [
-        {"user": "Lalitha T.", "rating": 4, "comment": "Colour is exactly as shown. Delivery was fast too."},
-        {"user": "Meena R.", "rating": 5, "comment": "Exactly what I needed for daily wear. Soft and breathable all day."}
+        {
+          "user": "Lalitha T.",
+          "rating": 4,
+          "comment": "Colour is exactly as shown. Delivery was fast too."
+        },
+        {
+          "user": "Meena R.",
+          "rating": 5,
+          "comment": "Exactly what I needed for daily wear. Soft and breathable all day."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Kutch_embroidery_saree.jpg/800px-Kutch_embroidery_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S010",
@@ -197,18 +348,35 @@
       "color": "soft gold",
       "color_family": "yellow",
       "pattern": "zari border",
-      "occasion_tags": ["wedding", "festival", "casual_formal"],
-      "sensory_tags": ["light", "elegant", "comfortable", "wedding"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "light",
+        "elegant",
+        "comfortable",
+        "wedding"
+      ],
       "price_inr": 1100,
       "available": true,
       "delivery_days": 8,
       "description": "A classic Venkatagiri cotton saree featuring a zari border. The gold zari work is handwoven directly into the fabric — not printed or added on. Lightweight and light, this is a go-to for wedding occasions.",
       "description_hi": "एक क्लासिक वेंकटगिरी सूती साड़ी जिसमें जरी की किनारी है। सोने की जरी का काम सीधे कपड़े में हाथ से बुना गया है — न मुद्रित और न ही चिपकाया गया। हल्की और हल्की, यह शादी के अवसरों के लिए एक बढ़िया विकल्प है।",
       "reviews": [
-        {"user": "Padma A.", "rating": 5, "comment": "Fine weave, lovely texture. Will order again."},
-        {"user": "Sudha V.", "rating": 5, "comment": "Beautiful colour. Washed well and did not fade at all."}
+        {
+          "user": "Padma A.",
+          "rating": 5,
+          "comment": "Fine weave, lovely texture. Will order again."
+        },
+        {
+          "user": "Sudha V.",
+          "rating": 5,
+          "comment": "Beautiful colour. Washed well and did not fade at all."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Venkatagiri_saree.jpg/800px-Venkatagiri_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S011",
@@ -218,18 +386,35 @@
       "color": "cream with gold border",
       "color_family": "neutral",
       "pattern": "kasavu gold border",
-      "occasion_tags": ["festival", "wedding", "casual_formal"],
-      "sensory_tags": ["light", "elegant", "traditional", "comfortable"],
+      "occasion_tags": [
+        "festival",
+        "wedding",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "light",
+        "elegant",
+        "traditional",
+        "comfortable"
+      ],
       "price_inr": 900,
       "available": true,
       "delivery_days": 8,
       "description": "Classic Kerala kasavu featuring a kasavu gold border. Pure cotton with a handwoven gold border — the signature of Kerala's weaving tradition. Light and elegant for Onam, weddings, and formal occasions.",
       "description_hi": "क्लासिक केरल कसावु जिसमें सोने की कसावु किनारी है। हाथ से बुनी सोने की किनारी के साथ शुद्ध सूती — केरल की बुनाई परंपरा की पहचान। ओणम, शादियों और औपचारिक अवसरों के लिए हल्की और सुंदर।",
       "reviews": [
-        {"user": "Rohini B.", "rating": 4, "comment": "Good everyday saree. Simple and elegant."},
-        {"user": "Kavitha N.", "rating": 4, "comment": "Good quality cotton. Feels premium for the price."}
+        {
+          "user": "Rohini B.",
+          "rating": 4,
+          "comment": "Good everyday saree. Simple and elegant."
+        },
+        {
+          "user": "Kavitha N.",
+          "rating": 4,
+          "comment": "Good quality cotton. Feels premium for the price."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Kerala_Kasavu_saree.jpg/800px-Kerala_Kasavu_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S012",
@@ -239,18 +424,34 @@
       "color": "white with red dot pattern",
       "color_family": "red",
       "pattern": "Tangaliya dot motif",
-      "occasion_tags": ["casual", "festival"],
-      "sensory_tags": ["light", "textured", "comfortable", "everyday"],
+      "occasion_tags": [
+        "casual",
+        "festival"
+      ],
+      "sensory_tags": [
+        "light",
+        "textured",
+        "comfortable",
+        "everyday"
+      ],
       "price_inr": 750,
       "available": true,
       "delivery_days": 9,
       "description": "A GI-tagged Tangaliya saree from Surendranagar, Gujarat, featuring a signature Tangaliya dot motif. The raised dot motif is created entirely on the loom — no embroidery. A rare and light fabric for discerning buyers.",
       "description_hi": "गुजरात के सुरेंद्रनगर से जीआई-टैग वाली तांगालिया साड़ी, जिसमें विशिष्ट तांगालिया बिंदु रूपांकन है। उभरे हुए बिंदु पूरी तरह से करघे पर बनाए जाते हैं — बिना कढ़ाई के। जानकार खरीदारों के लिए एक दुर्लभ और हल्का कपड़ा।",
       "reviews": [
-        {"user": "Saritha C.", "rating": 5, "comment": "Exactly as described. The zari border is beautiful."},
-        {"user": "Rekha P.", "rating": 5, "comment": "Wore this to office every week. Comfortable and looks neat."}
+        {
+          "user": "Saritha C.",
+          "rating": 5,
+          "comment": "Exactly as described. The zari border is beautiful."
+        },
+        {
+          "user": "Rekha P.",
+          "rating": 5,
+          "comment": "Wore this to office every week. Comfortable and looks neat."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Tangaliya_saree.jpg/800px-Tangaliya_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S013",
@@ -260,18 +461,35 @@
       "color": "white with pink floral",
       "color_family": "pink",
       "pattern": "rose block print",
-      "occasion_tags": ["casual", "college", "summer"],
-      "sensory_tags": ["light", "airy", "soft", "fresh"],
+      "occasion_tags": [
+        "casual",
+        "college",
+        "summer"
+      ],
+      "sensory_tags": [
+        "light",
+        "airy",
+        "soft",
+        "fresh"
+      ],
       "price_inr": 480,
       "available": true,
       "delivery_days": 5,
       "description": "Hand block-printed in Sanganer, Jaipur, this cotton saree features a rose block print made using natural or vegetable dyes. Each print is slightly unique — a mark of genuine handcraft. Light and casual-ready.",
       "description_hi": "जयपुर के सांगानेर में हाथ से ब्लॉक प्रिंट की गई यह सूती साड़ी प्राकृतिक रंगों से बने गुलाब के ब्लॉक प्रिंट को दर्शाती है। हर प्रिंट थोड़ा अलग होता है — वास्तविक हस्तशिल्प की पहचान। हल्की और सामान्य पहनावे के लिए तैयार।",
       "reviews": [
-        {"user": "Nirmala J.", "rating": 4, "comment": "Very comfortable in humid weather. Recommend for South India."},
-        {"user": "Annapurna D.", "rating": 4, "comment": "The border design is very pretty. Drapes well too."}
+        {
+          "user": "Nirmala J.",
+          "rating": 4,
+          "comment": "Very comfortable in humid weather. Recommend for South India."
+        },
+        {
+          "user": "Annapurna D.",
+          "rating": 4,
+          "comment": "The border design is very pretty. Drapes well too."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Sanganer_block_print_saree.jpg/800px-Sanganer_block_print_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S014",
@@ -281,18 +499,35 @@
       "color": "lavender",
       "color_family": "purple",
       "pattern": "plain with thin border",
-      "occasion_tags": ["casual", "daily_wear", "work"],
-      "sensory_tags": ["soft", "light", "breathable", "comfortable"],
+      "occasion_tags": [
+        "casual",
+        "daily_wear",
+        "work"
+      ],
+      "sensory_tags": [
+        "soft",
+        "light",
+        "breathable",
+        "comfortable"
+      ],
       "price_inr": 580,
       "available": true,
       "delivery_days": 6,
       "description": "This handwoven Venkatagiri cotton saree is prized for its fine thread count and soft drape. The plain with thin border is woven directly into the fabric — not printed. Lightweight and breathable, it keeps you cool through long days. Ideal for casual.",
       "description_hi": "यह हाथ से बुनी वेंकटगिरी सूती साड़ी अपने बारीक धागों और मुलायम ड्रेप के लिए जानी जाती है। पतली किनारी वाला सादा कपड़ा सीधे बुनाई में शामिल है — मुद्रित नहीं। हल्की और सांस लेने योग्य, यह लंबे दिनों में ठंडक देती है। सामान्य पहनावे के लिए आदर्श।",
       "reviews": [
-        {"user": "Kamala E.", "rating": 5, "comment": "Weaver did amazing work. The pattern is crisp."},
-        {"user": "Sujata M.", "rating": 5, "comment": "My mother loved this saree. Perfect for casual puja days."}
+        {
+          "user": "Kamala E.",
+          "rating": 5,
+          "comment": "Weaver did amazing work. The pattern is crisp."
+        },
+        {
+          "user": "Sujata M.",
+          "rating": 5,
+          "comment": "My mother loved this saree. Perfect for casual puja days."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Venkatagiri_saree.jpg/800px-Venkatagiri_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S015",
@@ -302,18 +537,35 @@
       "color": "sky blue",
       "color_family": "blue",
       "pattern": "plain",
-      "occasion_tags": ["casual", "summer", "daily_wear"],
-      "sensory_tags": ["light", "cool", "airy", "everyday"],
+      "occasion_tags": [
+        "casual",
+        "summer",
+        "daily_wear"
+      ],
+      "sensory_tags": [
+        "light",
+        "cool",
+        "airy",
+        "everyday"
+      ],
       "price_inr": 380,
       "available": true,
       "delivery_days": 4,
       "description": "Woven in the Shantipur tradition of West Bengal, this Tant cotton saree is prized for its fine weave and light drape. The plain adds subtle elegance. Tant cotton breathes extremely well — a favourite for daily wear in all seasons.",
       "description_hi": "पश्चिम बंगाल की शांतिपुर परंपरा में बुनी यह तांत सूती साड़ी अपनी बारीक बुनाई और हल्के ड्रेप के लिए जानी जाती है। सादा कपड़ा सूक्ष्म सुंदरता जोड़ता है। तांत कॉटन बहुत अच्छी तरह सांस लेता है — सभी मौसमों में दैनिक पहनावे के लिए पसंदीदा।",
       "reviews": [
-        {"user": "Vasantha F.", "rating": 4, "comment": "Nice colour. Slightly lighter than expected but still lovely."},
-        {"user": "Geetha S.", "rating": 4, "comment": "Light and easy to manage. Great for summer."}
+        {
+          "user": "Vasantha F.",
+          "rating": 4,
+          "comment": "Nice colour. Slightly lighter than expected but still lovely."
+        },
+        {
+          "user": "Geetha S.",
+          "rating": 4,
+          "comment": "Light and easy to manage. Great for summer."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Tant_saree.jpg/800px-Tant_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sambalpuri_Saree.jpg?width=600"
     },
     {
       "id": "S016",
@@ -323,18 +575,34 @@
       "color": "red and black",
       "color_family": "red",
       "pattern": "traditional shankha chakra motif",
-      "occasion_tags": ["festival", "casual_formal"],
-      "sensory_tags": ["comfortable", "traditional", "festive", "everyday"],
+      "occasion_tags": [
+        "festival",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "comfortable",
+        "traditional",
+        "festive",
+        "everyday"
+      ],
       "price_inr": 920,
       "available": true,
       "delivery_days": 10,
       "description": "Cotton Sambalpuri ikat featuring a traditional shankha chakra motif. The traditional motifs from Sambalpur are achieved through resist-dyeing before weaving. Earthy and comfortable, an excellent choice for festival wear.",
       "description_hi": "सूती संबलपुरी इकट जिसमें पारंपरिक शंख चक्र आकृति है। संबलपुर के पारंपरिक आकृतियाँ बुनाई से पहले रेजिस्ट-डाईंग द्वारा प्राप्त की जाती हैं। मिट्टी जैसी और आरामदायक, त्योहारों के लिए एक उत्कृष्ट विकल्प।",
       "reviews": [
-        {"user": "Meena R.", "rating": 5, "comment": "Exactly what I needed for daily wear. Soft and breathable all day."},
-        {"user": "Bharathi K.", "rating": 5, "comment": "Ordered for my daughter's college. She gets compliments daily."}
+        {
+          "user": "Meena R.",
+          "rating": 5,
+          "comment": "Exactly what I needed for daily wear. Soft and breathable all day."
+        },
+        {
+          "user": "Bharathi K.",
+          "rating": 5,
+          "comment": "Ordered for my daughter's college. She gets compliments daily."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Pochampally_Ikat_Saree.jpg/800px-Pochampally_Ikat_Saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sambalpuri_Saree.jpg?width=600"
     },
     {
       "id": "S017",
@@ -344,18 +612,35 @@
       "color": "indigo and white",
       "color_family": "blue",
       "pattern": "dabu resist print",
-      "occasion_tags": ["casual", "work", "college"],
-      "sensory_tags": ["light", "casual", "everyday", "cool"],
+      "occasion_tags": [
+        "casual",
+        "work",
+        "college"
+      ],
+      "sensory_tags": [
+        "light",
+        "casual",
+        "everyday",
+        "cool"
+      ],
       "price_inr": 680,
       "available": true,
       "delivery_days": 6,
       "description": "This cotton saree from Bagru, Rajasthan uses the traditional dabu resist printing method. The dabu resist print is earthy and distinctive. Lightweight and light, each piece carries the character of natural dye craft.",
       "description_hi": "राजस्थान के बागरू की यह सूती साड़ी पारंपरिक दाबू रेजिस्ट प्रिंटिंग विधि का उपयोग करती है। दाबू रेजिस्ट प्रिंट मिट्टी जैसा और विशिष्ट है। हल्की और हल्की, हर टुकड़ा प्राकृतिक रंग शिल्प का गुण रखता है।",
       "reviews": [
-        {"user": "Sudha V.", "rating": 5, "comment": "Beautiful colour. Washed well and did not fade at all."},
-        {"user": "Lalitha T.", "rating": 4, "comment": "Colour is exactly as shown. Delivery was fast too."}
+        {
+          "user": "Sudha V.",
+          "rating": 5,
+          "comment": "Beautiful colour. Washed well and did not fade at all."
+        },
+        {
+          "user": "Lalitha T.",
+          "rating": 4,
+          "comment": "Colour is exactly as shown. Delivery was fast too."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Bagru_block_print_saree.jpg/800px-Bagru_block_print_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S018",
@@ -365,18 +650,34 @@
       "color": "off-white",
       "color_family": "neutral",
       "pattern": "plain weave fine count",
-      "occasion_tags": ["casual", "daily_wear"],
-      "sensory_tags": ["soft", "light", "breathable", "simple"],
+      "occasion_tags": [
+        "casual",
+        "daily_wear"
+      ],
+      "sensory_tags": [
+        "soft",
+        "light",
+        "breathable",
+        "simple"
+      ],
       "price_inr": 490,
       "available": true,
       "delivery_days": 7,
       "description": "Woven in the historically significant Chendamangalam cluster of Kerala, this cotton saree has a plain weave fine count that is quietly elegant. Fine thread count, soft texture, and understated beauty make it ideal for casual.",
       "description_hi": "केरल के ऐतिहासिक चेंदमंगलम क्लस्टर में बुनी यह सूती साड़ी में बारीक काउंट का सादा कपड़ा है जो शांत सुंदरता रखता है। बारीक धागों की संख्या, मुलायम बनावट और कम दिखने वाली सुंदरता इसे सामान्य पहनावे के लिए आदर्श बनाती है।",
       "reviews": [
-        {"user": "Kavitha N.", "rating": 4, "comment": "Good quality cotton. Feels premium for the price."},
-        {"user": "Padma A.", "rating": 5, "comment": "Fine weave, lovely texture. Will order again."}
+        {
+          "user": "Kavitha N.",
+          "rating": 4,
+          "comment": "Good quality cotton. Feels premium for the price."
+        },
+        {
+          "user": "Padma A.",
+          "rating": 5,
+          "comment": "Fine weave, lovely texture. Will order again."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Venkatagiri_saree.jpg/800px-Venkatagiri_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S019",
@@ -386,18 +687,35 @@
       "color": "turquoise",
       "color_family": "blue",
       "pattern": "geometric embroidery border",
-      "occasion_tags": ["festival", "casual_formal", "casual"],
-      "sensory_tags": ["light", "festive", "vibrant", "comfortable"],
+      "occasion_tags": [
+        "festival",
+        "casual_formal",
+        "casual"
+      ],
+      "sensory_tags": [
+        "light",
+        "festive",
+        "vibrant",
+        "comfortable"
+      ],
       "price_inr": 780,
       "available": true,
       "delivery_days": 7,
       "description": "From the vibrant Kutch cluster of Gujarat, this cotton saree features a geometric embroidery border that reflects the bold aesthetic of the region. Bright, light, and full of character — perfect for festival occasions.",
       "description_hi": "गुजरात के जीवंत कच्छ क्षेत्र से, यह सूती साड़ी ज्यामितीय कढ़ाई वाली किनारी के साथ आती है जो क्षेत्र की बोल्ड सौंदर्यशैली को दर्शाती है। चमकीली, हल्की और चरित्र से भरपूर — त्योहारों के लिए बिल्कुल उपयुक्त।",
       "reviews": [
-        {"user": "Rekha P.", "rating": 5, "comment": "Wore this to office every week. Comfortable and looks neat."},
-        {"user": "Rohini B.", "rating": 4, "comment": "Good everyday saree. Simple and elegant."}
+        {
+          "user": "Rekha P.",
+          "rating": 5,
+          "comment": "Wore this to office every week. Comfortable and looks neat."
+        },
+        {
+          "user": "Rohini B.",
+          "rating": 4,
+          "comment": "Good everyday saree. Simple and elegant."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Kutch_embroidery_saree.jpg/800px-Kutch_embroidery_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S020",
@@ -407,18 +725,35 @@
       "color": "mustard yellow",
       "color_family": "yellow",
       "pattern": "thin stripe with contrast border",
-      "occasion_tags": ["casual", "festival", "daily_wear"],
-      "sensory_tags": ["light", "soft", "breathable", "everyday"],
+      "occasion_tags": [
+        "casual",
+        "festival",
+        "daily_wear"
+      ],
+      "sensory_tags": [
+        "light",
+        "soft",
+        "breathable",
+        "everyday"
+      ],
       "price_inr": 450,
       "available": true,
       "delivery_days": 5,
       "description": "Woven in the Shantipur tradition of West Bengal, this Tant cotton saree is prized for its fine weave and light drape. The thin stripe with contrast border adds subtle elegance. Tant cotton breathes extremely well — a favourite for daily wear in all seasons.",
       "description_hi": "पश्चिम बंगाल की शांतिपुर परंपरा में बुनी यह तांत सूती साड़ी अपनी बारीक बुनाई और हल्के ड्रेप के लिए जानी जाती है। विपरीत किनारे के साथ पतली धारियाँ सूक्ष्म सुंदरता जोड़ती हैं। तांत कॉटन बहुत अच्छी तरह सांस लेता है — सभी मौसमों में दैनिक पहनावे के लिए पसंदीदा।",
       "reviews": [
-        {"user": "Annapurna D.", "rating": 4, "comment": "The border design is very pretty. Drapes well too."},
-        {"user": "Saritha C.", "rating": 5, "comment": "Exactly as described. The zari border is beautiful."}
+        {
+          "user": "Annapurna D.",
+          "rating": 4,
+          "comment": "The border design is very pretty. Drapes well too."
+        },
+        {
+          "user": "Saritha C.",
+          "rating": 5,
+          "comment": "Exactly as described. The zari border is beautiful."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Tant_saree.jpg/800px-Tant_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sambalpuri_Saree.jpg?width=600"
     },
     {
       "id": "S021",
@@ -428,18 +763,36 @@
       "color": "mint green",
       "color_family": "green",
       "pattern": "plain square weave",
-      "occasion_tags": ["summer_wedding", "semi_formal", "festival"],
-      "sensory_tags": ["airy", "flowy", "light but rich", "summer wedding", "breathable yet elegant"],
+      "occasion_tags": [
+        "summer_wedding",
+        "semi_formal",
+        "festival"
+      ],
+      "sensory_tags": [
+        "airy",
+        "flowy",
+        "light but rich",
+        "summer wedding",
+        "breathable yet elegant"
+      ],
       "price_inr": 1100,
       "available": true,
       "delivery_days": 9,
       "description": "This Kota Doria saree from Rajasthan features a plain square weave. The hallmark square weave structure gives it an unmistakable texture that is airy, sheer, and incredibly elegant. A top choice for summer weddings.",
       "description_hi": "राजस्थान की यह कोटा डोरिया साड़ी सादे वर्गाकार बुनाई के साथ आती है। इसकी पहचान वर्गाकार बुनाई संरचना है जो इसे हवादार, पारदर्शी और अत्यंत सुंदर बनाती है। गर्मियों की शादियों के लिए एक बेहतरीन विकल्प।",
       "reviews": [
-        {"user": "Sunita B.", "rating": 5, "comment": "Ordered for my daughter's engagement. She looked stunning."},
-        {"user": "Falguni BB.", "rating": 4, "comment": "Nice soft feel. The colour matches the photo perfectly."}
+        {
+          "user": "Sunita B.",
+          "rating": 5,
+          "comment": "Ordered for my daughter's engagement. She looked stunning."
+        },
+        {
+          "user": "Falguni BB.",
+          "rating": 4,
+          "comment": "Nice soft feel. The colour matches the photo perfectly."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Kota_doria_saree.jpg/800px-Kota_doria_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S022",
@@ -449,18 +802,35 @@
       "color": "peach",
       "color_family": "orange",
       "pattern": "plain with gold border",
-      "occasion_tags": ["summer_wedding", "semi_formal", "wedding"],
-      "sensory_tags": ["flowy", "light but rich", "breathable yet elegant", "comfortable formal"],
+      "occasion_tags": [
+        "summer_wedding",
+        "semi_formal",
+        "wedding"
+      ],
+      "sensory_tags": [
+        "flowy",
+        "light but rich",
+        "breathable yet elegant",
+        "comfortable formal"
+      ],
       "price_inr": 950,
       "available": true,
       "delivery_days": 8,
       "description": "This Kota Doria saree from Rajasthan features a plain with gold border. The hallmark square weave structure gives it an unmistakable texture that is flowy, sheer, and incredibly elegant. A top choice for summer weddings.",
       "description_hi": "राजस्थान की यह कोटा डोरिया साड़ी सादे कपड़े के साथ सोने की किनारी के साथ आती है। इसकी पहचान वर्गाकार बुनाई संरचना है जो इसे बहने वाली, पारदर्शी और अत्यंत सुंदर बनाती है। गर्मियों की शादियों के लिए एक बेहतरीन विकल्प।",
       "reviews": [
-        {"user": "Mamta P.", "rating": 4, "comment": "Good quality. The border design is unique and handloom feel is real."},
-        {"user": "Girija CC.", "rating": 5, "comment": "Ordered twice already. This weaver does excellent work."}
+        {
+          "user": "Mamta P.",
+          "rating": 4,
+          "comment": "Good quality. The border design is unique and handloom feel is real."
+        },
+        {
+          "user": "Girija CC.",
+          "rating": 5,
+          "comment": "Ordered twice already. This weaver does excellent work."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Kota_doria_saree.jpg/800px-Kota_doria_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S023",
@@ -470,18 +840,36 @@
       "color": "pale gold",
       "color_family": "yellow",
       "pattern": "butis with gold motif",
-      "occasion_tags": ["wedding", "festival", "semi_formal"],
-      "sensory_tags": ["flowy", "elegant", "semi-formal", "versatile", "light but rich"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "flowy",
+        "elegant",
+        "semi-formal",
+        "versatile",
+        "light but rich"
+      ],
       "price_inr": 2200,
       "available": true,
       "delivery_days": 14,
       "description": "A signature Chanderi saree featuring a butis with gold motif. Chanderi fabric is celebrated for its sheer, flowy quality and subtle sheen — it catches light beautifully. The gold motifs are handwoven, not printed. A timeless piece for wedding.",
       "description_hi": "एक प्रतिष्ठित चंदेरी साड़ी जिसमें सोने के आकृति वाले बूटी हैं। चंदेरी कपड़ा अपनी पारदर्शी, बहने वाली गुणवत्ता और सूक्ष्म चमक के लिए प्रसिद्ध है — यह रोशनी को खूबसूरती से पकड़ता है। सोने के आकृतियाँ हाथ से बुनी गई हैं, मुद्रित नहीं। शादी के लिए एक कालातीत टुकड़ा।",
       "reviews": [
-        {"user": "Asha W.", "rating": 5, "comment": "Semi-formal and beautiful. Easy to manage for long events."},
-        {"user": "Hina DD.", "rating": 4, "comment": "Good for both day and evening events. Versatile pick."}
+        {
+          "user": "Asha W.",
+          "rating": 5,
+          "comment": "Semi-formal and beautiful. Easy to manage for long events."
+        },
+        {
+          "user": "Hina DD.",
+          "rating": 4,
+          "comment": "Good for both day and evening events. Versatile pick."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Chanderi_saree.jpg/800px-Chanderi_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S024",
@@ -491,18 +879,35 @@
       "color": "dusty rose",
       "color_family": "pink",
       "pattern": "plain with small butis",
-      "occasion_tags": ["summer_wedding", "semi_formal", "festival"],
-      "sensory_tags": ["flowy", "light but rich", "breathable yet elegant", "soft sheen"],
+      "occasion_tags": [
+        "summer_wedding",
+        "semi_formal",
+        "festival"
+      ],
+      "sensory_tags": [
+        "flowy",
+        "light but rich",
+        "breathable yet elegant",
+        "soft sheen"
+      ],
       "price_inr": 1600,
       "available": true,
       "delivery_days": 11,
       "description": "A signature Chanderi saree featuring a plain with small butis. Chanderi fabric is celebrated for its sheer, flowy quality and subtle sheen — it catches light beautifully. The gold motifs are handwoven, not printed. A timeless piece for summer wedding.",
       "description_hi": "एक प्रतिष्ठित चंदेरी साड़ी जिसमें छोटे बूटी वाला सादा कपड़ा है। चंदेरी कपड़ा अपनी पारदर्शी, बहने वाली गुणवत्ता और सूक्ष्म चमक के लिए प्रसिद्ध है — यह रोशनी को खूबसूरती से पकड़ता है। सोने के आकृतियाँ हाथ से बुनी गई हैं, मुद्रित नहीं। गर्मियों की शादी के लिए एक कालातीत टुकड़ा।",
       "reviews": [
-        {"user": "Bindiya X.", "rating": 4, "comment": "Lovely fabric. Slightly sheer but very elegant for evening."},
-        {"user": "Priya S.", "rating": 5, "comment": "Perfect blend — light enough for summer but rich enough for weddings."}
+        {
+          "user": "Bindiya X.",
+          "rating": 4,
+          "comment": "Lovely fabric. Slightly sheer but very elegant for evening."
+        },
+        {
+          "user": "Priya S.",
+          "rating": 5,
+          "comment": "Perfect blend — light enough for summer but rich enough for weddings."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Chanderi_saree.jpg/800px-Chanderi_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S025",
@@ -512,18 +917,35 @@
       "color": "purple with silver border",
       "color_family": "purple",
       "pattern": "reversible border",
-      "occasion_tags": ["wedding", "festival", "semi_formal"],
-      "sensory_tags": ["versatile", "elegant", "comfortable formal", "flowy"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "versatile",
+        "elegant",
+        "comfortable formal",
+        "flowy"
+      ],
       "price_inr": 1800,
       "available": true,
       "delivery_days": 10,
       "description": "This Maheshwari saree from Khargone, Madhya Pradesh features a reversible border. Maheshwari weaves are known for their reversible border and fine texture. Versatile and wedding-appropriate, a versatile wardrobe staple.",
       "description_hi": "मध्य प्रदेश के खरगोन की यह महेश्वरी साड़ी उलटने योग्य किनारी के साथ आती है। महेश्वरी बुनाई अपनी उलटने योग्य किनारी और बारीक बनावट के लिए जानी जाती है। बहुमुखी और शादी के लिए उपयुक्त, एक बहुमुखी अलमारी का मुख्य आधार।",
       "reviews": [
-        {"user": "Chanda Y.", "rating": 5, "comment": "The ikat pattern is stunning. Cannot believe this is custom-made."},
-        {"user": "Shreya D.", "rating": 5, "comment": "The drape is lovely. Wore this for an evening wedding. Perfect."}
+        {
+          "user": "Chanda Y.",
+          "rating": 5,
+          "comment": "The ikat pattern is stunning. Cannot believe this is custom-made."
+        },
+        {
+          "user": "Shreya D.",
+          "rating": 5,
+          "comment": "The drape is lovely. Wore this for an evening wedding. Perfect."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Maheshwari_saree.jpg/800px-Maheshwari_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S026",
@@ -533,18 +955,35 @@
       "color": "teal and gold",
       "color_family": "blue",
       "pattern": "geometric ikat",
-      "occasion_tags": ["wedding", "festival", "semi_formal"],
-      "sensory_tags": ["elegant", "versatile", "semi-formal", "flowy"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "elegant",
+        "versatile",
+        "semi-formal",
+        "flowy"
+      ],
       "price_inr": 1400,
       "available": true,
       "delivery_days": 10,
       "description": "A handwoven Pochampally Ikat saree featuring a geometric ikat. The double ikat technique means both warp and weft threads are resist-dyed before weaving — creating the distinctive blurred-edge pattern. A GI-tagged craft from Telangana. Elegant and striking for wedding.",
       "description_hi": "हाथ से बुनी पोचमपल्ली इकट साड़ी जिसमें ज्यामितीय इकट है। डबल इकट तकनीक का मतलब है कि बुनाई से पहले ताना और बाना दोनों धागों को रेजिस्ट-डाई किया जाता है — जिससे विशिष्ट धुंधले किनारे वाला पैटर्न बनता है। तेलंगाना की जीआई-टैग वाली कला। शादी के लिए सुंदर और आकर्षक।",
       "reviews": [
-        {"user": "Damini Z.", "rating": 4, "comment": "Great blend. Breathable yet looks festive. Recommend for summer weddings."},
-        {"user": "Pooja K.", "rating": 4, "comment": "Good weight. Not too heavy, not too light. Just right."}
+        {
+          "user": "Damini Z.",
+          "rating": 4,
+          "comment": "Great blend. Breathable yet looks festive. Recommend for summer weddings."
+        },
+        {
+          "user": "Pooja K.",
+          "rating": 4,
+          "comment": "Good weight. Not too heavy, not too light. Just right."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Pochampally_Ikat_Saree.jpg/800px-Pochampally_Ikat_Saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pochampalli_Ikat_saree.jpg?width=600"
     },
     {
       "id": "S027",
@@ -554,18 +993,34 @@
       "color": "red with white border",
       "color_family": "red",
       "pattern": "Ilkal traditional border",
-      "occasion_tags": ["wedding", "festival"],
-      "sensory_tags": ["traditional", "festive", "elegant", "versatile"],
+      "occasion_tags": [
+        "wedding",
+        "festival"
+      ],
+      "sensory_tags": [
+        "traditional",
+        "festive",
+        "elegant",
+        "versatile"
+      ],
       "price_inr": 1200,
       "available": true,
       "delivery_days": 9,
       "description": "This Ilkal weave from Karnataka features a Ilkal traditional border. The signature contrasting border is woven separately and joined — a technique unique to Ilkal. Traditional and perfect for wedding.",
       "description_hi": "कर्नाटक की इस इलकल बुनाई में इलकल पारंपरिक किनारी है। विशिष्ट विपरीत किनारी अलग से बुनी जाती है और फिर जोड़ी जाती है — यह तकनीक इलकल के लिए अद्वितीय है। पारंपरिक और शादी के लिए बिल्कुल सही।",
       "reviews": [
-        {"user": "Esha AA.", "rating": 5, "comment": "Chanderi quality at a fair price. The sheen is gorgeous."},
-        {"user": "Neha G.", "rating": 5, "comment": "Beautiful colour. The cotton-silk mix is exactly what I wanted."}
+        {
+          "user": "Esha AA.",
+          "rating": 5,
+          "comment": "Chanderi quality at a fair price. The sheen is gorgeous."
+        },
+        {
+          "user": "Neha G.",
+          "rating": 5,
+          "comment": "Beautiful colour. The cotton-silk mix is exactly what I wanted."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Ilkal_saree.jpg/800px-Ilkal_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S028",
@@ -575,18 +1030,34 @@
       "color": "orange and black",
       "color_family": "orange",
       "pattern": "ikat geometric",
-      "occasion_tags": ["festival", "semi_formal"],
-      "sensory_tags": ["versatile", "festive", "elegant", "comfortable formal"],
+      "occasion_tags": [
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "versatile",
+        "festive",
+        "elegant",
+        "comfortable formal"
+      ],
       "price_inr": 1300,
       "available": true,
       "delivery_days": 10,
       "description": "A Nuapatna ikat saree from Cuttack, Odisha featuring a ikat geometric. Nuapatna is known for intricate temple and geometric motifs achieved through tie-dye ikat. The versatile fabric and vibrant colours make it ideal for festival.",
       "description_hi": "ओडिशा के कटक से नुआपटना इकट साड़ी जिसमें ज्यामितीय इकट है। नुआपटना जटिल मंदिर और ज्यामितीय आकृतियों के लिए जाना जाता है जो टाई-डाई इकट के माध्यम से प्राप्त किए जाते हैं। बहुमुखी कपड़ा और जीवंत रंग इसे त्योहार के लिए आदर्श बनाते हैं।",
       "reviews": [
-        {"user": "Falguni BB.", "rating": 4, "comment": "Nice soft feel. The colour matches the photo perfectly."},
-        {"user": "Ritu V.", "rating": 4, "comment": "Flowy and elegant. Got many compliments at the festival."}
+        {
+          "user": "Falguni BB.",
+          "rating": 4,
+          "comment": "Nice soft feel. The colour matches the photo perfectly."
+        },
+        {
+          "user": "Ritu V.",
+          "rating": 4,
+          "comment": "Flowy and elegant. Got many compliments at the festival."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Pochampally_Ikat_Saree.jpg/800px-Pochampally_Ikat_Saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sambalpuri_Saree.jpg?width=600"
     },
     {
       "id": "S029",
@@ -596,18 +1067,35 @@
       "color": "cream with gold kasavu",
       "color_family": "neutral",
       "pattern": "kasavu border",
-      "occasion_tags": ["wedding", "festival", "semi_formal"],
-      "sensory_tags": ["elegant", "traditional", "comfortable formal", "light but rich"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "elegant",
+        "traditional",
+        "comfortable formal",
+        "light but rich"
+      ],
       "price_inr": 1800,
       "available": true,
       "delivery_days": 11,
       "description": "A cotton-silk Kerala kasavu featuring a kasavu border. The silk content gives the kasavu border extra sheen while keeping the fabric elegant. Perfect for Onam and weddings.",
       "description_hi": "एक कॉटन-सिल्क केरल कसावु जिसमें कसावु किनारी है। रेशम की मात्रा कसावु किनारी को अतिरिक्त चमक देती है जबकि कपड़े को सुंदर रखती है। ओणम और शादियों के लिए बिल्कुल सही।",
       "reviews": [
-        {"user": "Girija CC.", "rating": 5, "comment": "Ordered twice already. This weaver does excellent work."},
-        {"user": "Sunita B.", "rating": 5, "comment": "Ordered for my daughter's engagement. She looked stunning."}
+        {
+          "user": "Girija CC.",
+          "rating": 5,
+          "comment": "Ordered twice already. This weaver does excellent work."
+        },
+        {
+          "user": "Sunita B.",
+          "rating": 5,
+          "comment": "Ordered for my daughter's engagement. She looked stunning."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Kerala_Kasavu_saree.jpg/800px-Kerala_Kasavu_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S030",
@@ -617,18 +1105,34 @@
       "color": "lilac",
       "color_family": "purple",
       "pattern": "plain with thin gold border",
-      "occasion_tags": ["summer_wedding", "semi_formal"],
-      "sensory_tags": ["flowy", "light but rich", "breathable yet elegant", "soft sheen"],
+      "occasion_tags": [
+        "summer_wedding",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "flowy",
+        "light but rich",
+        "breathable yet elegant",
+        "soft sheen"
+      ],
       "price_inr": 1500,
       "available": true,
       "delivery_days": 12,
       "description": "A Kora cotton-silk saree featuring a plain with thin gold border. Kora fabric has a distinctive raw texture that is uniquely flowy. The cotton-silk blend makes it breathable yet elegant — perfect for summer events.",
       "description_hi": "कोरा कॉटन-सिल्क साड़ी जिसमें पतली सोने की किनारी वाला सादा कपड़ा है। कोरा कपड़े में एक विशिष्ट कच्ची बनावट होती है जो अद्वितीय रूप से बहने वाली होती है। कॉटन-सिल्क मिश्रण इसे सांस लेने योग्य और सुंदर बनाता है — गर्मियों के कार्यक्रमों के लिए बिल्कुल सही।",
       "reviews": [
-        {"user": "Hina DD.", "rating": 4, "comment": "Good for both day and evening events. Versatile pick."},
-        {"user": "Mamta P.", "rating": 4, "comment": "Good quality. The border design is unique and handloom feel is real."}
+        {
+          "user": "Hina DD.",
+          "rating": 4,
+          "comment": "Good for both day and evening events. Versatile pick."
+        },
+        {
+          "user": "Mamta P.",
+          "rating": 4,
+          "comment": "Good quality. The border design is unique and handloom feel is real."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Kora_saree.jpg/800px-Kora_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S031",
@@ -638,18 +1142,35 @@
       "color": "pale blue",
       "color_family": "blue",
       "pattern": "square weave plain",
-      "occasion_tags": ["summer_wedding", "semi_formal", "casual_formal"],
-      "sensory_tags": ["airy", "flowy", "summer wedding", "breathable yet elegant"],
+      "occasion_tags": [
+        "summer_wedding",
+        "semi_formal",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "airy",
+        "flowy",
+        "summer wedding",
+        "breathable yet elegant"
+      ],
       "price_inr": 980,
       "available": true,
       "delivery_days": 9,
       "description": "This Kota Doria saree from Rajasthan features a square weave plain. The hallmark square weave structure gives it an unmistakable texture that is airy, sheer, and incredibly elegant. A top choice for summer weddings.",
       "description_hi": "राजस्थान की यह कोटा डोरिया साड़ी सादे वर्गाकार बुनाई के साथ आती है। इसकी पहचान वर्गाकार बुनाई संरचना है जो इसे हवादार, पारदर्शी और अत्यंत सुंदर बनाती है। गर्मियों की शादियों के लिए एक बेहतरीन विकल्प।",
       "reviews": [
-        {"user": "Priya S.", "rating": 5, "comment": "Perfect blend — light enough for summer but rich enough for weddings."},
-        {"user": "Asha W.", "rating": 5, "comment": "Semi-formal and beautiful. Easy to manage for long events."}
+        {
+          "user": "Priya S.",
+          "rating": 5,
+          "comment": "Perfect blend — light enough for summer but rich enough for weddings."
+        },
+        {
+          "user": "Asha W.",
+          "rating": 5,
+          "comment": "Semi-formal and beautiful. Easy to manage for long events."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Kota_doria_saree.jpg/800px-Kota_doria_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S032",
@@ -659,18 +1180,34 @@
       "color": "dark green with gold border",
       "color_family": "green",
       "pattern": "Paithani style border",
-      "occasion_tags": ["wedding", "festival"],
-      "sensory_tags": ["elegant", "festive", "semi-formal", "versatile"],
+      "occasion_tags": [
+        "wedding",
+        "festival"
+      ],
+      "sensory_tags": [
+        "elegant",
+        "festive",
+        "semi-formal",
+        "versatile"
+      ],
       "price_inr": 2000,
       "available": true,
       "delivery_days": 11,
       "description": "A cotton-silk Paithani-style saree from Yeola featuring a Paithani style border. The cotton-silk blend gives a elegant drape while the Paithani border retains its characteristic sheen. Ideal for festive wedding.",
       "description_hi": "येवला से पैठणी शैली की कॉटन-सिल्क साड़ी जिसमें पैठणी शैली की किनारी है। कॉटन-सिल्क मिश्रण एक सुंदर ड्रेप देता है जबकि पैठणी किनारी अपनी विशिष्ट चमक बनाए रखती है। त्योहारी शादी के लिए आदर्श।",
       "reviews": [
-        {"user": "Shreya D.", "rating": 5, "comment": "The drape is lovely. Wore this for an evening wedding. Perfect."},
-        {"user": "Bindiya X.", "rating": 4, "comment": "Lovely fabric. Slightly sheer but very elegant for evening."}
+        {
+          "user": "Shreya D.",
+          "rating": 5,
+          "comment": "The drape is lovely. Wore this for an evening wedding. Perfect."
+        },
+        {
+          "user": "Bindiya X.",
+          "rating": 4,
+          "comment": "Lovely fabric. Slightly sheer but very elegant for evening."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Paithani_saree.jpg/800px-Paithani_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Bhandge_Paithani.png?width=600"
     },
     {
       "id": "S033",
@@ -680,18 +1217,35 @@
       "color": "coral",
       "color_family": "orange",
       "pattern": "plain with subtle sheen",
-      "occasion_tags": ["semi_formal", "festival", "casual_formal"],
-      "sensory_tags": ["soft sheen", "elegant", "comfortable formal", "flowy"],
+      "occasion_tags": [
+        "semi_formal",
+        "festival",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "soft sheen",
+        "elegant",
+        "comfortable formal",
+        "flowy"
+      ],
       "price_inr": 2200,
       "available": true,
       "delivery_days": 12,
       "description": "A Mysore silk blend saree featuring a plain with subtle sheen. Softer and more soft sheen than pure silk, this blend retains Mysore's signature sheen. A graceful choice for semi formal occasions.",
       "description_hi": "मैसूर सिल्क ब्लेंड साड़ी जिसमें सूक्ष्म चमक वाला सादा कपड़ा है। शुद्ध रेशम की तुलना में नरम और अधिक मुलायम चमक, यह मिश्रण मैसूर की विशिष्ट चमक को बरकरार रखता है। अर्ध-औपचारिक अवसरों के लिए एक सुंदर विकल्प।",
       "reviews": [
-        {"user": "Pooja K.", "rating": 4, "comment": "Good weight. Not too heavy, not too light. Just right."},
-        {"user": "Chanda Y.", "rating": 5, "comment": "The ikat pattern is stunning. Cannot believe this is custom-made."}
+        {
+          "user": "Pooja K.",
+          "rating": 4,
+          "comment": "Good weight. Not too heavy, not too light. Just right."
+        },
+        {
+          "user": "Chanda Y.",
+          "rating": 5,
+          "comment": "The ikat pattern is stunning. Cannot believe this is custom-made."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Mysore_silk_saree.jpg/800px-Mysore_silk_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_sarees_%287642285396%29.jpg?width=600"
     },
     {
       "id": "S034",
@@ -701,18 +1255,34 @@
       "color": "maroon with silver border",
       "color_family": "red",
       "pattern": "Ilkal border",
-      "occasion_tags": ["wedding", "festival"],
-      "sensory_tags": ["traditional", "versatile", "festive", "elegant"],
+      "occasion_tags": [
+        "wedding",
+        "festival"
+      ],
+      "sensory_tags": [
+        "traditional",
+        "versatile",
+        "festive",
+        "elegant"
+      ],
       "price_inr": 1100,
       "available": true,
       "delivery_days": 7,
       "description": "This Ilkal weave from Karnataka features a Ilkal border. The signature contrasting border is woven separately and joined — a technique unique to Ilkal. Traditional and perfect for wedding.",
       "description_hi": "कर्नाटक की इस इलकल बुनाई में इलकल किनारी है। विशिष्ट विपरीत किनारी अलग से बुनी जाती है और फिर जोड़ी जाती है — यह तकनीक इलकल के लिए अद्वितीय है। पारंपरिक और शादी के लिए बिल्कुल सही।",
       "reviews": [
-        {"user": "Neha G.", "rating": 5, "comment": "Beautiful colour. The cotton-silk mix is exactly what I wanted."},
-        {"user": "Damini Z.", "rating": 4, "comment": "Great blend. Breathable yet looks festive. Recommend for summer weddings."}
+        {
+          "user": "Neha G.",
+          "rating": 5,
+          "comment": "Beautiful colour. The cotton-silk mix is exactly what I wanted."
+        },
+        {
+          "user": "Damini Z.",
+          "rating": 4,
+          "comment": "Great blend. Breathable yet looks festive. Recommend for summer weddings."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Ilkal_saree.jpg/800px-Ilkal_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S035",
@@ -722,18 +1292,34 @@
       "color": "sage green",
       "color_family": "green",
       "pattern": "plain square weave",
-      "occasion_tags": ["summer_wedding", "semi_formal"],
-      "sensory_tags": ["airy", "flowy", "light but rich", "summer wedding"],
+      "occasion_tags": [
+        "summer_wedding",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "airy",
+        "flowy",
+        "light but rich",
+        "summer wedding"
+      ],
       "price_inr": 880,
       "available": true,
       "delivery_days": 8,
       "description": "This Kota Doria saree from Rajasthan features a plain square weave. The hallmark square weave structure gives it an unmistakable texture that is airy, sheer, and incredibly elegant. A top choice for summer weddings.",
       "description_hi": "राजस्थान की यह कोटा डोरिया साड़ी सादे वर्गाकार बुनाई के साथ आती है। इसकी पहचान वर्गाकार बुनाई संरचना है जो इसे हवादार, पारदर्शी और अत्यंत सुंदर बनाती है। गर्मियों की शादियों के लिए एक बेहतरीन विकल्प।",
       "reviews": [
-        {"user": "Ritu V.", "rating": 4, "comment": "Flowy and elegant. Got many compliments at the festival."},
-        {"user": "Esha AA.", "rating": 5, "comment": "Chanderi quality at a fair price. The sheen is gorgeous."}
+        {
+          "user": "Ritu V.",
+          "rating": 4,
+          "comment": "Flowy and elegant. Got many compliments at the festival."
+        },
+        {
+          "user": "Esha AA.",
+          "rating": 5,
+          "comment": "Chanderi quality at a fair price. The sheen is gorgeous."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Kota_doria_saree.jpg/800px-Kota_doria_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S036",
@@ -743,18 +1329,35 @@
       "color": "ivory",
       "color_family": "neutral",
       "pattern": "small gold butis",
-      "occasion_tags": ["wedding", "semi_formal", "festival"],
-      "sensory_tags": ["flowy", "elegant", "soft sheen", "versatile"],
+      "occasion_tags": [
+        "wedding",
+        "semi_formal",
+        "festival"
+      ],
+      "sensory_tags": [
+        "flowy",
+        "elegant",
+        "soft sheen",
+        "versatile"
+      ],
       "price_inr": 1800,
       "available": true,
       "delivery_days": 11,
       "description": "A signature Chanderi saree featuring a small gold butis. Chanderi fabric is celebrated for its sheer, flowy quality and subtle sheen — it catches light beautifully. The gold motifs are handwoven, not printed. A timeless piece for wedding.",
       "description_hi": "एक प्रतिष्ठित चंदेरी साड़ी जिसमें छोटे सोने के बूटी हैं। चंदेरी कपड़ा अपनी पारदर्शी, बहने वाली गुणवत्ता और सूक्ष्म चमक के लिए प्रसिद्ध है — यह रोशनी को खूबसूरती से पकड़ता है। सोने के आकृतियाँ हाथ से बुनी गई हैं, मुद्रित नहीं। शादी के लिए एक कालातीत टुकड़ा।",
       "reviews": [
-        {"user": "Sunita B.", "rating": 5, "comment": "Ordered for my daughter's engagement. She looked stunning."},
-        {"user": "Falguni BB.", "rating": 4, "comment": "Nice soft feel. The colour matches the photo perfectly."}
+        {
+          "user": "Sunita B.",
+          "rating": 5,
+          "comment": "Ordered for my daughter's engagement. She looked stunning."
+        },
+        {
+          "user": "Falguni BB.",
+          "rating": 4,
+          "comment": "Nice soft feel. The colour matches the photo perfectly."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Chanderi_saree.jpg/800px-Chanderi_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S037",
@@ -764,18 +1367,35 @@
       "color": "navy blue",
       "color_family": "blue",
       "pattern": "plain with contrast border",
-      "occasion_tags": ["work", "semi_formal", "casual_formal"],
-      "sensory_tags": ["comfortable formal", "versatile", "elegant", "light but rich"],
+      "occasion_tags": [
+        "work",
+        "semi_formal",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "comfortable formal",
+        "versatile",
+        "elegant",
+        "light but rich"
+      ],
       "price_inr": 1200,
       "available": true,
       "delivery_days": 6,
       "description": "A Salem cotton-silk blend featuring a plain with contrast border. Salem's weaves are known for excellent colour retention and durability. Comfortable formal and practical for regular work wear.",
       "description_hi": "एक सेलम कॉटन-सिल्क ब्लेंड जिसमें विपरीत किनारे वाला सादा कपड़ा है। सेलम की बुनाई रंग धारण क्षमता और टिकाऊपन के लिए जानी जाती है। आरामदायक औपचारिक और नियमित काम के पहनावे के लिए व्यावहारिक।",
       "reviews": [
-        {"user": "Mamta P.", "rating": 4, "comment": "Good quality. The border design is unique and handloom feel is real."},
-        {"user": "Girija CC.", "rating": 5, "comment": "Ordered twice already. This weaver does excellent work."}
+        {
+          "user": "Mamta P.",
+          "rating": 4,
+          "comment": "Good quality. The border design is unique and handloom feel is real."
+        },
+        {
+          "user": "Girija CC.",
+          "rating": 5,
+          "comment": "Ordered twice already. This weaver does excellent work."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Salem_cotton_saree.jpg/800px-Salem_cotton_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S038",
@@ -785,18 +1405,34 @@
       "color": "yellow and red",
       "color_family": "yellow",
       "pattern": "phula motif ikat",
-      "occasion_tags": ["festival", "semi_formal"],
-      "sensory_tags": ["festive", "versatile", "comfortable formal", "traditional"],
+      "occasion_tags": [
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "festive",
+        "versatile",
+        "comfortable formal",
+        "traditional"
+      ],
       "price_inr": 1400,
       "available": true,
       "delivery_days": 10,
       "description": "A Sambalpuri ikat saree from Sambalpur, Odisha featuring a phula motif ikat. Traditional shankha, chakra, and phula motifs are woven in — not printed. Each piece takes days to complete. Festive and culturally significant.",
       "description_hi": "ओडिशा के संबलपुर से संबलपुरी इकट साड़ी जिसमें फूला आकृति वाला इकट है। पारंपरिक शंख, चक्र और फूला आकृतियाँ बुनी जाती हैं — मुद्रित नहीं। हर टुकड़ा पूरा होने में दिनों का समय लेता है। त्योहारी और सांस्कृतिक रूप से महत्वपूर्ण।",
       "reviews": [
-        {"user": "Asha W.", "rating": 5, "comment": "Semi-formal and beautiful. Easy to manage for long events."},
-        {"user": "Hina DD.", "rating": 4, "comment": "Good for both day and evening events. Versatile pick."}
+        {
+          "user": "Asha W.",
+          "rating": 5,
+          "comment": "Semi-formal and beautiful. Easy to manage for long events."
+        },
+        {
+          "user": "Hina DD.",
+          "rating": 4,
+          "comment": "Good for both day and evening events. Versatile pick."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Pochampally_Ikat_Saree.jpg/800px-Pochampally_Ikat_Saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sambalpuri_Saree.jpg?width=600"
     },
     {
       "id": "S039",
@@ -806,18 +1442,35 @@
       "color": "teal with gold border",
       "color_family": "blue",
       "pattern": "reversible stripe border",
-      "occasion_tags": ["wedding", "festival", "semi_formal"],
-      "sensory_tags": ["versatile", "elegant", "comfortable formal", "flowy"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "versatile",
+        "elegant",
+        "comfortable formal",
+        "flowy"
+      ],
       "price_inr": 2000,
       "available": true,
       "delivery_days": 10,
       "description": "This Maheshwari saree from Khargone, Madhya Pradesh features a reversible stripe border. Maheshwari weaves are known for their reversible border and fine texture. Versatile and wedding-appropriate, a versatile wardrobe staple.",
       "description_hi": "मध्य प्रदेश के खरगोन की यह महेश्वरी साड़ी उलटने योग्य धारीदार किनारी के साथ आती है। महेश्वरी बुनाई अपनी उलटने योग्य किनारी और बारीक बनावट के लिए जानी जाती है। बहुमुखी और शादी के लिए उपयुक्त, एक बहुमुखी अलमारी का मुख्य आधार।",
       "reviews": [
-        {"user": "Bindiya X.", "rating": 4, "comment": "Lovely fabric. Slightly sheer but very elegant for evening."},
-        {"user": "Priya S.", "rating": 5, "comment": "Perfect blend — light enough for summer but rich enough for weddings."}
+        {
+          "user": "Bindiya X.",
+          "rating": 4,
+          "comment": "Lovely fabric. Slightly sheer but very elegant for evening."
+        },
+        {
+          "user": "Priya S.",
+          "rating": 5,
+          "comment": "Perfect blend — light enough for summer but rich enough for weddings."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Maheshwari_saree.jpg/800px-Maheshwari_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S040",
@@ -827,18 +1480,35 @@
       "color": "pale pink",
       "color_family": "pink",
       "pattern": "plain",
-      "occasion_tags": ["summer_wedding", "semi_formal", "casual_formal"],
-      "sensory_tags": ["flowy", "breathable yet elegant", "light but rich", "soft sheen"],
+      "occasion_tags": [
+        "summer_wedding",
+        "semi_formal",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "flowy",
+        "breathable yet elegant",
+        "light but rich",
+        "soft sheen"
+      ],
       "price_inr": 1350,
       "available": true,
       "delivery_days": 12,
       "description": "A Kora cotton-silk saree featuring a plain. Kora fabric has a distinctive raw texture that is uniquely flowy. The cotton-silk blend makes it breathable yet elegant — perfect for summer events.",
       "description_hi": "कोरा कॉटन-सिल्क साड़ी जिसमें सादा कपड़ा है। कोरा कपड़े में एक विशिष्ट कच्ची बनावट होती है जो अद्वितीय रूप से बहने वाली होती है। कॉटन-सिल्क मिश्रण इसे सांस लेने योग्य और सुंदर बनाता है — गर्मियों के कार्यक्रमों के लिए बिल्कुल सही।",
       "reviews": [
-        {"user": "Chanda Y.", "rating": 5, "comment": "The ikat pattern is stunning. Cannot believe this is custom-made."},
-        {"user": "Shreya D.", "rating": 5, "comment": "The drape is lovely. Wore this for an evening wedding. Perfect."}
+        {
+          "user": "Chanda Y.",
+          "rating": 5,
+          "comment": "The ikat pattern is stunning. Cannot believe this is custom-made."
+        },
+        {
+          "user": "Shreya D.",
+          "rating": 5,
+          "comment": "The drape is lovely. Wore this for an evening wedding. Perfect."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Kora_saree.jpg/800px-Kora_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S041",
@@ -848,18 +1518,36 @@
       "color": "deep red with gold zari",
       "color_family": "red",
       "pattern": "temple border with peacock pallu",
-      "occasion_tags": ["wedding", "ceremony", "reception"],
-      "sensory_tags": ["rich", "royal", "grand", "luxurious", "heavy"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "reception"
+      ],
+      "sensory_tags": [
+        "rich",
+        "royal",
+        "grand",
+        "luxurious",
+        "heavy"
+      ],
       "price_inr": 8500,
       "available": true,
       "delivery_days": 21,
       "description": "A pure Kanjivaram silk saree featuring a temple border with peacock pallu. Kanjivaram silk is the gold standard of Indian wedding sarees — thick, lustrous, and built for a lifetime. The temple border and rich pallu are woven in pure zari. A piece you will pass down.",
       "description_hi": "एक शुद्ध कांचीपुरम रेशमी साड़ी जिसमें मोर पल्लू के साथ मंदिर की किनारी है। कांचीपुरम रेशम भारतीय शादी की साड़ियों का स्वर्ण मानक है — मोटा, चमकदार और जीवन भर चलने वाला। मंदिर की किनारी और समृद्ध पल्लू शुद्ध जरी में बुने गए हैं। एक टुकड़ा जो आप विरासत में देंगे।",
       "reviews": [
-        {"user": "Hema B.", "rating": 4, "comment": "Luxurious feel. Would make a great gift too."},
-        {"user": "Priyanka M.", "rating": 4, "comment": "Rich fabric. Drapes beautifully for formal occasions."}
+        {
+          "user": "Hema B.",
+          "rating": 4,
+          "comment": "Luxurious feel. Would make a great gift too."
+        },
+        {
+          "user": "Priyanka M.",
+          "rating": 4,
+          "comment": "Rich fabric. Drapes beautifully for formal occasions."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Kanjivaram_silk_saree.jpg/800px-Kanjivaram_silk_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_sarees_%287642285396%29.jpg?width=600"
     },
     {
       "id": "S042",
@@ -869,18 +1557,36 @@
       "color": "green with contrast pallu",
       "color_family": "green",
       "pattern": "checks with zari border",
-      "occasion_tags": ["wedding", "festival", "ceremony"],
-      "sensory_tags": ["rich", "royal", "elegant", "formal", "glossy"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "rich",
+        "royal",
+        "elegant",
+        "formal",
+        "glossy"
+      ],
       "price_inr": 6000,
       "available": true,
       "delivery_days": 16,
       "description": "A pure Kanjivaram silk saree featuring a checks with zari border. Kanjivaram silk is the gold standard of Indian wedding sarees — thick, lustrous, and built for a lifetime. The temple border and rich pallu are woven in pure zari. A piece you will pass down.",
       "description_hi": "एक शुद्ध कांचीपुरम रेशमी साड़ी जिसमें जरी किनारे के साथ चेकर पैटर्न है। कांचीपुरम रेशम भारतीय शादी की साड़ियों का स्वर्ण मानक है — मोटा, चमकदार और जीवन भर चलने वाला। मंदिर की किनारी और समृद्ध पल्लू शुद्ध जरी में बुने गए हैं। एक टुकड़ा जो आप विरासत में देंगे।",
       "reviews": [
-        {"user": "Nandini A.", "rating": 5, "comment": "Pure silk smell, beautiful sheen. Very authentic."},
-        {"user": "Swathi L.", "rating": 5, "comment": "Exactly like Kanjivaram quality but more affordable. Loved it."}
+        {
+          "user": "Nandini A.",
+          "rating": 5,
+          "comment": "Pure silk smell, beautiful sheen. Very authentic."
+        },
+        {
+          "user": "Swathi L.",
+          "rating": 5,
+          "comment": "Exactly like Kanjivaram quality but more affordable. Loved it."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Kanjivaram_silk_saree.jpg/800px-Kanjivaram_silk_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_sarees_%287642285396%29.jpg?width=600"
     },
     {
       "id": "S043",
@@ -890,18 +1596,36 @@
       "color": "teal and maroon geometric",
       "color_family": "blue",
       "pattern": "double ikat geometric",
-      "occasion_tags": ["wedding", "festival", "formal"],
-      "sensory_tags": ["rich", "elegant", "glossy", "formal", "stiff"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "formal"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "glossy",
+        "formal",
+        "stiff"
+      ],
       "price_inr": 4500,
       "available": true,
       "delivery_days": 14,
       "description": "Pure silk Pochampally Ikat featuring a double ikat geometric. The geometric precision of Pochampally's double ikat on silk produces a saree that is both rich and deeply luxurious. A collector's piece from Telangana.",
       "description_hi": "शुद्ध रेशम पोचमपल्ली इकट जिसमें डबल इकट ज्यामितीय है। रेशम पर पोचमपल्ली के डबल इकट की ज्यामितीय सटीकता एक साड़ी बनाती है जो समृद्ध और अत्यंत शानदार है। तेलंगाना से एक संग्राहक का टुकड़ा।",
       "reviews": [
-        {"user": "Revathi G.", "rating": 4, "comment": "Traditional and elegant. Perfect for ceremonies."},
-        {"user": "Divya N.", "rating": 5, "comment": "The colour is deep and vibrant. Perfect for reception."}
+        {
+          "user": "Revathi G.",
+          "rating": 4,
+          "comment": "Traditional and elegant. Perfect for ceremonies."
+        },
+        {
+          "user": "Divya N.",
+          "rating": 5,
+          "comment": "The colour is deep and vibrant. Perfect for reception."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Pochampally_Ikat_Saree.jpg/800px-Pochampally_Ikat_Saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pochampalli_Ikat_saree.jpg?width=600"
     },
     {
       "id": "S044",
@@ -911,18 +1635,36 @@
       "color": "navy and gold",
       "color_family": "blue",
       "pattern": "fine ikat with gold thread",
-      "occasion_tags": ["wedding", "ceremony", "reception"],
-      "sensory_tags": ["luxurious", "royal", "grand", "rich", "formal"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "reception"
+      ],
+      "sensory_tags": [
+        "luxurious",
+        "royal",
+        "grand",
+        "rich",
+        "formal"
+      ],
       "price_inr": 7500,
       "available": true,
       "delivery_days": 21,
       "description": "Pure silk Pochampally Ikat featuring a fine ikat with gold thread. The geometric precision of Pochampally's double ikat on silk produces a saree that is both luxurious and deeply luxurious. A collector's piece from Telangana.",
       "description_hi": "शुद्ध रेशम पोचमपल्ली इकट जिसमें सोने के धागे के साथ बारीक इकट है। रेशम पर पोचमपल्ली के डबल इकट की ज्यामितीय सटीकता एक साड़ी बनाती है जो शानदार और अत्यंत शानदार है। तेलंगाना से एक संग्राहक का टुकड़ा।",
       "reviews": [
-        {"user": "Kamakshi H.", "rating": 5, "comment": "The weave is very fine. Genuinely handloom quality."},
-        {"user": "Archana P.", "rating": 4, "comment": "Heavy but very elegant. My mother-in-law approved."}
+        {
+          "user": "Kamakshi H.",
+          "rating": 5,
+          "comment": "The weave is very fine. Genuinely handloom quality."
+        },
+        {
+          "user": "Archana P.",
+          "rating": 4,
+          "comment": "Heavy but very elegant. My mother-in-law approved."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Pochampally_Ikat_Saree.jpg/800px-Pochampally_Ikat_Saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pochampalli_Ikat_saree.jpg?width=600"
     },
     {
       "id": "S045",
@@ -932,18 +1674,36 @@
       "color": "ivory with gold brocade",
       "color_family": "neutral",
       "pattern": "floral brocade",
-      "occasion_tags": ["wedding", "ceremony", "reception"],
-      "sensory_tags": ["luxurious", "grand", "royal", "rich", "elegant"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "reception"
+      ],
+      "sensory_tags": [
+        "luxurious",
+        "grand",
+        "royal",
+        "rich",
+        "elegant"
+      ],
       "price_inr": 9000,
       "available": true,
       "delivery_days": 20,
       "description": "A Banarasi saree from Varanasi featuring a floral brocade. Banarasi brocade is India's most celebrated wedding fabric — the gold jaal or floral motifs are woven with real zari thread. Luxurious and deeply luxurious. A heritage piece.",
       "description_hi": "वाराणसी से एक बनारसी साड़ी जिसमें फूलों की ब्रोकेड है। बनारसी ब्रोकेड भारत का सबसे प्रसिद्ध शादी का कपड़ा है — सोने की जाल या फूलों के आकृतियाँ असली जरी के धागे से बुनी जाती हैं। शानदार और अत्यंत शानदार। एक विरासत का टुकड़ा।",
       "reviews": [
-        {"user": "Jayalakshmi I.", "rating": 5, "comment": "Best silk saree I have bought online. Stunning piece."},
-        {"user": "Sindhu T.", "rating": 5, "comment": "The pallu is gorgeous. Felt like a queen wearing this."}
+        {
+          "user": "Jayalakshmi I.",
+          "rating": 5,
+          "comment": "Best silk saree I have bought online. Stunning piece."
+        },
+        {
+          "user": "Sindhu T.",
+          "rating": 5,
+          "comment": "The pallu is gorgeous. Felt like a queen wearing this."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Banarasi_saree.jpg/800px-Banarasi_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Banarasi_Sari_on_viewing_wooden_blocks_01.jpg?width=600"
     },
     {
       "id": "S046",
@@ -953,18 +1713,36 @@
       "color": "pink with silver zari",
       "color_family": "pink",
       "pattern": "floral jaal",
-      "occasion_tags": ["wedding", "reception", "festival"],
-      "sensory_tags": ["rich", "elegant", "glossy", "formal", "luxurious"],
+      "occasion_tags": [
+        "wedding",
+        "reception",
+        "festival"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "glossy",
+        "formal",
+        "luxurious"
+      ],
       "price_inr": 5500,
       "available": true,
       "delivery_days": 15,
       "description": "A Banarasi saree from Varanasi featuring a floral jaal. Banarasi brocade is India's most celebrated wedding fabric — the gold jaal or floral motifs are woven with real zari thread. Rich and deeply luxurious. A heritage piece.",
       "description_hi": "वाराणसी से एक बनारसी साड़ी जिसमें फूलों की जाल है। बनारसी ब्रोकेड भारत का सबसे प्रसिद्ध शादी का कपड़ा है — सोने की जाल या फूलों के आकृतियाँ असली जरी के धागे से बुनी जाती हैं। समृद्ध और अत्यंत शानदार। एक विरासत का टुकड़ा।",
       "reviews": [
-        {"user": "Ananya R.", "rating": 5, "comment": "Wore this for my sister's wedding. Got so many compliments."},
-        {"user": "Madhavi V.", "rating": 4, "comment": "Good silk quality. Slight colour variation from photo but still beautiful."}
+        {
+          "user": "Ananya R.",
+          "rating": 5,
+          "comment": "Wore this for my sister's wedding. Got so many compliments."
+        },
+        {
+          "user": "Madhavi V.",
+          "rating": 4,
+          "comment": "Good silk quality. Slight colour variation from photo but still beautiful."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Banarasi_saree.jpg/800px-Banarasi_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Banarasi_Sari_on_viewing_wooden_blocks_01.jpg?width=600"
     },
     {
       "id": "S047",
@@ -974,18 +1752,36 @@
       "color": "royal blue with contrast border",
       "color_family": "blue",
       "pattern": "heavy contrast border and pallu",
-      "occasion_tags": ["wedding", "ceremony", "festival"],
-      "sensory_tags": ["rich", "royal", "grand", "stiff", "heavy"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "festival"
+      ],
+      "sensory_tags": [
+        "rich",
+        "royal",
+        "grand",
+        "stiff",
+        "heavy"
+      ],
       "price_inr": 6500,
       "available": true,
       "delivery_days": 18,
       "description": "A Dharmavaram silk saree from Andhra Pradesh featuring a heavy contrast border and pallu. Dharmavaram is celebrated for its heavy contrast border and rich pallu — a staple of South Indian weddings. Rich and magnificent.",
       "description_hi": "आंध्र प्रदेश से धर्मावरम रेशमी साड़ी जिसमें भारी विपरीत किनारी और पल्लू है। धर्मावरम अपनी भारी विपरीत किनारी और समृद्ध पल्लू के लिए प्रसिद्ध है — दक्षिण भारतीय शादियों का एक प्रमुख आधार। समृद्ध और शानदार।",
       "reviews": [
-        {"user": "Deepika S.", "rating": 5, "comment": "The zari work is breathtaking. Worth every rupee."},
-        {"user": "Sridevi K.", "rating": 5, "comment": "Ordered for Diwali. Weaver's craftsmanship is outstanding."}
+        {
+          "user": "Deepika S.",
+          "rating": 5,
+          "comment": "The zari work is breathtaking. Worth every rupee."
+        },
+        {
+          "user": "Sridevi K.",
+          "rating": 5,
+          "comment": "Ordered for Diwali. Weaver's craftsmanship is outstanding."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Dharmavaram_silk_saree.jpg/800px-Dharmavaram_silk_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_sarees_%287642285396%29.jpg?width=600"
     },
     {
       "id": "S048",
@@ -995,18 +1791,36 @@
       "color": "soft gold",
       "color_family": "yellow",
       "pattern": "fine jamdani floral",
-      "occasion_tags": ["wedding", "ceremony", "formal"],
-      "sensory_tags": ["luxurious", "elegant", "royal", "rich", "glossy"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "formal"
+      ],
+      "sensory_tags": [
+        "luxurious",
+        "elegant",
+        "royal",
+        "rich",
+        "glossy"
+      ],
       "price_inr": 9500,
       "available": true,
       "delivery_days": 22,
       "description": "An Uppada Jamdani silk saree from East Godavari, Andhra Pradesh featuring a fine jamdani floral. Uppada Jamdani uses an extra weft technique to create floral patterns that appear to float on the fabric. Rare, luxurious, and exquisite.",
       "description_hi": "पूर्वी गोदावरी, आंध्र प्रदेश से उप्पादा जामदानी रेशमी साड़ी जिसमें बारीक जामदानी फूल हैं। उप्पादा जामदानी अतिरिक्त बाना तकनीक का उपयोग करके फूलों के पैटर्न बनाती है जो कपड़े पर तैरते हुए दिखाई देते हैं। दुर्लभ, शानदार और उत्कृष्ट।",
       "reviews": [
-        {"user": "Priyanka M.", "rating": 4, "comment": "Rich fabric. Drapes beautifully for formal occasions."},
-        {"user": "Usha C.", "rating": 5, "comment": "Arrived on time. The zari border is exactly as described."}
+        {
+          "user": "Priyanka M.",
+          "rating": 4,
+          "comment": "Rich fabric. Drapes beautifully for formal occasions."
+        },
+        {
+          "user": "Usha C.",
+          "rating": 5,
+          "comment": "Arrived on time. The zari border is exactly as described."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Uppada_Jamdani_saree.jpg/800px-Uppada_Jamdani_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S049",
@@ -1016,18 +1830,36 @@
       "color": "deep purple",
       "color_family": "purple",
       "pattern": "plain with gold border",
-      "occasion_tags": ["wedding", "formal", "ceremony"],
-      "sensory_tags": ["rich", "elegant", "glossy", "royal", "luxurious"],
+      "occasion_tags": [
+        "wedding",
+        "formal",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "glossy",
+        "royal",
+        "luxurious"
+      ],
       "price_inr": 5000,
       "available": true,
       "delivery_days": 17,
       "description": "A Mysore silk saree featuring a plain with gold border. Mysore silk is prized for its softer hand compared to Kanjivaram — rich with a gorgeous natural sheen. The GI-tagged Mysore silk is a landmark of Karnataka's weaving heritage.",
       "description_hi": "एक मैसूर रेशमी साड़ी जिसमें सोने की किनारी वाला सादा कपड़ा है। मैसूर रेशम कांचीपुरम की तुलना में अपने नरम हाथ के लिए बेशकीमती है — एक शानदार प्राकृतिक चमक के साथ समृद्ध। जीआई-टैग वाला मैसूर रेशम कर्नाटक की बुनाई विरासत का एक मील का पत्थर है।",
       "reviews": [
-        {"user": "Swathi L.", "rating": 5, "comment": "Exactly like Kanjivaram quality but more affordable. Loved it."},
-        {"user": "Hema B.", "rating": 4, "comment": "Luxurious feel. Would make a great gift too."}
+        {
+          "user": "Swathi L.",
+          "rating": 5,
+          "comment": "Exactly like Kanjivaram quality but more affordable. Loved it."
+        },
+        {
+          "user": "Hema B.",
+          "rating": 4,
+          "comment": "Luxurious feel. Would make a great gift too."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Mysore_silk_saree.jpg/800px-Mysore_silk_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_sarees_%287642285396%29.jpg?width=600"
     },
     {
       "id": "S050",
@@ -1037,18 +1869,36 @@
       "color": "vermillion red",
       "color_family": "red",
       "pattern": "fine thread plain with border",
-      "occasion_tags": ["wedding", "ceremony", "festival"],
-      "sensory_tags": ["rich", "royal", "elegant", "luxurious", "glossy"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "festival"
+      ],
+      "sensory_tags": [
+        "rich",
+        "royal",
+        "elegant",
+        "luxurious",
+        "glossy"
+      ],
       "price_inr": 7000,
       "available": true,
       "delivery_days": 22,
       "description": "A Molakalmuru silk saree from Chitradurga, Karnataka featuring a fine thread plain with border. Molakalmuru is known for its fine thread count and subtle colour gradients. Richer than Mysore silk and deeply rich — a collector's choice.",
       "description_hi": "चित्रदुर्ग, कर्नाटक से मोलकालमूरु रेशमी साड़ी जिसमें बारीक धागे का सादा कपड़ा है जिसमें किनारी है। मोलकालमूरु अपनी बारीक धागों की संख्या और सूक्ष्म रंग ग्रेडिएंट के लिए जाना जाता है। मैसूर रेशम से अधिक समृद्ध और गहराई से समृद्ध — एक संग्राहक की पसंद।",
       "reviews": [
-        {"user": "Divya N.", "rating": 5, "comment": "The colour is deep and vibrant. Perfect for reception."},
-        {"user": "Nandini A.", "rating": 5, "comment": "Pure silk smell, beautiful sheen. Very authentic."}
+        {
+          "user": "Divya N.",
+          "rating": 5,
+          "comment": "The colour is deep and vibrant. Perfect for reception."
+        },
+        {
+          "user": "Nandini A.",
+          "rating": 5,
+          "comment": "Pure silk smell, beautiful sheen. Very authentic."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Kanjivaram_silk_saree.jpg/800px-Kanjivaram_silk_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_sarees_%287642285396%29.jpg?width=600"
     },
     {
       "id": "S051",
@@ -1058,18 +1908,36 @@
       "color": "jade green",
       "color_family": "green",
       "pattern": "subtle colour gradient",
-      "occasion_tags": ["wedding", "formal", "festival"],
-      "sensory_tags": ["rich", "elegant", "glossy", "royal", "stiff"],
+      "occasion_tags": [
+        "wedding",
+        "formal",
+        "festival"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "glossy",
+        "royal",
+        "stiff"
+      ],
       "price_inr": 6000,
       "available": true,
       "delivery_days": 18,
       "description": "A Molakalmuru silk saree from Chitradurga, Karnataka featuring a subtle colour gradient. Molakalmuru is known for its fine thread count and subtle colour gradients. Richer than Mysore silk and deeply rich — a collector's choice.",
       "description_hi": "चित्रदुर्ग, कर्नाटक से मोलकालमूरु रेशमी साड़ी जिसमें सूक्ष्म रंग ग्रेडिएंट है। मोलकालमूरु अपनी बारीक धागों की संख्या और सूक्ष्म रंग ग्रेडिएंट के लिए जाना जाता है। मैसूर रेशम से अधिक समृद्ध और गहराई से समृद्ध — एक संग्राहक की पसंद।",
       "reviews": [
-        {"user": "Archana P.", "rating": 4, "comment": "Heavy but very elegant. My mother-in-law approved."},
-        {"user": "Revathi G.", "rating": 4, "comment": "Traditional and elegant. Perfect for ceremonies."}
+        {
+          "user": "Archana P.",
+          "rating": 4,
+          "comment": "Heavy but very elegant. My mother-in-law approved."
+        },
+        {
+          "user": "Revathi G.",
+          "rating": 4,
+          "comment": "Traditional and elegant. Perfect for ceremonies."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Kanjivaram_silk_saree.jpg/800px-Kanjivaram_silk_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_sarees_%287642285396%29.jpg?width=600"
     },
     {
       "id": "S052",
@@ -1079,18 +1947,36 @@
       "color": "natural beige",
       "color_family": "neutral",
       "pattern": "plain tussar texture",
-      "occasion_tags": ["formal", "semi_formal", "festival"],
-      "sensory_tags": ["rich", "textured", "elegant", "formal", "earthy"],
+      "occasion_tags": [
+        "formal",
+        "semi_formal",
+        "festival"
+      ],
+      "sensory_tags": [
+        "rich",
+        "textured",
+        "elegant",
+        "formal",
+        "earthy"
+      ],
       "price_inr": 3500,
       "available": true,
       "delivery_days": 13,
       "description": "Pure Bhagalpuri Tussar silk featuring a plain tussar texture. Tussar is a wild silk with a natural golden undertone and rich texture. Rich and unique — no two Tussar sarees look identical.",
       "description_hi": "शुद्ध भागलपुरी तुस्सर रेशम जिसमें सादा तुस्सर बनावट है। तुस्सर एक जंगली रेशम है जिसमें प्राकृतिक सुनहरा अंडरटोन और समृद्ध बनावट होती है। समृद्ध और अद्वितीय — दो तुस्सर साड़ियाँ एक जैसी नहीं दिखतीं।",
       "reviews": [
-        {"user": "Sindhu T.", "rating": 5, "comment": "The pallu is gorgeous. Felt like a queen wearing this."},
-        {"user": "Kamakshi H.", "rating": 5, "comment": "The weave is very fine. Genuinely handloom quality."}
+        {
+          "user": "Sindhu T.",
+          "rating": 5,
+          "comment": "The pallu is gorgeous. Felt like a queen wearing this."
+        },
+        {
+          "user": "Kamakshi H.",
+          "rating": 5,
+          "comment": "The weave is very fine. Genuinely handloom quality."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Tussar_saree.jpg/800px-Tussar_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sambalpuri_Saree.jpg?width=600"
     },
     {
       "id": "S053",
@@ -1100,18 +1986,36 @@
       "color": "natural with natural dye print",
       "color_family": "neutral",
       "pattern": "natural dye block print on tussar",
-      "occasion_tags": ["formal", "festival", "semi_formal"],
-      "sensory_tags": ["rich", "textured", "earthy", "elegant", "formal"],
+      "occasion_tags": [
+        "formal",
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "rich",
+        "textured",
+        "earthy",
+        "elegant",
+        "formal"
+      ],
       "price_inr": 5000,
       "available": true,
       "delivery_days": 17,
       "description": "Pure Bhagalpuri Tussar silk featuring a natural dye block print on tussar. Tussar is a wild silk with a natural golden undertone and rich texture. Rich and unique — no two Tussar sarees look identical.",
       "description_hi": "शुद्ध भागलपुरी तुस्सर रेशम जिसमें तुस्सर पर प्राकृतिक रंग से ब्लॉक प्रिंट है। तुस्सर एक जंगली रेशम है जिसमें प्राकृतिक सुनहरा अंडरटोन और समृद्ध बनावट होती है। समृद्ध और अद्वितीय — दो तुस्सर साड़ियाँ एक जैसी नहीं दिखतीं।",
       "reviews": [
-        {"user": "Madhavi V.", "rating": 4, "comment": "Good silk quality. Slight colour variation from photo but still beautiful."},
-        {"user": "Jayalakshmi I.", "rating": 5, "comment": "Best silk saree I have bought online. Stunning piece."}
+        {
+          "user": "Madhavi V.",
+          "rating": 4,
+          "comment": "Good silk quality. Slight colour variation from photo but still beautiful."
+        },
+        {
+          "user": "Jayalakshmi I.",
+          "rating": 5,
+          "comment": "Best silk saree I have bought online. Stunning piece."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Tussar_saree.jpg/800px-Tussar_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sambalpuri_Saree.jpg?width=600"
     },
     {
       "id": "S054",
@@ -1121,18 +2025,36 @@
       "color": "champagne",
       "color_family": "neutral",
       "pattern": "plain fine thread",
-      "occasion_tags": ["wedding", "formal", "reception"],
-      "sensory_tags": ["rich", "elegant", "glossy", "luxurious", "formal"],
+      "occasion_tags": [
+        "wedding",
+        "formal",
+        "reception"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "glossy",
+        "luxurious",
+        "formal"
+      ],
       "price_inr": 4000,
       "available": true,
       "delivery_days": 15,
       "description": "A Murshidabad silk saree from West Bengal featuring a plain fine thread. Murshidabad produces a finer, lighter silk than Banarasi — known for its subtle sheen and rich quality. Elegant for wedding.",
       "description_hi": "पश्चिम बंगाल से मुर्शिदाबाद रेशमी साड़ी जिसमें बारीक धागे का सादा कपड़ा है। मुर्शिदाबाद बनारसी की तुलना में बारीक, हल्का रेशम पैदा करता है — अपनी सूक्ष्म चमक और समृद्ध गुणवत्ता के लिए जाना जाता है। शादी के लिए सुंदर।",
       "reviews": [
-        {"user": "Sridevi K.", "rating": 5, "comment": "Ordered for Diwali. Weaver's craftsmanship is outstanding."},
-        {"user": "Ananya R.", "rating": 5, "comment": "Wore this for my sister's wedding. Got so many compliments."}
+        {
+          "user": "Sridevi K.",
+          "rating": 5,
+          "comment": "Ordered for Diwali. Weaver's craftsmanship is outstanding."
+        },
+        {
+          "user": "Ananya R.",
+          "rating": 5,
+          "comment": "Wore this for my sister's wedding. Got so many compliments."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Kora_saree.jpg/800px-Kora_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S055",
@@ -1142,18 +2064,36 @@
       "color": "maroon with narrative motifs",
       "color_family": "red",
       "pattern": "baluchari narrative weaving",
-      "occasion_tags": ["wedding", "ceremony", "festival"],
-      "sensory_tags": ["rich", "royal", "grand", "elegant", "luxurious"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "festival"
+      ],
+      "sensory_tags": [
+        "rich",
+        "royal",
+        "grand",
+        "elegant",
+        "luxurious"
+      ],
       "price_inr": 5500,
       "available": true,
       "delivery_days": 14,
       "description": "A Bishnupuri Baluchari saree featuring a baluchari narrative weaving. The Baluchari weaving tradition depicts scenes from epics and mythology directly in the fabric. Rich, rich, and a genuine collector's piece.",
       "description_hi": "एक बिष्णुपुरी बालुचरी साड़ी जिसमें बालुचरी कथा बुनाई है। बालुचरी बुनाई परंपरा महाकाव्यों और पौराणिक कथाओं के दृश्यों को सीधे कपड़े में चित्रित करती है। समृद्ध, समृद्ध, और एक वास्तविक संग्राहक का टुकड़ा।",
       "reviews": [
-        {"user": "Usha C.", "rating": 5, "comment": "Arrived on time. The zari border is exactly as described."},
-        {"user": "Deepika S.", "rating": 5, "comment": "The zari work is breathtaking. Worth every rupee."}
+        {
+          "user": "Usha C.",
+          "rating": 5,
+          "comment": "Arrived on time. The zari border is exactly as described."
+        },
+        {
+          "user": "Deepika S.",
+          "rating": 5,
+          "comment": "The zari work is breathtaking. Worth every rupee."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Baluchari_saree.jpg/800px-Baluchari_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S056",
@@ -1163,18 +2103,36 @@
       "color": "red and black ikat",
       "color_family": "red",
       "pattern": "traditional shankha motif",
-      "occasion_tags": ["wedding", "festival", "ceremony"],
-      "sensory_tags": ["rich", "royal", "traditional", "festive", "formal"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "rich",
+        "royal",
+        "traditional",
+        "festive",
+        "formal"
+      ],
       "price_inr": 5000,
       "available": true,
       "delivery_days": 17,
       "description": "A pure silk Sambalpuri saree featuring a traditional shankha motif. Silk Sambalpuri is reserved for festivals and weddings — the motifs carry deep cultural meaning. Rich, rich, and built to last generations.",
       "description_hi": "एक शुद्ध रेशम संबलपुरी साड़ी जिसमें पारंपरिक शंख आकृति है। रेशमी संबलपुरी त्योहारों और शादियों के लिए आरक्षित है — आकृतियाँ गहरा सांस्कृतिक अर्थ रखती हैं। समृद्ध, समृद्ध, और पीढ़ियों तक चलने के लिए बनी।",
       "reviews": [
-        {"user": "Hema B.", "rating": 4, "comment": "Luxurious feel. Would make a great gift too."},
-        {"user": "Priyanka M.", "rating": 4, "comment": "Rich fabric. Drapes beautifully for formal occasions."}
+        {
+          "user": "Hema B.",
+          "rating": 4,
+          "comment": "Luxurious feel. Would make a great gift too."
+        },
+        {
+          "user": "Priyanka M.",
+          "rating": 4,
+          "comment": "Rich fabric. Drapes beautifully for formal occasions."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Pochampally_Ikat_Saree.jpg/800px-Pochampally_Ikat_Saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sambalpuri_Saree.jpg?width=600"
     },
     {
       "id": "S057",
@@ -1184,18 +2142,36 @@
       "color": "magenta with gold border",
       "color_family": "pink",
       "pattern": "plain with contrast border",
-      "occasion_tags": ["wedding", "festival", "formal"],
-      "sensory_tags": ["rich", "elegant", "royal", "glossy", "formal"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "formal"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "royal",
+        "glossy",
+        "formal"
+      ],
       "price_inr": 3500,
       "available": true,
       "delivery_days": 16,
       "description": "An Arni silk saree from Tirupattur, Tamil Nadu featuring a plain with contrast border. Arni silk offers Kanjivaram-style richness at a more accessible price. The rich weave and vibrant colours make it ideal for wedding.",
       "description_hi": "तिरुपत्तूर, तमिलनाडु से एक अर्णी रेशमी साड़ी जिसमें विपरीत किनारे वाला सादा कपड़ा है। अर्णी रेशम कांचीपुरम शैली की समृद्धि को अधिक सुलभ मूल्य पर प्रदान करता है। समृद्ध बुनाई और जीवंत रंग इसे शादी के लिए आदर्श बनाते हैं।",
       "reviews": [
-        {"user": "Nandini A.", "rating": 5, "comment": "Pure silk smell, beautiful sheen. Very authentic."},
-        {"user": "Swathi L.", "rating": 5, "comment": "Exactly like Kanjivaram quality but more affordable. Loved it."}
+        {
+          "user": "Nandini A.",
+          "rating": 5,
+          "comment": "Pure silk smell, beautiful sheen. Very authentic."
+        },
+        {
+          "user": "Swathi L.",
+          "rating": 5,
+          "comment": "Exactly like Kanjivaram quality but more affordable. Loved it."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Kanjivaram_silk_saree.jpg/800px-Kanjivaram_silk_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_sarees_%287642285396%29.jpg?width=600"
     },
     {
       "id": "S058",
@@ -1205,18 +2181,35 @@
       "color": "navy blue with gold",
       "color_family": "blue",
       "pattern": "temple border",
-      "occasion_tags": ["wedding", "ceremony"],
-      "sensory_tags": ["rich", "royal", "grand", "luxurious", "stiff"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "rich",
+        "royal",
+        "grand",
+        "luxurious",
+        "stiff"
+      ],
       "price_inr": 11000,
       "available": true,
       "delivery_days": 21,
       "description": "A pure Kanjivaram silk saree featuring a temple border. Kanjivaram silk is the gold standard of Indian wedding sarees — thick, lustrous, and built for a lifetime. The temple border and rich pallu are woven in pure zari. A piece you will pass down.",
       "description_hi": "एक शुद्ध कांचीपुरम रेशमी साड़ी जिसमें मंदिर की किनारी है। कांचीपुरम रेशम भारतीय शादी की साड़ियों का स्वर्ण मानक है — मोटा, चमकदार और जीवन भर चलने वाला। मंदिर की किनारी और समृद्ध पल्लू शुद्ध जरी में बुने गए हैं। एक टुकड़ा जो आप विरासत में देंगे।",
       "reviews": [
-        {"user": "Revathi G.", "rating": 4, "comment": "Traditional and elegant. Perfect for ceremonies."},
-        {"user": "Divya N.", "rating": 5, "comment": "The colour is deep and vibrant. Perfect for reception."}
+        {
+          "user": "Revathi G.",
+          "rating": 4,
+          "comment": "Traditional and elegant. Perfect for ceremonies."
+        },
+        {
+          "user": "Divya N.",
+          "rating": 5,
+          "comment": "The colour is deep and vibrant. Perfect for reception."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Kanjivaram_silk_saree.jpg/800px-Kanjivaram_silk_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_sarees_%287642285396%29.jpg?width=600"
     },
     {
       "id": "S059",
@@ -1226,18 +2219,36 @@
       "color": "deep green with peacock pallu",
       "color_family": "green",
       "pattern": "peacock motif pallu",
-      "occasion_tags": ["wedding", "ceremony", "reception"],
-      "sensory_tags": ["luxurious", "grand", "royal", "rich", "heavy"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "reception"
+      ],
+      "sensory_tags": [
+        "luxurious",
+        "grand",
+        "royal",
+        "rich",
+        "heavy"
+      ],
       "price_inr": 12000,
       "available": true,
       "delivery_days": 25,
       "description": "A premium Paithani saree featuring a peacock motif pallu. The distinctive oblique weft technique gives Paithani its characteristic shimmer. Grand, luxurious, and appropriate for the most significant occasions.",
       "description_hi": "एक प्रीमियम पैठणी साड़ी जिसमें मोर आकृति वाला पल्लू है। विशिष्ट तिरछी बाना तकनीक पैठणी को इसकी विशिष्ट चमक देती है। भव्य, शानदार, और सबसे महत्वपूर्ण अवसरों के लिए उपयुक्त।",
       "reviews": [
-        {"user": "Kamakshi H.", "rating": 5, "comment": "The weave is very fine. Genuinely handloom quality."},
-        {"user": "Archana P.", "rating": 4, "comment": "Heavy but very elegant. My mother-in-law approved."}
+        {
+          "user": "Kamakshi H.",
+          "rating": 5,
+          "comment": "The weave is very fine. Genuinely handloom quality."
+        },
+        {
+          "user": "Archana P.",
+          "rating": 4,
+          "comment": "Heavy but very elegant. My mother-in-law approved."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Paithani_saree.jpg/800px-Paithani_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Bhandge_Paithani.png?width=600"
     },
     {
       "id": "S060",
@@ -1247,18 +2258,36 @@
       "color": "deep maroon",
       "color_family": "red",
       "pattern": "contrast border and pallu",
-      "occasion_tags": ["wedding", "ceremony", "festival"],
-      "sensory_tags": ["rich", "stiff", "grand", "royal", "heavy"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "festival"
+      ],
+      "sensory_tags": [
+        "rich",
+        "stiff",
+        "grand",
+        "royal",
+        "heavy"
+      ],
       "price_inr": 5500,
       "available": true,
       "delivery_days": 18,
       "description": "A Dharmavaram silk saree from Andhra Pradesh featuring a contrast border and pallu. Dharmavaram is celebrated for its heavy contrast border and rich pallu — a staple of South Indian weddings. Rich and magnificent.",
       "description_hi": "आंध्र प्रदेश से धर्मावरम रेशमी साड़ी जिसमें विपरीत किनारी और पल्लू है। धर्मावरम अपनी भारी विपरीत किनारी और समृद्ध पल्लू के लिए प्रसिद्ध है — दक्षिण भारतीय शादियों का एक प्रमुख आधार। समृद्ध और शानदार।",
       "reviews": [
-        {"user": "Jayalakshmi I.", "rating": 5, "comment": "Best silk saree I have bought online. Stunning piece."},
-        {"user": "Sindhu T.", "rating": 5, "comment": "The pallu is gorgeous. Felt like a queen wearing this."}
+        {
+          "user": "Jayalakshmi I.",
+          "rating": 5,
+          "comment": "Best silk saree I have bought online. Stunning piece."
+        },
+        {
+          "user": "Sindhu T.",
+          "rating": 5,
+          "comment": "The pallu is gorgeous. Felt like a queen wearing this."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Dharmavaram_silk_saree.jpg/800px-Dharmavaram_silk_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_sarees_%287642285396%29.jpg?width=600"
     },
     {
       "id": "S061",
@@ -1268,18 +2297,36 @@
       "color": "gold with red border",
       "color_family": "yellow",
       "pattern": "traditional contrast border",
-      "occasion_tags": ["wedding", "festival", "ceremony"],
-      "sensory_tags": ["rich", "elegant", "royal", "glossy", "formal"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "royal",
+        "glossy",
+        "formal"
+      ],
       "price_inr": 4500,
       "available": true,
       "delivery_days": 14,
       "description": "A Dharmavaram silk saree from Andhra Pradesh featuring a traditional contrast border. Dharmavaram is celebrated for its heavy contrast border and rich pallu — a staple of South Indian weddings. Rich and magnificent.",
       "description_hi": "आंध्र प्रदेश से धर्मावरम रेशमी साड़ी जिसमें पारंपरिक विपरीत किनारी है। धर्मावरम अपनी भारी विपरीत किनारी और समृद्ध पल्लू के लिए प्रसिद्ध है — दक्षिण भारतीय शादियों का एक प्रमुख आधार। समृद्ध और शानदार।",
       "reviews": [
-        {"user": "Ananya R.", "rating": 5, "comment": "Wore this for my sister's wedding. Got so many compliments."},
-        {"user": "Madhavi V.", "rating": 4, "comment": "Good silk quality. Slight colour variation from photo but still beautiful."}
+        {
+          "user": "Ananya R.",
+          "rating": 5,
+          "comment": "Wore this for my sister's wedding. Got so many compliments."
+        },
+        {
+          "user": "Madhavi V.",
+          "rating": 4,
+          "comment": "Good silk quality. Slight colour variation from photo but still beautiful."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Dharmavaram_silk_saree.jpg/800px-Dharmavaram_silk_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_sarees_%287642285396%29.jpg?width=600"
     },
     {
       "id": "S062",
@@ -1289,18 +2336,36 @@
       "color": "blue and white",
       "color_family": "blue",
       "pattern": "temple motif ikat",
-      "occasion_tags": ["wedding", "festival", "formal"],
-      "sensory_tags": ["rich", "elegant", "royal", "glossy", "formal"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "formal"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "royal",
+        "glossy",
+        "formal"
+      ],
       "price_inr": 4000,
       "available": true,
       "delivery_days": 13,
       "description": "A handwoven Nuapatna Ikat Silk saree featuring a temple motif ikat. Crafted by a skilled artisan from a traditional weaving cluster, this saree is rich and ideal for wedding occasions. Woven to order — no two pieces are identical.",
       "description_hi": "हाथ से बुनी नुआपटना इकट रेशमी साड़ी जिसमें मंदिर आकृति वाला इकट है। एक पारंपरिक बुनाई क्लस्टर से एक कुशल कारीगर द्वारा तैयार की गई, यह साड़ी समृद्ध और शादी के अवसरों के लिए आदर्श है। ऑर्डर पर बुनी गई — दो टुकड़े एक जैसे नहीं हैं।",
       "reviews": [
-        {"user": "Deepika S.", "rating": 5, "comment": "The zari work is breathtaking. Worth every rupee."},
-        {"user": "Sridevi K.", "rating": 5, "comment": "Ordered for Diwali. Weaver's craftsmanship is outstanding."}
+        {
+          "user": "Deepika S.",
+          "rating": 5,
+          "comment": "The zari work is breathtaking. Worth every rupee."
+        },
+        {
+          "user": "Sridevi K.",
+          "rating": 5,
+          "comment": "Ordered for Diwali. Weaver's craftsmanship is outstanding."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Pochampally_Ikat_Saree.jpg/800px-Pochampally_Ikat_Saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sambalpuri_Saree.jpg?width=600"
     },
     {
       "id": "S063",
@@ -1310,18 +2375,36 @@
       "color": "deep red with gold brocade",
       "color_family": "red",
       "pattern": "heavy brocade jaal",
-      "occasion_tags": ["wedding", "ceremony", "reception"],
-      "sensory_tags": ["luxurious", "grand", "royal", "heavy", "rich"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "reception"
+      ],
+      "sensory_tags": [
+        "luxurious",
+        "grand",
+        "royal",
+        "heavy",
+        "rich"
+      ],
       "price_inr": 12000,
       "available": true,
       "delivery_days": 20,
       "description": "A Banarasi saree from Varanasi featuring a heavy brocade jaal. Banarasi brocade is India's most celebrated wedding fabric — the gold jaal or floral motifs are woven with real zari thread. Luxurious and deeply luxurious. A heritage piece.",
       "description_hi": "वाराणसी से एक बनारसी साड़ी जिसमें भारी ब्रोकेड जाल है। बनारसी ब्रोकेड भारत का सबसे प्रसिद्ध शादी का कपड़ा है — सोने की जाल या फूलों के आकृतियाँ असली जरी के धागे से बुनी जाती हैं। शानदार और अत्यंत शानदार। एक विरासत का टुकड़ा।",
       "reviews": [
-        {"user": "Priyanka M.", "rating": 4, "comment": "Rich fabric. Drapes beautifully for formal occasions."},
-        {"user": "Usha C.", "rating": 5, "comment": "Arrived on time. The zari border is exactly as described."}
+        {
+          "user": "Priyanka M.",
+          "rating": 4,
+          "comment": "Rich fabric. Drapes beautifully for formal occasions."
+        },
+        {
+          "user": "Usha C.",
+          "rating": 5,
+          "comment": "Arrived on time. The zari border is exactly as described."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Banarasi_saree.jpg/800px-Banarasi_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Banarasi_Sari_on_viewing_wooden_blocks_01.jpg?width=600"
     },
     {
       "id": "S064",
@@ -1331,18 +2414,36 @@
       "color": "purple with gold border",
       "color_family": "purple",
       "pattern": "Paithani lotus border",
-      "occasion_tags": ["wedding", "festival", "ceremony"],
-      "sensory_tags": ["elegant", "royal", "rich", "formal", "grand"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "elegant",
+        "royal",
+        "rich",
+        "formal",
+        "grand"
+      ],
       "price_inr": 5500,
       "available": true,
       "delivery_days": 18,
       "description": "A Yeola-style Paithani saree from Nashik featuring a Paithani lotus border. Yeola produces Paithani at a more accessible price without compromising on the signature oblique weave. Elegant and beautiful for wedding.",
       "description_hi": "नाशिक से येवला शैली की पैठणी साड़ी जिसमें पैठणी कमल की किनारी है। येवला पैठणी को अधिक सुलभ मूल्य पर पैदा करता है, बिना हस्ताक्षर तिरछी बुनाई से समझौता किए। शादी के लिए सुंदर और खूबसूरत।",
       "reviews": [
-        {"user": "Swathi L.", "rating": 5, "comment": "Exactly like Kanjivaram quality but more affordable. Loved it."},
-        {"user": "Hema B.", "rating": 4, "comment": "Luxurious feel. Would make a great gift too."}
+        {
+          "user": "Swathi L.",
+          "rating": 5,
+          "comment": "Exactly like Kanjivaram quality but more affordable. Loved it."
+        },
+        {
+          "user": "Hema B.",
+          "rating": 4,
+          "comment": "Luxurious feel. Would make a great gift too."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Paithani_saree.jpg/800px-Paithani_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Bhandge_Paithani.png?width=600"
     },
     {
       "id": "S065",
@@ -1352,18 +2453,35 @@
       "color": "red and green double ikat",
       "color_family": "red",
       "pattern": "double ikat geometric",
-      "occasion_tags": ["wedding", "ceremony"],
-      "sensory_tags": ["luxurious", "royal", "grand", "rich", "heavy"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "luxurious",
+        "royal",
+        "grand",
+        "rich",
+        "heavy"
+      ],
       "price_inr": 18000,
       "available": true,
       "delivery_days": 30,
       "description": "A rare Patola silk saree from Patan, Gujarat featuring a double ikat geometric. Patola is India's most technically demanding weave — the double ikat technique means every single thread is dyed before weaving. A genuine heirloom.",
       "description_hi": "गुजरात के पाटन से एक दुर्लभ पटोला रेशमी साड़ी जिसमें डबल इकट ज्यामितीय है। पटोला भारत की सबसे तकनीकी रूप से मांग वाली बुनाई है — डबल इकट तकनीक का मतलब है कि बुनाई से पहले हर एक धागे को रंगा जाता है। एक वास्तविक विरासत।",
       "reviews": [
-        {"user": "Divya N.", "rating": 5, "comment": "The colour is deep and vibrant. Perfect for reception."},
-        {"user": "Nandini A.", "rating": 5, "comment": "Pure silk smell, beautiful sheen. Very authentic."}
+        {
+          "user": "Divya N.",
+          "rating": 5,
+          "comment": "The colour is deep and vibrant. Perfect for reception."
+        },
+        {
+          "user": "Nandini A.",
+          "rating": 5,
+          "comment": "Pure silk smell, beautiful sheen. Very authentic."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Pochampally_Ikat_Saree.jpg/800px-Pochampally_Ikat_Saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S066",
@@ -1373,18 +2491,36 @@
       "color": "royal blue",
       "color_family": "blue",
       "pattern": "plain with gold border",
-      "occasion_tags": ["wedding", "formal", "ceremony"],
-      "sensory_tags": ["rich", "elegant", "glossy", "luxurious", "royal"],
+      "occasion_tags": [
+        "wedding",
+        "formal",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "glossy",
+        "luxurious",
+        "royal"
+      ],
       "price_inr": 4500,
       "available": true,
       "delivery_days": 17,
       "description": "A Mysore silk saree featuring a plain with gold border. Mysore silk is prized for its softer hand compared to Kanjivaram — rich with a gorgeous natural sheen. The GI-tagged Mysore silk is a landmark of Karnataka's weaving heritage.",
       "description_hi": "एक मैसूर रेशमी साड़ी जिसमें सोने की किनारी वाला सादा कपड़ा है। मैसूर रेशम कांचीपुरम की तुलना में अपने नरम हाथ के लिए बेशकीमती है — एक शानदार प्राकृतिक चमक के साथ समृद्ध। जीआई-टैग वाला मैसूर रेशम कर्नाटक की बुनाई विरासत का एक मील का पत्थर है।",
       "reviews": [
-        {"user": "Archana P.", "rating": 4, "comment": "Heavy but very elegant. My mother-in-law approved."},
-        {"user": "Revathi G.", "rating": 4, "comment": "Traditional and elegant. Perfect for ceremonies."}
+        {
+          "user": "Archana P.",
+          "rating": 4,
+          "comment": "Heavy but very elegant. My mother-in-law approved."
+        },
+        {
+          "user": "Revathi G.",
+          "rating": 4,
+          "comment": "Traditional and elegant. Perfect for ceremonies."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Mysore_silk_saree.jpg/800px-Mysore_silk_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_sarees_%287642285396%29.jpg?width=600"
     },
     {
       "id": "S067",
@@ -1394,18 +2530,36 @@
       "color": "orange and purple",
       "color_family": "orange",
       "pattern": "chevron ikat",
-      "occasion_tags": ["festival", "wedding", "formal"],
-      "sensory_tags": ["rich", "elegant", "royal", "glossy", "stiff"],
+      "occasion_tags": [
+        "festival",
+        "wedding",
+        "formal"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "royal",
+        "glossy",
+        "stiff"
+      ],
       "price_inr": 3800,
       "available": true,
       "delivery_days": 14,
       "description": "Pure silk Pochampally Ikat featuring a chevron ikat. The geometric precision of Pochampally's double ikat on silk produces a saree that is both rich and deeply luxurious. A collector's piece from Telangana.",
       "description_hi": "शुद्ध रेशम पोचमपल्ली इकट जिसमें शेवरॉन इकट है। रेशम पर पोचमपल्ली के डबल इकट की ज्यामितीय सटीकता एक साड़ी बनाती है जो समृद्ध और अत्यंत शानदार है। तेलंगाना से एक संग्राहक का टुकड़ा।",
       "reviews": [
-        {"user": "Sindhu T.", "rating": 5, "comment": "The pallu is gorgeous. Felt like a queen wearing this."},
-        {"user": "Kamakshi H.", "rating": 5, "comment": "The weave is very fine. Genuinely handloom quality."}
+        {
+          "user": "Sindhu T.",
+          "rating": 5,
+          "comment": "The pallu is gorgeous. Felt like a queen wearing this."
+        },
+        {
+          "user": "Kamakshi H.",
+          "rating": 5,
+          "comment": "The weave is very fine. Genuinely handloom quality."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Pochampally_Ikat_Saree.jpg/800px-Pochampally_Ikat_Saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pochampalli_Ikat_saree.jpg?width=600"
     },
     {
       "id": "S068",
@@ -1415,18 +2569,36 @@
       "color": "black and gold",
       "color_family": "neutral",
       "pattern": "fine gold thread ikat",
-      "occasion_tags": ["wedding", "ceremony", "formal"],
-      "sensory_tags": ["luxurious", "grand", "royal", "elegant", "formal"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "formal"
+      ],
+      "sensory_tags": [
+        "luxurious",
+        "grand",
+        "royal",
+        "elegant",
+        "formal"
+      ],
       "price_inr": 9000,
       "available": true,
       "delivery_days": 21,
       "description": "Pure silk Pochampally Ikat featuring a fine gold thread ikat. The geometric precision of Pochampally's double ikat on silk produces a saree that is both luxurious and deeply luxurious. A collector's piece from Telangana.",
       "description_hi": "शुद्ध रेशम पोचमपल्ली इकट जिसमें बारीक सोने के धागे वाला इकट है। रेशम पर पोचमपल्ली के डबल इकट की ज्यामितीय सटीकता एक साड़ी बनाती है जो शानदार और अत्यंत शानदार है। तेलंगाना से एक संग्राहक का टुकड़ा।",
       "reviews": [
-        {"user": "Madhavi V.", "rating": 4, "comment": "Good silk quality. Slight colour variation from photo but still beautiful."},
-        {"user": "Jayalakshmi I.", "rating": 5, "comment": "Best silk saree I have bought online. Stunning piece."}
+        {
+          "user": "Madhavi V.",
+          "rating": 4,
+          "comment": "Good silk quality. Slight colour variation from photo but still beautiful."
+        },
+        {
+          "user": "Jayalakshmi I.",
+          "rating": 5,
+          "comment": "Best silk saree I have bought online. Stunning piece."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Pochampally_Ikat_Saree.jpg/800px-Pochampally_Ikat_Saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pochampalli_Ikat_saree.jpg?width=600"
     },
     {
       "id": "S069",
@@ -1436,18 +2608,36 @@
       "color": "saffron",
       "color_family": "orange",
       "pattern": "plain with contrast border",
-      "occasion_tags": ["wedding", "festival", "ceremony"],
-      "sensory_tags": ["rich", "elegant", "royal", "glossy", "formal"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "royal",
+        "glossy",
+        "formal"
+      ],
       "price_inr": 3200,
       "available": true,
       "delivery_days": 16,
       "description": "An Arni silk saree from Tirupattur, Tamil Nadu featuring a plain with contrast border. Arni silk offers Kanjivaram-style richness at a more accessible price. The rich weave and vibrant colours make it ideal for wedding.",
       "description_hi": "तिरुपत्तूर, तमिलनाडु से एक अर्णी रेशमी साड़ी जिसमें विपरीत किनारे वाला सादा कपड़ा है। अर्णी रेशम कांचीपुरम शैली की समृद्धि को अधिक सुलभ मूल्य पर प्रदान करता है। समृद्ध बुनाई और जीवंत रंग इसे शादी के लिए आदर्श बनाते हैं।",
       "reviews": [
-        {"user": "Sridevi K.", "rating": 5, "comment": "Ordered for Diwali. Weaver's craftsmanship is outstanding."},
-        {"user": "Ananya R.", "rating": 5, "comment": "Wore this for my sister's wedding. Got so many compliments."}
+        {
+          "user": "Sridevi K.",
+          "rating": 5,
+          "comment": "Ordered for Diwali. Weaver's craftsmanship is outstanding."
+        },
+        {
+          "user": "Ananya R.",
+          "rating": 5,
+          "comment": "Wore this for my sister's wedding. Got so many compliments."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Kanjivaram_silk_saree.jpg/800px-Kanjivaram_silk_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_sarees_%287642285396%29.jpg?width=600"
     },
     {
       "id": "S070",
@@ -1457,18 +2647,36 @@
       "color": "peacock blue",
       "color_family": "blue",
       "pattern": "colour gradient fine thread",
-      "occasion_tags": ["wedding", "formal", "ceremony"],
-      "sensory_tags": ["rich", "elegant", "royal", "stiff", "glossy"],
+      "occasion_tags": [
+        "wedding",
+        "formal",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "royal",
+        "stiff",
+        "glossy"
+      ],
       "price_inr": 5500,
       "available": true,
       "delivery_days": 18,
       "description": "A Molakalmuru silk saree from Chitradurga, Karnataka featuring a colour gradient fine thread. Molakalmuru is known for its fine thread count and subtle colour gradients. Richer than Mysore silk and deeply rich — a collector's choice.",
       "description_hi": "चित्रदुर्ग, कर्नाटक से मोलकालमूरु रेशमी साड़ी जिसमें रंग ग्रेडिएंट के साथ बारीक धागे हैं। मोलकालमूरु अपनी बारीक धागों की संख्या और सूक्ष्म रंग ग्रेडिएंट के लिए जाना जाता है। मैसूर रेशम से अधिक समृद्ध और गहराई से समृद्ध — एक संग्राहक की पसंद।",
       "reviews": [
-        {"user": "Usha C.", "rating": 5, "comment": "Arrived on time. The zari border is exactly as described."},
-        {"user": "Deepika S.", "rating": 5, "comment": "The zari work is breathtaking. Worth every rupee."}
+        {
+          "user": "Usha C.",
+          "rating": 5,
+          "comment": "Arrived on time. The zari border is exactly as described."
+        },
+        {
+          "user": "Deepika S.",
+          "rating": 5,
+          "comment": "The zari work is breathtaking. Worth every rupee."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Kanjivaram_silk_saree.jpg/800px-Kanjivaram_silk_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_sarees_%287642285396%29.jpg?width=600"
     },
     {
       "id": "S071",
@@ -1478,18 +2686,36 @@
       "color": "deep teal with gold zari",
       "color_family": "blue",
       "pattern": "reversible zari border",
-      "occasion_tags": ["wedding", "festival", "ceremony"],
-      "sensory_tags": ["rich", "elegant", "royal", "glossy", "formal"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "rich",
+        "elegant",
+        "royal",
+        "glossy",
+        "formal"
+      ],
       "price_inr": 4500,
       "available": true,
       "delivery_days": 16,
       "description": "A handwoven Maheshwari Silk saree featuring a reversible zari border. Crafted by a skilled artisan from a traditional weaving cluster, this saree is rich and ideal for wedding occasions. Woven to order — no two pieces are identical.",
       "description_hi": "हाथ से बुनी महेश्वरी रेशमी साड़ी जिसमें उलटने योग्य जरी किनारी है। एक पारंपरिक बुनाई क्लस्टर से एक कुशल कारीगर द्वारा तैयार की गई, यह साड़ी समृद्ध और शादी के अवसरों के लिए आदर्श है। ऑर्डर पर बुनी गई — दो टुकड़े एक जैसे नहीं हैं।",
       "reviews": [
-        {"user": "Hema B.", "rating": 4, "comment": "Luxurious feel. Would make a great gift too."},
-        {"user": "Priyanka M.", "rating": 4, "comment": "Rich fabric. Drapes beautifully for formal occasions."}
+        {
+          "user": "Hema B.",
+          "rating": 4,
+          "comment": "Luxurious feel. Would make a great gift too."
+        },
+        {
+          "user": "Priyanka M.",
+          "rating": 4,
+          "comment": "Rich fabric. Drapes beautifully for formal occasions."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Maheshwari_saree.jpg/800px-Maheshwari_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S072",
@@ -1499,18 +2725,36 @@
       "color": "wine red",
       "color_family": "red",
       "pattern": "fine stripe with zari",
-      "occasion_tags": ["wedding", "formal", "reception"],
-      "sensory_tags": ["rich", "grand", "elegant", "stiff", "luxurious"],
+      "occasion_tags": [
+        "wedding",
+        "formal",
+        "reception"
+      ],
+      "sensory_tags": [
+        "rich",
+        "grand",
+        "elegant",
+        "stiff",
+        "luxurious"
+      ],
       "price_inr": 5800,
       "available": true,
       "delivery_days": 16,
       "description": "A handwoven Maheshwari Silk saree featuring a fine stripe with zari. Crafted by a skilled artisan from a traditional weaving cluster, this saree is rich and ideal for wedding occasions. Woven to order — no two pieces are identical.",
       "description_hi": "हाथ से बुनी महेश्वरी रेशमी साड़ी जिसमें जरी के साथ बारीक धारी है। एक पारंपरिक बुनाई क्लस्टर से एक कुशल कारीगर द्वारा तैयार की गई, यह साड़ी समृद्ध और शादी के अवसरों के लिए आदर्श है। ऑर्डर पर बुनी गई — दो टुकड़े एक जैसे नहीं हैं।",
       "reviews": [
-        {"user": "Nandini A.", "rating": 5, "comment": "Pure silk smell, beautiful sheen. Very authentic."},
-        {"user": "Swathi L.", "rating": 5, "comment": "Exactly like Kanjivaram quality but more affordable. Loved it."}
+        {
+          "user": "Nandini A.",
+          "rating": 5,
+          "comment": "Pure silk smell, beautiful sheen. Very authentic."
+        },
+        {
+          "user": "Swathi L.",
+          "rating": 5,
+          "comment": "Exactly like Kanjivaram quality but more affordable. Loved it."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Maheshwari_saree.jpg/800px-Maheshwari_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S073",
@@ -1520,18 +2764,36 @@
       "color": "pale gold",
       "color_family": "yellow",
       "pattern": "fine thread plain",
-      "occasion_tags": ["wedding", "reception", "formal"],
-      "sensory_tags": ["elegant", "glossy", "rich", "formal", "luxurious"],
+      "occasion_tags": [
+        "wedding",
+        "reception",
+        "formal"
+      ],
+      "sensory_tags": [
+        "elegant",
+        "glossy",
+        "rich",
+        "formal",
+        "luxurious"
+      ],
       "price_inr": 5000,
       "available": true,
       "delivery_days": 15,
       "description": "A Murshidabad silk saree from West Bengal featuring a fine thread plain. Murshidabad produces a finer, lighter silk than Banarasi — known for its subtle sheen and elegant quality. Elegant for wedding.",
       "description_hi": "पश्चिम बंगाल से मुर्शिदाबाद रेशमी साड़ी जिसमें बारीक धागे का सादा कपड़ा है। मुर्शिदाबाद बनारसी की तुलना में बारीक, हल्का रेशम पैदा करता है — अपनी सूक्ष्म चमक और सुंदर गुणवत्ता के लिए जाना जाता है। शादी के लिए सुंदर।",
       "reviews": [
-        {"user": "Revathi G.", "rating": 4, "comment": "Traditional and elegant. Perfect for ceremonies."},
-        {"user": "Divya N.", "rating": 5, "comment": "The colour is deep and vibrant. Perfect for reception."}
+        {
+          "user": "Revathi G.",
+          "rating": 4,
+          "comment": "Traditional and elegant. Perfect for ceremonies."
+        },
+        {
+          "user": "Divya N.",
+          "rating": 5,
+          "comment": "The colour is deep and vibrant. Perfect for reception."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Kora_saree.jpg/800px-Kora_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S074",
@@ -1541,18 +2803,36 @@
       "color": "deep blue with narrative pallu",
       "color_family": "blue",
       "pattern": "mythological narrative motif",
-      "occasion_tags": ["wedding", "ceremony", "festival"],
-      "sensory_tags": ["rich", "grand", "royal", "luxurious", "elegant"],
+      "occasion_tags": [
+        "wedding",
+        "ceremony",
+        "festival"
+      ],
+      "sensory_tags": [
+        "rich",
+        "grand",
+        "royal",
+        "luxurious",
+        "elegant"
+      ],
       "price_inr": 6500,
       "available": true,
       "delivery_days": 14,
       "description": "A Bishnupuri Baluchari saree featuring a mythological narrative motif. The Baluchari weaving tradition depicts scenes from epics and mythology directly in the fabric. Rich, rich, and a genuine collector's piece.",
       "description_hi": "एक बिष्णुपुरी बालुचरी साड़ी जिसमें पौराणिक कथा आकृति है। बालुचरी बुनाई परंपरा महाकाव्यों और पौराणिक कथाओं के दृश्यों को सीधे कपड़े में चित्रित करती है। समृद्ध, समृद्ध, और एक वास्तविक संग्राहक का टुकड़ा।",
       "reviews": [
-        {"user": "Kamakshi H.", "rating": 5, "comment": "The weave is very fine. Genuinely handloom quality."},
-        {"user": "Archana P.", "rating": 4, "comment": "Heavy but very elegant. My mother-in-law approved."}
+        {
+          "user": "Kamakshi H.",
+          "rating": 5,
+          "comment": "The weave is very fine. Genuinely handloom quality."
+        },
+        {
+          "user": "Archana P.",
+          "rating": 4,
+          "comment": "Heavy but very elegant. My mother-in-law approved."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Baluchari_saree.jpg/800px-Baluchari_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S075",
@@ -1562,18 +2842,35 @@
       "color": "yellow and black",
       "color_family": "yellow",
       "pattern": "chakra motif",
-      "occasion_tags": ["wedding", "festival"],
-      "sensory_tags": ["rich", "festive", "royal", "formal", "traditional"],
+      "occasion_tags": [
+        "wedding",
+        "festival"
+      ],
+      "sensory_tags": [
+        "rich",
+        "festive",
+        "royal",
+        "formal",
+        "traditional"
+      ],
       "price_inr": 4500,
       "available": true,
       "delivery_days": 17,
       "description": "A pure silk Sambalpuri saree featuring a chakra motif. Silk Sambalpuri is reserved for festivals and weddings — the motifs carry deep cultural meaning. Rich, rich, and built to last generations.",
       "description_hi": "एक शुद्ध रेशम संबलपुरी साड़ी जिसमें चक्र आकृति है। रेशमी संबलपुरी त्योहारों और शादियों के लिए आरक्षित है — आकृतियाँ गहरा सांस्कृतिक अर्थ रखती हैं। समृद्ध, समृद्ध, और पीढ़ियों तक चलने के लिए बनी।",
       "reviews": [
-        {"user": "Jayalakshmi I.", "rating": 5, "comment": "Best silk saree I have bought online. Stunning piece."},
-        {"user": "Sindhu T.", "rating": 5, "comment": "The pallu is gorgeous. Felt like a queen wearing this."}
+        {
+          "user": "Jayalakshmi I.",
+          "rating": 5,
+          "comment": "Best silk saree I have bought online. Stunning piece."
+        },
+        {
+          "user": "Sindhu T.",
+          "rating": 5,
+          "comment": "The pallu is gorgeous. Felt like a queen wearing this."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Pochampally_Ikat_Saree.jpg/800px-Pochampally_Ikat_Saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sambalpuri_Saree.jpg?width=600"
     },
     {
       "id": "S076",
@@ -1583,18 +2880,35 @@
       "color": "blue and white",
       "color_family": "blue",
       "pattern": "simple geometric ikat",
-      "occasion_tags": ["semi_formal", "casual_formal", "festival"],
-      "sensory_tags": ["versatile", "comfortable formal", "elegant", "flowy"],
+      "occasion_tags": [
+        "semi_formal",
+        "casual_formal",
+        "festival"
+      ],
+      "sensory_tags": [
+        "versatile",
+        "comfortable formal",
+        "elegant",
+        "flowy"
+      ],
       "price_inr": 1100,
       "available": true,
       "delivery_days": 10,
       "description": "A handwoven Pochampally Ikat saree featuring a simple geometric ikat. The double ikat technique means both warp and weft threads are resist-dyed before weaving — creating the distinctive blurred-edge pattern. A GI-tagged craft from Telangana. Versatile and striking for semi formal.",
       "description_hi": "हाथ से बुनी पोचमपल्ली इकट साड़ी जिसमें सरल ज्यामितीय इकट है। डबल इकट तकनीक का मतलब है कि बुनाई से पहले ताना और बाना दोनों धागों को रेजिस्ट-डाई किया जाता है — जिससे विशिष्ट धुंधले किनारे वाला पैटर्न बनता है। तेलंगाना की जीआई-टैग वाली कला। अर्ध-औपचारिक के लिए बहुमुखी और आकर्षक।",
       "reviews": [
-        {"user": "Priya S.", "rating": 5, "comment": "Perfect blend — light enough for summer but rich enough for weddings."},
-        {"user": "Asha W.", "rating": 5, "comment": "Semi-formal and beautiful. Easy to manage for long events."}
+        {
+          "user": "Priya S.",
+          "rating": 5,
+          "comment": "Perfect blend — light enough for summer but rich enough for weddings."
+        },
+        {
+          "user": "Asha W.",
+          "rating": 5,
+          "comment": "Semi-formal and beautiful. Easy to manage for long events."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Pochampally_Ikat_Saree.jpg/800px-Pochampally_Ikat_Saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pochampalli_Ikat_saree.jpg?width=600"
     },
     {
       "id": "S077",
@@ -1604,18 +2918,35 @@
       "color": "sky blue with gold motif",
       "color_family": "blue",
       "pattern": "scattered gold butis",
-      "occasion_tags": ["wedding", "semi_formal", "festival"],
-      "sensory_tags": ["flowy", "light but rich", "breathable yet elegant", "elegant"],
+      "occasion_tags": [
+        "wedding",
+        "semi_formal",
+        "festival"
+      ],
+      "sensory_tags": [
+        "flowy",
+        "light but rich",
+        "breathable yet elegant",
+        "elegant"
+      ],
       "price_inr": 2500,
       "available": true,
       "delivery_days": 14,
       "description": "A signature Chanderi saree featuring a scattered gold butis. Chanderi fabric is celebrated for its sheer, flowy quality and subtle sheen — it catches light beautifully. The gold motifs are handwoven, not printed. A timeless piece for wedding.",
       "description_hi": "एक प्रतिष्ठित चंदेरी साड़ी जिसमें बिखरे हुए सोने के बूटी हैं। चंदेरी कपड़ा अपनी पारदर्शी, बहने वाली गुणवत्ता और सूक्ष्म चमक के लिए प्रसिद्ध है — यह रोशनी को खूबसूरती से पकड़ता है। सोने के आकृतियाँ हाथ से बुनी गई हैं, मुद्रित नहीं। शादी के लिए एक कालातीत टुकड़ा।",
       "reviews": [
-        {"user": "Shreya D.", "rating": 5, "comment": "The drape is lovely. Wore this for an evening wedding. Perfect."},
-        {"user": "Bindiya X.", "rating": 4, "comment": "Lovely fabric. Slightly sheer but very elegant for evening."}
+        {
+          "user": "Shreya D.",
+          "rating": 5,
+          "comment": "The drape is lovely. Wore this for an evening wedding. Perfect."
+        },
+        {
+          "user": "Bindiya X.",
+          "rating": 4,
+          "comment": "Lovely fabric. Slightly sheer but very elegant for evening."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Chanderi_saree.jpg/800px-Chanderi_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S078",
@@ -1625,18 +2956,34 @@
       "color": "mint with silver border",
       "color_family": "green",
       "pattern": "plain with subtle sheen",
-      "occasion_tags": ["summer_wedding", "semi_formal"],
-      "sensory_tags": ["soft sheen", "flowy", "comfortable formal", "breathable yet elegant"],
+      "occasion_tags": [
+        "summer_wedding",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "soft sheen",
+        "flowy",
+        "comfortable formal",
+        "breathable yet elegant"
+      ],
       "price_inr": 2000,
       "available": true,
       "delivery_days": 12,
       "description": "This Mysore silk blend features a plain with subtle sheen. The blend balances Mysore's characteristic softness with everyday wearability. Elegant and soft sheen for summer wedding.",
       "description_hi": "यह मैसूर सिल्क ब्लेंड सूक्ष्म चमक के साथ सादा कपड़ा है। यह मिश्रण मैसूर की विशेषता नरमी को दैनिक पहनने की क्षमता के साथ संतुलित करता है। गर्मियों की शादी के लिए सुंदर और नरम चमक।",
       "reviews": [
-        {"user": "Pooja K.", "rating": 4, "comment": "Good weight. Not too heavy, not too light. Just right."},
-        {"user": "Chanda Y.", "rating": 5, "comment": "The ikat pattern is stunning. Cannot believe this is custom-made."}
+        {
+          "user": "Pooja K.",
+          "rating": 4,
+          "comment": "Good weight. Not too heavy, not too light. Just right."
+        },
+        {
+          "user": "Chanda Y.",
+          "rating": 5,
+          "comment": "The ikat pattern is stunning. Cannot believe this is custom-made."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Mysore_silk_saree.jpg/800px-Mysore_silk_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_sarees_%287642285396%29.jpg?width=600"
     },
     {
       "id": "S079",
@@ -1646,18 +2993,35 @@
       "color": "coral with gold border",
       "color_family": "orange",
       "pattern": "simplified Paithani border",
-      "occasion_tags": ["wedding", "festival", "semi_formal"],
-      "sensory_tags": ["elegant", "versatile", "festive", "comfortable formal"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "elegant",
+        "versatile",
+        "festive",
+        "comfortable formal"
+      ],
       "price_inr": 3200,
       "available": true,
       "delivery_days": 18,
       "description": "A Yeola-style Paithani saree from Nashik featuring a simplified Paithani border. Yeola produces Paithani at a more accessible price without compromising on the signature oblique weave. Elegant and beautiful for wedding.",
       "description_hi": "नाशिक से येवला शैली की पैठणी साड़ी जिसमें सरलीकृत पैठणी किनारी है। येवला पैठणी को अधिक सुलभ मूल्य पर पैदा करता है, बिना हस्ताक्षर तिरछी बुनाई से समझौता किए। शादी के लिए सुंदर और खूबसूरत।",
       "reviews": [
-        {"user": "Neha G.", "rating": 5, "comment": "Beautiful colour. The cotton-silk mix is exactly what I wanted."},
-        {"user": "Damini Z.", "rating": 4, "comment": "Great blend. Breathable yet looks festive. Recommend for summer weddings."}
+        {
+          "user": "Neha G.",
+          "rating": 5,
+          "comment": "Beautiful colour. The cotton-silk mix is exactly what I wanted."
+        },
+        {
+          "user": "Damini Z.",
+          "rating": 4,
+          "comment": "Great blend. Breathable yet looks festive. Recommend for summer weddings."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Paithani_saree.jpg/800px-Paithani_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Bhandge_Paithani.png?width=600"
     },
     {
       "id": "S080",
@@ -1667,18 +3031,34 @@
       "color": "green and gold",
       "color_family": "green",
       "pattern": "lighter contrast border",
-      "occasion_tags": ["wedding", "festival"],
-      "sensory_tags": ["elegant", "versatile", "comfortable formal", "semi-formal"],
+      "occasion_tags": [
+        "wedding",
+        "festival"
+      ],
+      "sensory_tags": [
+        "elegant",
+        "versatile",
+        "comfortable formal",
+        "semi-formal"
+      ],
       "price_inr": 2800,
       "available": true,
       "delivery_days": 14,
       "description": "A Dharmavaram cotton-silk blend featuring a lighter contrast border. Lighter than pure Dharmavaram silk but carrying its signature contrast border. Elegant and appropriate for wedding occasions.",
       "description_hi": "एक धर्मावरम कॉटन-सिल्क ब्लेंड जिसमें हल्की विपरीत किनारी है। शुद्ध धर्मावरम रेशम की तुलना में हल्का लेकिन अपनी विशिष्ट विपरीत किनारी को धारण करता है। शादी के अवसरों के लिए सुंदर और उपयुक्त।",
       "reviews": [
-        {"user": "Ritu V.", "rating": 4, "comment": "Flowy and elegant. Got many compliments at the festival."},
-        {"user": "Esha AA.", "rating": 5, "comment": "Chanderi quality at a fair price. The sheen is gorgeous."}
+        {
+          "user": "Ritu V.",
+          "rating": 4,
+          "comment": "Flowy and elegant. Got many compliments at the festival."
+        },
+        {
+          "user": "Esha AA.",
+          "rating": 5,
+          "comment": "Chanderi quality at a fair price. The sheen is gorgeous."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Dharmavaram_silk_saree.jpg/800px-Dharmavaram_silk_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_sarees_%287642285396%29.jpg?width=600"
     },
     {
       "id": "S081",
@@ -1688,18 +3068,35 @@
       "color": "pink and gold",
       "color_family": "pink",
       "pattern": "lightweight checks",
-      "occasion_tags": ["summer_wedding", "semi_formal", "festival"],
-      "sensory_tags": ["flowy", "light but rich", "elegant", "breathable yet elegant"],
+      "occasion_tags": [
+        "summer_wedding",
+        "semi_formal",
+        "festival"
+      ],
+      "sensory_tags": [
+        "flowy",
+        "light but rich",
+        "elegant",
+        "breathable yet elegant"
+      ],
       "price_inr": 3000,
       "available": true,
       "delivery_days": 16,
       "description": "A cotton-silk Kanjivaram blend featuring a lightweight checks. Lighter than pure Kanjivaram silk, this blend gives you the signature sheen at a flowy weight. Ideal for summer wedding without the heaviness of full silk.",
       "description_hi": "एक कॉटन-सिल्क कांचीपुरम ब्लेंड जिसमें हल्के चेकर पैटर्न हैं। शुद्ध कांचीपुरम रेशम की तुलना में हल्का, यह मिश्रण आपको बहने वाले वजन पर विशिष्ट चमक देता है। पूरे रेशम की भारीपन के बिना गर्मियों की शादी के लिए आदर्श।",
       "reviews": [
-        {"user": "Sunita B.", "rating": 5, "comment": "Ordered for my daughter's engagement. She looked stunning."},
-        {"user": "Falguni BB.", "rating": 4, "comment": "Nice soft feel. The colour matches the photo perfectly."}
+        {
+          "user": "Sunita B.",
+          "rating": 5,
+          "comment": "Ordered for my daughter's engagement. She looked stunning."
+        },
+        {
+          "user": "Falguni BB.",
+          "rating": 4,
+          "comment": "Nice soft feel. The colour matches the photo perfectly."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Kanjivaram_silk_saree.jpg/800px-Kanjivaram_silk_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_sarees_%287642285396%29.jpg?width=600"
     },
     {
       "id": "S082",
@@ -1709,18 +3106,34 @@
       "color": "green and white ikat",
       "color_family": "green",
       "pattern": "ikat temple motif",
-      "occasion_tags": ["festival", "semi_formal"],
-      "sensory_tags": ["versatile", "comfortable formal", "festive", "traditional"],
+      "occasion_tags": [
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "versatile",
+        "comfortable formal",
+        "festive",
+        "traditional"
+      ],
       "price_inr": 1800,
       "available": true,
       "delivery_days": 13,
       "description": "This Nuapatna cotton-silk saree carries a ikat temple motif signature of the Cuttack cluster. Versatile drape and rich ikat detailing make it a beautiful festival choice.",
       "description_hi": "यह नुआपटना कॉटन-सिल्क साड़ी कटक क्लस्टर के इकट मंदिर आकृति हस्ताक्षर को धारण करती है। बहुमुखी ड्रेप और समृद्ध इकट विवरण इसे एक सुंदर त्योहार विकल्प बनाते हैं।",
       "reviews": [
-        {"user": "Mamta P.", "rating": 4, "comment": "Good quality. The border design is unique and handloom feel is real."},
-        {"user": "Girija CC.", "rating": 5, "comment": "Ordered twice already. This weaver does excellent work."}
+        {
+          "user": "Mamta P.",
+          "rating": 4,
+          "comment": "Good quality. The border design is unique and handloom feel is real."
+        },
+        {
+          "user": "Girija CC.",
+          "rating": 5,
+          "comment": "Ordered twice already. This weaver does excellent work."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Pochampally_Ikat_Saree.jpg/800px-Pochampally_Ikat_Saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sambalpuri_Saree.jpg?width=600"
     },
     {
       "id": "S083",
@@ -1730,18 +3143,35 @@
       "color": "off-white with gold kasavu",
       "color_family": "neutral",
       "pattern": "double kasavu border",
-      "occasion_tags": ["festival", "wedding", "semi_formal"],
-      "sensory_tags": ["elegant", "traditional", "light but rich", "comfortable formal"],
+      "occasion_tags": [
+        "festival",
+        "wedding",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "elegant",
+        "traditional",
+        "light but rich",
+        "comfortable formal"
+      ],
       "price_inr": 2200,
       "available": true,
       "delivery_days": 11,
       "description": "A cotton-silk Kerala kasavu featuring a double kasavu border. The silk content gives the kasavu border extra sheen while keeping the fabric elegant. Perfect for Onam and weddings.",
       "description_hi": "एक कॉटन-सिल्क केरल कसावु जिसमें डबल कसावु किनारी है। रेशम की मात्रा कसावु किनारी को अतिरिक्त चमक देती है जबकि कपड़े को सुंदर रखती है। ओणम और शादियों के लिए बिल्कुल सही।",
       "reviews": [
-        {"user": "Asha W.", "rating": 5, "comment": "Semi-formal and beautiful. Easy to manage for long events."},
-        {"user": "Hina DD.", "rating": 4, "comment": "Good for both day and evening events. Versatile pick."}
+        {
+          "user": "Asha W.",
+          "rating": 5,
+          "comment": "Semi-formal and beautiful. Easy to manage for long events."
+        },
+        {
+          "user": "Hina DD.",
+          "rating": 4,
+          "comment": "Good for both day and evening events. Versatile pick."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Kerala_Kasavu_saree.jpg/800px-Kerala_Kasavu_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S084",
@@ -1751,18 +3181,34 @@
       "color": "green with red border",
       "color_family": "green",
       "pattern": "traditional Ilkal border",
-      "occasion_tags": ["festival", "wedding"],
-      "sensory_tags": ["traditional", "festive", "versatile", "elegant"],
+      "occasion_tags": [
+        "festival",
+        "wedding"
+      ],
+      "sensory_tags": [
+        "traditional",
+        "festive",
+        "versatile",
+        "elegant"
+      ],
       "price_inr": 950,
       "available": true,
       "delivery_days": 7,
       "description": "This Ilkal weave from Karnataka features a traditional Ilkal border. The signature contrasting border is woven separately and joined — a technique unique to Ilkal. Traditional and perfect for festival.",
       "description_hi": "कर्नाटक की इस इलकल बुनाई में पारंपरिक इलकल किनारी है। विशिष्ट विपरीत किनारी अलग से बुनी जाती है और फिर जोड़ी जाती है — यह तकनीक इलकल के लिए अद्वितीय है। त्योहार के लिए पारंपरिक और बिल्कुल सही।",
       "reviews": [
-        {"user": "Bindiya X.", "rating": 4, "comment": "Lovely fabric. Slightly sheer but very elegant for evening."},
-        {"user": "Priya S.", "rating": 5, "comment": "Perfect blend — light enough for summer but rich enough for weddings."}
+        {
+          "user": "Bindiya X.",
+          "rating": 4,
+          "comment": "Lovely fabric. Slightly sheer but very elegant for evening."
+        },
+        {
+          "user": "Priya S.",
+          "rating": 5,
+          "comment": "Perfect blend — light enough for summer but rich enough for weddings."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Ilkal_saree.jpg/800px-Ilkal_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S085",
@@ -1772,18 +3218,34 @@
       "color": "white with multicolour dots",
       "color_family": "neutral",
       "pattern": "Tangaliya dot motif",
-      "occasion_tags": ["casual_formal", "semi_formal"],
-      "sensory_tags": ["versatile", "comfortable formal", "textured", "elegant"],
+      "occasion_tags": [
+        "casual_formal",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "versatile",
+        "comfortable formal",
+        "textured",
+        "elegant"
+      ],
       "price_inr": 1600,
       "available": true,
       "delivery_days": 9,
       "description": "A Tangaliya silk-cotton saree from Surendranagar with a Tangaliya dot motif. The GI-tagged Tangaliya dot motif is raised on the loom — purely structural, not embroidered. Versatile and genuinely unique.",
       "description_hi": "सुरेंद्रनगर से तांगालिया सिल्क-कॉटन साड़ी जिसमें तांगालिया बिंदु आकृति है। जीआई-टैग वाली तांगालिया बिंदु आकृति करघे पर उभरी हुई है — पूरी तरह से संरचनात्मक, कढ़ाई नहीं। बहुमुखी और वास्तव में अद्वितीय।",
       "reviews": [
-        {"user": "Chanda Y.", "rating": 5, "comment": "The ikat pattern is stunning. Cannot believe this is custom-made."},
-        {"user": "Shreya D.", "rating": 5, "comment": "The drape is lovely. Wore this for an evening wedding. Perfect."}
+        {
+          "user": "Chanda Y.",
+          "rating": 5,
+          "comment": "The ikat pattern is stunning. Cannot believe this is custom-made."
+        },
+        {
+          "user": "Shreya D.",
+          "rating": 5,
+          "comment": "The drape is lovely. Wore this for an evening wedding. Perfect."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Tangaliya_saree.jpg/800px-Tangaliya_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S086",
@@ -1793,18 +3255,34 @@
       "color": "lavender",
       "color_family": "purple",
       "pattern": "square weave plain",
-      "occasion_tags": ["summer_wedding", "semi_formal"],
-      "sensory_tags": ["airy", "flowy", "summer wedding", "breathable yet elegant"],
+      "occasion_tags": [
+        "summer_wedding",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "airy",
+        "flowy",
+        "summer wedding",
+        "breathable yet elegant"
+      ],
       "price_inr": 1050,
       "available": true,
       "delivery_days": 9,
       "description": "This Kota Doria saree from Rajasthan features a square weave plain. The hallmark square weave structure gives it an unmistakable texture that is airy, sheer, and incredibly elegant. A top choice for summer weddings.",
       "description_hi": "राजस्थान की यह कोटा डोरिया साड़ी सादे वर्गाकार बुनाई के साथ आती है। इसकी पहचान वर्गाकार बुनाई संरचना है जो इसे हवादार, पारदर्शी और अत्यंत सुंदर बनाती है। गर्मियों की शादियों के लिए एक बेहतरीन विकल्प।",
       "reviews": [
-        {"user": "Damini Z.", "rating": 4, "comment": "Great blend. Breathable yet looks festive. Recommend for summer weddings."},
-        {"user": "Pooja K.", "rating": 4, "comment": "Good weight. Not too heavy, not too light. Just right."}
+        {
+          "user": "Damini Z.",
+          "rating": 4,
+          "comment": "Great blend. Breathable yet looks festive. Recommend for summer weddings."
+        },
+        {
+          "user": "Pooja K.",
+          "rating": 4,
+          "comment": "Good weight. Not too heavy, not too light. Just right."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Kota_doria_saree.jpg/800px-Kota_doria_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S087",
@@ -1814,18 +3292,35 @@
       "color": "deep teal with silver butis",
       "color_family": "blue",
       "pattern": "scattered silver butis",
-      "occasion_tags": ["wedding", "semi_formal", "festival"],
-      "sensory_tags": ["flowy", "elegant", "soft sheen", "light but rich"],
+      "occasion_tags": [
+        "wedding",
+        "semi_formal",
+        "festival"
+      ],
+      "sensory_tags": [
+        "flowy",
+        "elegant",
+        "soft sheen",
+        "light but rich"
+      ],
       "price_inr": 2000,
       "available": true,
       "delivery_days": 11,
       "description": "A signature Chanderi saree featuring a scattered silver butis. Chanderi fabric is celebrated for its sheer, flowy quality and subtle sheen — it catches light beautifully. The gold motifs are handwoven, not printed. A timeless piece for wedding.",
       "description_hi": "एक प्रतिष्ठित चंदेरी साड़ी जिसमें बिखरे हुए चांदी के बूटी हैं। चंदेरी कपड़ा अपनी पारदर्शी, बहने वाली गुणवत्ता और सूक्ष्म चमक के लिए प्रसिद्ध है — यह रोशनी को खूबसूरती से पकड़ता है। सोने के आकृतियाँ हाथ से बुनी गई हैं, मुद्रित नहीं। शादी के लिए एक कालातीत टुकड़ा।",
       "reviews": [
-        {"user": "Esha AA.", "rating": 5, "comment": "Chanderi quality at a fair price. The sheen is gorgeous."},
-        {"user": "Neha G.", "rating": 5, "comment": "Beautiful colour. The cotton-silk mix is exactly what I wanted."}
+        {
+          "user": "Esha AA.",
+          "rating": 5,
+          "comment": "Chanderi quality at a fair price. The sheen is gorgeous."
+        },
+        {
+          "user": "Neha G.",
+          "rating": 5,
+          "comment": "Beautiful colour. The cotton-silk mix is exactly what I wanted."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Chanderi_saree.jpg/800px-Chanderi_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S088",
@@ -1835,18 +3330,35 @@
       "color": "beige with gold jaal",
       "color_family": "neutral",
       "pattern": "light brocade jaal",
-      "occasion_tags": ["wedding", "festival", "semi_formal"],
-      "sensory_tags": ["elegant", "versatile", "light but rich", "comfortable formal"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "elegant",
+        "versatile",
+        "light but rich",
+        "comfortable formal"
+      ],
       "price_inr": 2800,
       "available": true,
       "delivery_days": 15,
       "description": "A Banarasi cotton-silk blend featuring a light brocade jaal. Lighter than pure Banarasi silk but carrying the same elegance of the jaal brocade. Elegant and beautiful for festive wedding.",
       "description_hi": "एक बनारसी कॉटन-सिल्क ब्लेंड जिसमें हल्की ब्रोकेड जाल है। शुद्ध बनारसी रेशम की तुलना में हल्का लेकिन जाल ब्रोकेड की समान सुंदरता को धारण करता है। त्योहारी शादी के लिए सुंदर और खूबसूरत।",
       "reviews": [
-        {"user": "Falguni BB.", "rating": 4, "comment": "Nice soft feel. The colour matches the photo perfectly."},
-        {"user": "Ritu V.", "rating": 4, "comment": "Flowy and elegant. Got many compliments at the festival."}
+        {
+          "user": "Falguni BB.",
+          "rating": 4,
+          "comment": "Nice soft feel. The colour matches the photo perfectly."
+        },
+        {
+          "user": "Ritu V.",
+          "rating": 4,
+          "comment": "Flowy and elegant. Got many compliments at the festival."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Banarasi_saree.jpg/800px-Banarasi_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Banarasi_Sari_on_viewing_wooden_blocks_01.jpg?width=600"
     },
     {
       "id": "S089",
@@ -1856,18 +3368,34 @@
       "color": "purple with gold border",
       "color_family": "purple",
       "pattern": "Ilkal signature border",
-      "occasion_tags": ["wedding", "festival"],
-      "sensory_tags": ["traditional", "elegant", "festive", "versatile"],
+      "occasion_tags": [
+        "wedding",
+        "festival"
+      ],
+      "sensory_tags": [
+        "traditional",
+        "elegant",
+        "festive",
+        "versatile"
+      ],
       "price_inr": 1400,
       "available": true,
       "delivery_days": 9,
       "description": "This Ilkal weave from Karnataka features a Ilkal signature border. The signature contrasting border is woven separately and joined — a technique unique to Ilkal. Traditional and perfect for wedding.",
       "description_hi": "कर्नाटक की इस इलकल बुनाई में इलकल हस्ताक्षर किनारी है। विशिष्ट विपरीत किनारी अलग से बुनी जाती है और फिर जोड़ी जाती है — यह तकनीक इलकल के लिए अद्वितीय है। शादी के लिए पारंपरिक और बिल्कुल सही।",
       "reviews": [
-        {"user": "Girija CC.", "rating": 5, "comment": "Ordered twice already. This weaver does excellent work."},
-        {"user": "Sunita B.", "rating": 5, "comment": "Ordered for my daughter's engagement. She looked stunning."}
+        {
+          "user": "Girija CC.",
+          "rating": 5,
+          "comment": "Ordered twice already. This weaver does excellent work."
+        },
+        {
+          "user": "Sunita B.",
+          "rating": 5,
+          "comment": "Ordered for my daughter's engagement. She looked stunning."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Ilkal_saree.jpg/800px-Ilkal_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S090",
@@ -1877,18 +3405,34 @@
       "color": "orange with silver border",
       "color_family": "orange",
       "pattern": "reversible border",
-      "occasion_tags": ["festival", "semi_formal"],
-      "sensory_tags": ["versatile", "elegant", "festive", "comfortable formal"],
+      "occasion_tags": [
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "versatile",
+        "elegant",
+        "festive",
+        "comfortable formal"
+      ],
       "price_inr": 1600,
       "available": true,
       "delivery_days": 10,
       "description": "This Maheshwari saree from Khargone, Madhya Pradesh features a reversible border. Maheshwari weaves are known for their reversible border and fine texture. Versatile and festival-appropriate, a versatile wardrobe staple.",
       "description_hi": "मध्य प्रदेश के खरगोन की यह महेश्वरी साड़ी उलटने योग्य किनारी के साथ आती है। महेश्वरी बुनाई अपनी उलटने योग्य किनारी और बारीक बनावट के लिए जानी जाती है। त्योहार के लिए बहुमुखी और उपयुक्त, एक बहुमुखी अलमारी का मुख्य आधार।",
       "reviews": [
-        {"user": "Hina DD.", "rating": 4, "comment": "Good for both day and evening events. Versatile pick."},
-        {"user": "Mamta P.", "rating": 4, "comment": "Good quality. The border design is unique and handloom feel is real."}
+        {
+          "user": "Hina DD.",
+          "rating": 4,
+          "comment": "Good for both day and evening events. Versatile pick."
+        },
+        {
+          "user": "Mamta P.",
+          "rating": 4,
+          "comment": "Good quality. The border design is unique and handloom feel is real."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Maheshwari_saree.jpg/800px-Maheshwari_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S091",
@@ -1898,18 +3442,34 @@
       "color": "yellow",
       "color_family": "yellow",
       "pattern": "plain square weave",
-      "occasion_tags": ["summer_wedding", "casual_formal"],
-      "sensory_tags": ["airy", "flowy", "summer wedding", "light but rich"],
+      "occasion_tags": [
+        "summer_wedding",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "airy",
+        "flowy",
+        "summer wedding",
+        "light but rich"
+      ],
       "price_inr": 820,
       "available": true,
       "delivery_days": 8,
       "description": "This Kota Doria saree from Rajasthan features a plain square weave. The hallmark square weave structure gives it an unmistakable texture that is airy, sheer, and incredibly elegant. A top choice for summer weddings.",
       "description_hi": "राजस्थान की यह कोटा डोरिया साड़ी सादे वर्गाकार बुनाई के साथ आती है। इसकी पहचान वर्गाकार बुनाई संरचना है जो इसे हवादार, पारदर्शी और अत्यंत सुंदर बनाती है। गर्मियों की शादियों के लिए एक बेहतरीन विकल्प।",
       "reviews": [
-        {"user": "Priya S.", "rating": 5, "comment": "Perfect blend — light enough for summer but rich enough for weddings."},
-        {"user": "Asha W.", "rating": 5, "comment": "Semi-formal and beautiful. Easy to manage for long events."}
+        {
+          "user": "Priya S.",
+          "rating": 5,
+          "comment": "Perfect blend — light enough for summer but rich enough for weddings."
+        },
+        {
+          "user": "Asha W.",
+          "rating": 5,
+          "comment": "Semi-formal and beautiful. Easy to manage for long events."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Kota_doria_saree.jpg/800px-Kota_doria_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S092",
@@ -1919,18 +3479,34 @@
       "color": "blue and yellow",
       "color_family": "blue",
       "pattern": "vibrant ikat geometric",
-      "occasion_tags": ["festival", "semi_formal"],
-      "sensory_tags": ["festive", "versatile", "comfortable formal", "vibrant"],
+      "occasion_tags": [
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "festive",
+        "versatile",
+        "comfortable formal",
+        "vibrant"
+      ],
       "price_inr": 1500,
       "available": true,
       "delivery_days": 10,
       "description": "A Nuapatna ikat saree from Cuttack, Odisha featuring a vibrant ikat geometric. Nuapatna is known for intricate temple and geometric motifs achieved through tie-dye ikat. The festive fabric and vibrant colours make it ideal for festival.",
       "description_hi": "ओडिशा के कटक से नुआपटना इकट साड़ी जिसमें जीवंत इकट ज्यामितीय है। नुआपटना जटिल मंदिर और ज्यामितीय आकृतियों के लिए जाना जाता है जो टाई-डाई इकट के माध्यम से प्राप्त किए जाते हैं। त्योहारी कपड़ा और जीवंत रंग इसे त्योहार के लिए आदर्श बनाते हैं।",
       "reviews": [
-        {"user": "Shreya D.", "rating": 5, "comment": "The drape is lovely. Wore this for an evening wedding. Perfect."},
-        {"user": "Bindiya X.", "rating": 4, "comment": "Lovely fabric. Slightly sheer but very elegant for evening."}
+        {
+          "user": "Shreya D.",
+          "rating": 5,
+          "comment": "The drape is lovely. Wore this for an evening wedding. Perfect."
+        },
+        {
+          "user": "Bindiya X.",
+          "rating": 4,
+          "comment": "Lovely fabric. Slightly sheer but very elegant for evening."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Pochampally_Ikat_Saree.jpg/800px-Pochampally_Ikat_Saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sambalpuri_Saree.jpg?width=600"
     },
     {
       "id": "S093",
@@ -1940,18 +3516,34 @@
       "color": "natural with block print",
       "color_family": "neutral",
       "pattern": "tussar texture cotton silk blend",
-      "occasion_tags": ["semi_formal", "casual_formal"],
-      "sensory_tags": ["textured", "versatile", "elegant", "earthy"],
+      "occasion_tags": [
+        "semi_formal",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "textured",
+        "versatile",
+        "elegant",
+        "earthy"
+      ],
       "price_inr": 2200,
       "available": true,
       "delivery_days": 13,
       "description": "A Bhagalpuri cotton-silk blend featuring a tussar texture cotton silk blend. The Tussar-like texture combined with cotton gives a textured drape with earthy richness. Great for semi formal occasions.",
       "description_hi": "एक भागलपुरी कॉटन-सिल्क ब्लेंड जिसमें तुस्सर बनावट वाला कॉटन-सिल्क मिश्रण है। तुस्सर जैसी बनावट कॉटन के साथ मिलकर एक बनावटी ड्रेप देती है जिसमें मिट्टी की समृद्धि होती है। अर्ध-औपचारिक अवसरों के लिए बढ़िया।",
       "reviews": [
-        {"user": "Pooja K.", "rating": 4, "comment": "Good weight. Not too heavy, not too light. Just right."},
-        {"user": "Chanda Y.", "rating": 5, "comment": "The ikat pattern is stunning. Cannot believe this is custom-made."}
+        {
+          "user": "Pooja K.",
+          "rating": 4,
+          "comment": "Good weight. Not too heavy, not too light. Just right."
+        },
+        {
+          "user": "Chanda Y.",
+          "rating": 5,
+          "comment": "The ikat pattern is stunning. Cannot believe this is custom-made."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Tussar_saree.jpg/800px-Tussar_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Sambalpuri_Saree.jpg?width=600"
     },
     {
       "id": "S094",
@@ -1961,18 +3553,35 @@
       "color": "dark maroon",
       "color_family": "red",
       "pattern": "plain with woven border",
-      "occasion_tags": ["wedding", "festival", "semi_formal"],
-      "sensory_tags": ["comfortable formal", "elegant", "versatile", "light but rich"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "semi_formal"
+      ],
+      "sensory_tags": [
+        "comfortable formal",
+        "elegant",
+        "versatile",
+        "light but rich"
+      ],
       "price_inr": 1300,
       "available": true,
       "delivery_days": 6,
       "description": "A Salem cotton-silk blend featuring a plain with woven border. Salem's weaves are known for excellent colour retention and durability. Comfortable formal and practical for regular wedding wear.",
       "description_hi": "एक सेलम कॉटन-सिल्क ब्लेंड जिसमें बुने हुए किनारे वाला सादा कपड़ा है। सेलम की बुनाई रंग धारण क्षमता और टिकाऊपन के लिए जानी जाती है। आरामदायक औपचारिक और नियमित शादी के पहनावे के लिए व्यावहारिक।",
       "reviews": [
-        {"user": "Neha G.", "rating": 5, "comment": "Beautiful colour. The cotton-silk mix is exactly what I wanted."},
-        {"user": "Damini Z.", "rating": 4, "comment": "Great blend. Breathable yet looks festive. Recommend for summer weddings."}
+        {
+          "user": "Neha G.",
+          "rating": 5,
+          "comment": "Beautiful colour. The cotton-silk mix is exactly what I wanted."
+        },
+        {
+          "user": "Damini Z.",
+          "rating": 4,
+          "comment": "Great blend. Breathable yet looks festive. Recommend for summer weddings."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Salem_cotton_saree.jpg/800px-Salem_cotton_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S095",
@@ -1982,18 +3591,34 @@
       "color": "aqua",
       "color_family": "blue",
       "pattern": "plain",
-      "occasion_tags": ["summer_wedding", "casual_formal"],
-      "sensory_tags": ["flowy", "breathable yet elegant", "light but rich", "airy"],
+      "occasion_tags": [
+        "summer_wedding",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "flowy",
+        "breathable yet elegant",
+        "light but rich",
+        "airy"
+      ],
       "price_inr": 1450,
       "available": true,
       "delivery_days": 12,
       "description": "A Kora cotton-silk saree featuring a plain. Kora fabric has a distinctive raw texture that is uniquely flowy. The cotton-silk blend makes it breathable yet elegant — perfect for summer events.",
       "description_hi": "कोरा कॉटन-सिल्क साड़ी जिसमें सादा कपड़ा है। कोरा कपड़े में एक विशिष्ट कच्ची बनावट होती है जो अद्वितीय रूप से बहने वाली होती है। कॉटन-सिल्क मिश्रण इसे सांस लेने योग्य और सुंदर बनाता है — गर्मियों के कार्यक्रमों के लिए बिल्कुल सही।",
       "reviews": [
-        {"user": "Ritu V.", "rating": 4, "comment": "Flowy and elegant. Got many compliments at the festival."},
-        {"user": "Esha AA.", "rating": 5, "comment": "Chanderi quality at a fair price. The sheen is gorgeous."}
+        {
+          "user": "Ritu V.",
+          "rating": 4,
+          "comment": "Flowy and elegant. Got many compliments at the festival."
+        },
+        {
+          "user": "Esha AA.",
+          "rating": 5,
+          "comment": "Chanderi quality at a fair price. The sheen is gorgeous."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Kora_saree.jpg/800px-Kora_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S096",
@@ -2003,18 +3628,34 @@
       "color": "green and red",
       "color_family": "green",
       "pattern": "ikat checks",
-      "occasion_tags": ["festival", "casual_formal"],
-      "sensory_tags": ["versatile", "festive", "comfortable formal", "traditional"],
+      "occasion_tags": [
+        "festival",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "versatile",
+        "festive",
+        "comfortable formal",
+        "traditional"
+      ],
       "price_inr": 1250,
       "available": true,
       "delivery_days": 10,
       "description": "A Pochampally cotton-silk blend featuring a ikat checks. The ikat pattern has that distinctive handcrafted blur that no machine can replicate. Versatile drape makes it ideal for festival occasions.",
       "description_hi": "एक पोचमपल्ली कॉटन-सिल्क ब्लेंड जिसमें इकट चेकर पैटर्न है। इकट पैटर्न में एक विशिष्ट हस्तनिर्मित धुंधलापन होता है जिसे कोई मशीन दोहरा नहीं सकती। बहुमुखी ड्रेप इसे त्योहारी अवसरों के लिए आदर्श बनाता है।",
       "reviews": [
-        {"user": "Sunita B.", "rating": 5, "comment": "Ordered for my daughter's engagement. She looked stunning."},
-        {"user": "Falguni BB.", "rating": 4, "comment": "Nice soft feel. The colour matches the photo perfectly."}
+        {
+          "user": "Sunita B.",
+          "rating": 5,
+          "comment": "Ordered for my daughter's engagement. She looked stunning."
+        },
+        {
+          "user": "Falguni BB.",
+          "rating": 4,
+          "comment": "Nice soft feel. The colour matches the photo perfectly."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Pochampally_Ikat_Saree.jpg/800px-Pochampally_Ikat_Saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Pochampalli_Ikat_saree.jpg?width=600"
     },
     {
       "id": "S097",
@@ -2024,18 +3665,34 @@
       "color": "blue with gold border",
       "color_family": "blue",
       "pattern": "simplified Paithani style",
-      "occasion_tags": ["wedding", "festival"],
-      "sensory_tags": ["elegant", "festive", "versatile", "comfortable formal"],
+      "occasion_tags": [
+        "wedding",
+        "festival"
+      ],
+      "sensory_tags": [
+        "elegant",
+        "festive",
+        "versatile",
+        "comfortable formal"
+      ],
       "price_inr": 1800,
       "available": true,
       "delivery_days": 11,
       "description": "A cotton-silk Paithani-style saree from Yeola featuring a simplified Paithani style. The cotton-silk blend gives a elegant drape while the Paithani border retains its characteristic sheen. Ideal for festive wedding.",
       "description_hi": "येवला से पैठणी शैली की कॉटन-सिल्क साड़ी जिसमें सरलीकृत पैठणी शैली है। कॉटन-सिल्क मिश्रण एक सुंदर ड्रेप देता है जबकि पैठणी किनारी अपनी विशिष्ट चमक बनाए रखती है। त्योहारी शादी के लिए आदर्श।",
       "reviews": [
-        {"user": "Mamta P.", "rating": 4, "comment": "Good quality. The border design is unique and handloom feel is real."},
-        {"user": "Girija CC.", "rating": 5, "comment": "Ordered twice already. This weaver does excellent work."}
+        {
+          "user": "Mamta P.",
+          "rating": 4,
+          "comment": "Good quality. The border design is unique and handloom feel is real."
+        },
+        {
+          "user": "Girija CC.",
+          "rating": 5,
+          "comment": "Ordered twice already. This weaver does excellent work."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Paithani_saree.jpg/800px-Paithani_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Bhandge_Paithani.png?width=600"
     },
     {
       "id": "S098",
@@ -2045,18 +3702,36 @@
       "color": "white with gold jamdani",
       "color_family": "neutral",
       "pattern": "jamdani floral weave",
-      "occasion_tags": ["wedding", "formal", "ceremony"],
-      "sensory_tags": ["luxurious", "elegant", "royal", "rich", "glossy"],
+      "occasion_tags": [
+        "wedding",
+        "formal",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "luxurious",
+        "elegant",
+        "royal",
+        "rich",
+        "glossy"
+      ],
       "price_inr": 7500,
       "available": true,
       "delivery_days": 22,
       "description": "An Uppada Jamdani saree featuring a jamdani floral weave. The Jamdani weave inserts supplementary threads to create intricate designs without embroidery. Luxurious silk with a distinctly artistic quality.",
       "description_hi": "एक उप्पादा जामदानी साड़ी जिसमें जामदानी फूलों की बुनाई है। जामदानी बुनाई बिना कढ़ाई के जटिल डिज़ाइन बनाने के लिए अतिरिक्त धागे डालती है। एक विशिष्ट कलात्मक गुणवत्ता वाला शानदार रेशम।",
       "reviews": [
-        {"user": "Madhavi V.", "rating": 4, "comment": "Good silk quality. Slight colour variation from photo but still beautiful."},
-        {"user": "Jayalakshmi I.", "rating": 5, "comment": "Best silk saree I have bought online. Stunning piece."}
+        {
+          "user": "Madhavi V.",
+          "rating": 4,
+          "comment": "Good silk quality. Slight colour variation from photo but still beautiful."
+        },
+        {
+          "user": "Jayalakshmi I.",
+          "rating": 5,
+          "comment": "Best silk saree I have bought online. Stunning piece."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Uppada_Jamdani_saree.jpg/800px-Uppada_Jamdani_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S099",
@@ -2066,18 +3741,35 @@
       "color": "pale green with gold border",
       "color_family": "green",
       "pattern": "fine zari border",
-      "occasion_tags": ["wedding", "festival", "casual_formal"],
-      "sensory_tags": ["light", "elegant", "comfortable", "wedding"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "casual_formal"
+      ],
+      "sensory_tags": [
+        "light",
+        "elegant",
+        "comfortable",
+        "wedding"
+      ],
       "price_inr": 1400,
       "available": true,
       "delivery_days": 8,
       "description": "A classic Venkatagiri cotton saree featuring a fine zari border. The gold zari work is handwoven directly into the fabric — not printed or added on. Lightweight and light, this is a go-to for wedding occasions.",
       "description_hi": "एक क्लासिक वेंकटगिरी सूती साड़ी जिसमें बारीक जरी की किनारी है। सोने की जरी का काम सीधे कपड़े में हाथ से बुना गया है — न मुद्रित और न ही चिपकाया गया। हल्की और हल्की, यह शादी के अवसरों के लिए एक बढ़िया विकल्प है।",
       "reviews": [
-        {"user": "Lalitha T.", "rating": 4, "comment": "Colour is exactly as shown. Delivery was fast too."},
-        {"user": "Meena R.", "rating": 5, "comment": "Exactly what I needed for daily wear. Soft and breathable all day."}
+        {
+          "user": "Lalitha T.",
+          "rating": 4,
+          "comment": "Colour is exactly as shown. Delivery was fast too."
+        },
+        {
+          "user": "Meena R.",
+          "rating": 5,
+          "comment": "Exactly what I needed for daily wear. Soft and breathable all day."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Venkatagiri_saree.jpg/800px-Venkatagiri_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     },
     {
       "id": "S100",
@@ -2087,18 +3779,35 @@
       "color": "white with thick gold border",
       "color_family": "neutral",
       "pattern": "double kasavu border",
-      "occasion_tags": ["wedding", "festival", "ceremony"],
-      "sensory_tags": ["light", "traditional", "elegant", "comfortable"],
+      "occasion_tags": [
+        "wedding",
+        "festival",
+        "ceremony"
+      ],
+      "sensory_tags": [
+        "light",
+        "traditional",
+        "elegant",
+        "comfortable"
+      ],
       "price_inr": 1200,
       "available": true,
       "delivery_days": 8,
       "description": "Classic Kerala kasavu featuring a double kasavu border. Pure cotton with a handwoven gold border — the signature of Kerala's weaving tradition. Light and elegant for Onam, weddings, and formal occasions.",
       "description_hi": "क्लासिक केरल कसावु जिसमें डबल कसावु किनारी है। हाथ से बुनी सोने की किनारी के साथ शुद्ध सूती — केरल की बुनाई परंपरा की पहचान। ओणम, शादियों और औपचारिक अवसरों के लिए हल्की और सुंदर।",
       "reviews": [
-        {"user": "Padma A.", "rating": 5, "comment": "Fine weave, lovely texture. Will order again."},
-        {"user": "Sudha V.", "rating": 5, "comment": "Beautiful colour. Washed well and did not fade at all."}
+        {
+          "user": "Padma A.",
+          "rating": 5,
+          "comment": "Fine weave, lovely texture. Will order again."
+        },
+        {
+          "user": "Sudha V.",
+          "rating": 5,
+          "comment": "Beautiful colour. Washed well and did not fade at all."
+        }
       ],
-      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Kerala_Kasavu_saree.jpg/800px-Kerala_Kasavu_saree.jpg"
+      "image_url": "https://commons.wikimedia.org/wiki/Special:FilePath/Kanchipuram_silk_sareer.JPG?width=600"
     }
   ],
   "metadata": {
