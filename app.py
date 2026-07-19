@@ -2015,15 +2015,14 @@ def _onboarding_page() -> None:
             st.rerun()
         return
 
-    # GPS — st.components.v1.html sets allow="geolocation" on the iframe unlike st.html
+    # GPS — st.iframe sets allow="geolocation" on the iframe unlike st.html
     # which is fully sandboxed. On success redirect window.parent with lat/lon query params.
-    import streamlit.components.v1 as _stc
     gps_label  = get_ui_string("onboard_gps", lang)
     gps_wait   = "स्थान मिल रहा है..." if lang == "hi" else "Getting location..."
     gps_denied = ("अनुमति अस्वीकृत। ब्राउज़र में लोकेशन चालू करें।"
                   if lang == "hi"
                   else "Permission denied — allow location in browser settings.")
-    _stc.html(f"""<!DOCTYPE html><html><body style="margin:0;padding:4px;background:transparent;">
+    st.iframe(f"""<!DOCTYPE html><html><body style="margin:0;padding:4px;background:transparent;">
     <button id="gps-btn" onclick="getGPS()" style="
         background:#9F2089;color:#fff;border:none;border-radius:8px;
         padding:0.45rem 1.1rem;font-size:0.9rem;font-weight:700;cursor:pointer;">
