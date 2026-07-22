@@ -2162,8 +2162,8 @@ def _onboarding_page() -> None:
                                   if lang == "hi"
                                   else "Could not extract details. Please type the fields manually.")
                     st.warning(no_extract)
-            else:
-                st.rerun()  # rerun on transcription error to reset the audio widget
+        else:
+            st.rerun()  # rerun on transcription error to reset the audio widget
 
     _pre_cluster = st.session_state.get("gps_place", "")
     _pre_state   = st.session_state.get("gps_state", "")
