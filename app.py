@@ -598,7 +598,19 @@ def _tts_edge(text: str, lang: str = "hi") -> Optional[bytes]:
             path = await generate()
             with open(path, "rb") as fh:
                 return fh.read()
-        return asyncio.run(_run_and_read())
+        import threading
+        result_holder = [None]
+        def _run_in_thread():
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                result_holder[0] = loop.run_until_complete(_run_and_read())
+            finally:
+                loop.close()
+        t = threading.Thread(target=_run_in_thread)
+        t.start()
+        t.join()
+        return result_holder[0]
     except Exception as e:
         print(f"Edge TTS error: {e}")
         return None
@@ -645,18 +657,6 @@ def _convert_audio_to_wav(audio_bytes: bytes) -> tuple:
                 pass
 
 def _stt_google(audio_bytes: bytes) -> tuple:
-    """
-    Transcribe audio using a single Google STT call with language=hi-IN.
-
-    hi-IN is the correct model for Indian bilingual speech:
-    - Hindi speech  → returns Devanagari  ✓
-    - English speech → returns Latin       ✓  (Google handles code-switching)
-    - Mixed speech  → returns both scripts  ✓
-
-    Running two STT calls (hi-IN + en-IN) and comparing was slower and
-    introduced ambiguity. One call is enough — language is detected from
-    the returned text script, not from the STT model choice.
-    """
     if len(audio_bytes) < 4_000:
         return None, "Recording too short — please speak clearly for at least 2 seconds."
     try:
@@ -674,14 +674,17 @@ def _stt_google(audio_bytes: bytes) -> tuple:
         with sr.AudioFile(wav_path) as source:
             recognizer.adjust_for_ambient_noise(source, duration=0.3)
             audio = recognizer.record(source)
-        try:
-            text = recognizer.recognize_google(audio, language="hi-IN")
-            if text and len(text.strip()) > 1:
-                return text.strip(), None
-        except sr.UnknownValueError:
-            pass
-        except sr.RequestError as e:
-            return None, f"Speech recognition service unavailable: {e}"
+
+        for lang_code in ("hi-IN", "en-IN"):
+            try:
+                text = recognizer.recognize_google(audio, language=lang_code)
+                if text and len(text.strip()) > 1:
+                    return text.strip(), None
+            except sr.UnknownValueError:
+                continue
+            except sr.RequestError as e:
+                return None, f"Speech recognition service unavailable: {e}"
+
         return None, "Could not understand. Please speak clearly in Hindi or English."
     except Exception as e:
         return None, f"Speech recognition error: {e}"
@@ -691,9 +694,7 @@ def _stt_google(audio_bytes: bytes) -> tuple:
         except OSError:
             pass
 
-def _transcribe_audio(audio_file, hint_lang: str = "en") -> Tuple[Optional[str], Optional[str]]:
-    # hint_lang kept for signature compatibility but no longer used —
-    # hi-IN handles both languages correctly
+def _transcribe_audio(audio_file) -> Tuple[Optional[str], Optional[str]]:
     buf = audio_file.getbuffer()
     return _stt_google(bytes(buf))
 
@@ -1216,15 +1217,12 @@ def _buyer_page() -> None:
                 if st.session_state.get("last_buyer_audio_hash") != _b_hash:
                     st.session_state["last_buyer_audio_hash"] = _b_hash
                     with st.spinner("Transcribing..."):
-                        _hint = st.session_state.get("language", "en")
-                        text, err = _transcribe_audio(audio_file, hint_lang=_hint)
-                    # Reset hash after every attempt so user can retry freely
-                    st.session_state["last_buyer_audio_hash"] = None
+                        text, err = _transcribe_audio(audio_file)
                     if err:
                         st.warning(err)
                     else:
-                        # Detect language from the transcript itself (not from STT hint)
-                        # so the session language always reflects what was actually spoken
+                        # ── FIX 3: detect language from transcript immediately so UI
+                        #    flips in this render cycle, before _send is called ──
                         st.session_state["language"] = _detect_language(text)
 
                         t = text.lower().strip()
@@ -1241,14 +1239,14 @@ def _buyer_page() -> None:
 
             # ---- TEXT INPUT ----
             st.text_input("Type your message...", key="user_input", label_visibility="collapsed")
-            if st.button(get_ui_string("btn_select", lang), key="send_btn", use_container_width=True):
+            if st.button(get_ui_string("send_btn", lang), key="send_btn", use_container_width=True):
                 ui = st.session_state.get("user_input", "").strip()
                 if ui:
                     # ── FIX 3 (text path): detect and set language before _send
                     #    so the UI flips immediately in this render cycle ──
                     st.session_state["language"] = _detect_language(ui)
 
-                    if cur == "retrieved" and not _is_number_selection(ui):
+                    if cur == "retrieved" and _is_correction(ui):
                         _send(ui, force_new_search=True)
                     else:
                         _send(ui)
@@ -1384,7 +1382,7 @@ def _weaver_page() -> None:
             spinner_msg = "सुन रहे हैं..." if lang == "hi" else "Listening..."
             with st.spinner(spinner_msg):
                 try:
-                    text, err = _transcribe_audio(w_audio, hint_lang=st.session_state.get("language", "en"))
+                    text, err = _transcribe_audio(w_audio)
                 except Exception as e:
                     text, err = None, f"Transcription error: {e}"
 
@@ -2068,7 +2066,8 @@ def _onboarding_page() -> None:
     gps_denied = ("अनुमति अस्वीकृत। ब्राउज़र में लोकेशन चालू करें।"
                   if lang == "hi"
                   else "Permission denied — allow location in browser.")
-    st.iframe(f"""<!DOCTYPE html><html><body style="margin:0;padding:4px;background:transparent;">
+    import streamlit.components.v1 as components
+    components.html(f"""<!DOCTYPE html><html><body style="margin:0;padding:4px;background:transparent;">
     <button id="gb" onclick="doGPS()" style="background:#9F2089;color:#fff;border:none;
         border-radius:8px;padding:0.45rem 1.1rem;font-size:0.9rem;font-weight:700;cursor:pointer;">
         \U0001f4cd {gps_label}
@@ -2150,7 +2149,7 @@ def _onboarding_page() -> None:
             st.session_state["last_reg_audio_hash"] = _audio_hash
             spinner_msg = "विवरण निकाला जा रहा है..." if lang == "hi" else "Listening and extracting details..."
             with st.spinner(spinner_msg):
-                text, err = _transcribe_audio(reg_audio, hint_lang=st.session_state.get("language", "en"))
+                text, err = _transcribe_audio(reg_audio)
             if err:
                 st.warning(f"{'ट्रांसक्रिप्शन विफल' if lang=='hi' else 'Could not transcribe'}: {err}")
             else:
@@ -2176,8 +2175,8 @@ def _onboarding_page() -> None:
                                   if lang == "hi"
                                   else "Could not extract details. Please type the fields manually.")
                     st.warning(no_extract)
-            else:
-                st.rerun()  # rerun on transcription error to reset the audio widget
+        else:
+            st.rerun()  # rerun on transcription error to reset the audio widget
 
     _pre_cluster = st.session_state.get("gps_place", "")
     _pre_state   = st.session_state.get("gps_state", "")
