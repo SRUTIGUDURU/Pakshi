@@ -598,19 +598,7 @@ def _tts_edge(text: str, lang: str = "hi") -> Optional[bytes]:
             path = await generate()
             with open(path, "rb") as fh:
                 return fh.read()
-        import threading
-        result_holder = [None]
-        def _run_in_thread():
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            try:
-                result_holder[0] = loop.run_until_complete(_run_and_read())
-            finally:
-                loop.close()
-        t = threading.Thread(target=_run_in_thread)
-        t.start()
-        t.join()
-        return result_holder[0]
+        return asyncio.run(_run_and_read())
     except Exception as e:
         print(f"Edge TTS error: {e}")
         return None
@@ -1239,14 +1227,14 @@ def _buyer_page() -> None:
 
             # ---- TEXT INPUT ----
             st.text_input("Type your message...", key="user_input", label_visibility="collapsed")
-            if st.button(get_ui_string("send_btn", lang), key="send_btn", use_container_width=True):
+            if st.button(get_ui_string("btn_select", lang), key="send_btn", use_container_width=True):
                 ui = st.session_state.get("user_input", "").strip()
                 if ui:
                     # ── FIX 3 (text path): detect and set language before _send
                     #    so the UI flips immediately in this render cycle ──
                     st.session_state["language"] = _detect_language(ui)
 
-                    if cur == "retrieved" and _is_correction(ui):
+                    if cur == "retrieved" and not _is_number_selection(ui):
                         _send(ui, force_new_search=True)
                     else:
                         _send(ui)
