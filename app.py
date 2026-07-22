@@ -2066,8 +2066,7 @@ def _onboarding_page() -> None:
     gps_denied = ("अनुमति अस्वीकृत। ब्राउज़र में लोकेशन चालू करें।"
                   if lang == "hi"
                   else "Permission denied — allow location in browser.")
-    import streamlit.components.v1 as components
-    components.html(f"""<!DOCTYPE html><html><body style="margin:0;padding:4px;background:transparent;">
+    st.iframe(f"""<!DOCTYPE html><html><body style="margin:0;padding:4px;background:transparent;">
     <button id="gb" onclick="doGPS()" style="background:#9F2089;color:#fff;border:none;
         border-radius:8px;padding:0.45rem 1.1rem;font-size:0.9rem;font-weight:700;cursor:pointer;">
         \U0001f4cd {gps_label}
