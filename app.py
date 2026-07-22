@@ -274,7 +274,6 @@ def _strip_html(text: str) -> str:
     if not text:
         return ""
     clean = str(text)
-    # Decode common HTML entities FIRST so they don't become active tags after stripping
     clean = clean.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&").replace("&nbsp;", " ").replace("&middot;", "·")
     clean = re.sub(r"<[^>]+>", "", clean)
     return clean.strip()
@@ -288,7 +287,7 @@ def _detect_language(text: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# CSS (full, with fixes for mobile)
+# CSS
 # ---------------------------------------------------------------------------
 st.markdown("""
 <style>
@@ -560,8 +559,7 @@ def _enrich_swatch_images(swatches: list) -> list:
 
 @st.cache_data(show_spinner=False, ttl=3600)
 def _fetch_image_bytes(url: str) -> Optional[bytes]:
-    """Fetch image bytes from URL server-side so st.image() gets raw bytes.
-    Cached per URL so each image is only downloaded once per hour."""
+    """Fetch image bytes from URL server-side so st.image() gets raw bytes."""
     if not url:
         return None
     try:
@@ -812,12 +810,11 @@ def _step_indicator(current: str) -> None:
     st.markdown("".join(parts), unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
-# Swatch card — fully bilingual, HTML-safe
+# Swatch card
 # ---------------------------------------------------------------------------
 def _swatch_card(swatch: dict, index: int) -> None:
     lang = st.session_state.get("language", "en")
 
-    # ── SAFE field extraction: strip any HTML the agent may have included ──
     weave_style  = _strip_html(swatch.get("weave_style", "—"))
     color        = _strip_html(swatch.get("color", "—"))
     description  = _strip_html(swatch.get("description", ""))
@@ -832,7 +829,6 @@ def _swatch_card(swatch: dict, index: int) -> None:
     if weaver_cluster:
         location = f"{weaver_cluster}, {weaver_state}"
 
-    # Escape for safe HTML injection
     def esc(s):
         return str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
@@ -841,7 +837,6 @@ def _swatch_card(swatch: dict, index: int) -> None:
         for t in swatch.get("sensory_tags", [])[:3]
     )
 
-    # Bilingual label lookups
     lbl_authentic      = get_ui_string("common_authentic", lang)
     lbl_labor          = get_ui_string("swatch_labor", lang)
     lbl_placeholder    = get_ui_string("swatch_placeholder", lang)
@@ -852,14 +847,10 @@ def _swatch_card(swatch: dict, index: int) -> None:
     border_color = "var(--accent)" if index == 0 else "var(--border-strong)"
     image_url = swatch.get("image_url", "")
 
-    # ── Embed image as base64 so the entire card renders in one st.markdown call ──
-    # Streamlit strips external URLs from <img> tags even with unsafe_allow_html,
-    # but a data URI is treated as inline content and always renders correctly.
     img_bytes = _fetch_image_bytes(image_url) if image_url else None
     if img_bytes:
         try:
             img_b64 = base64.b64encode(img_bytes).decode("utf-8")
-            # Detect mime type from magic bytes (JPEG vs PNG vs WebP)
             if img_bytes[:2] == b'\xff\xd8':
                 mime = "image/jpeg"
             elif img_bytes[:8] == b'\x89PNG\r\n\x1a\n':
@@ -915,13 +906,15 @@ def _swatch_card(swatch: dict, index: int) -> None:
 
 # ---------------------------------------------------------------------------
 # Core send function
+# FIX 1: detect language BEFORE calling agent, then prepend a language
+#         instruction so the agent always replies in the correct script.
 # ---------------------------------------------------------------------------
 def _send(user_text: str, *, force_new_search: bool = False) -> None:
     user_text = (user_text or "").strip()
     if not user_text:
         return
 
-    # ── Detect language EARLY so the panel refreshes immediately ──
+    # ── Detect language from user input and update UI immediately ──
     detected = _detect_language(user_text)
     st.session_state["language"] = detected
 
@@ -952,8 +945,23 @@ def _send(user_text: str, *, force_new_search: bool = False) -> None:
     st.session_state["history"].append(("user", user_text))
     st.session_state["agent_thinking"] = True
 
+    # ── FIX 1: Prepend language instruction so agent replies in the right language ──
+    # Pure number selections and control words ("confirm", "back", "yes", "no")
+    # are passed through without a language prefix so they don't confuse the agent's
+    # state machine.  Everything else gets the language hint.
+    _control_words = {"confirm", "back", "yes", "no", "1", "2", "3",
+                      "search again", "hi"}
+    if user_text.lower().strip() in _control_words:
+        agent_input = user_text
+    else:
+        if detected == "hi":
+            lang_instruction = "[SYSTEM: The user is speaking Hindi. Respond ONLY in Hindi using Devanagari script. Do not use English.] "
+        else:
+            lang_instruction = "[SYSTEM: The user is speaking English. Respond ONLY in English. Do not use Hindi or Devanagari script.] "
+        agent_input = lang_instruction + user_text
+
     try:
-        response = st.session_state["agent"].chat(user_text)
+        response = st.session_state["agent"].chat(agent_input)
     except Exception as exc:
         st.session_state["agent_thinking"] = False
         st.session_state["history"].append(("agent", f"Error: {exc}. Please try again."))
@@ -1003,9 +1011,7 @@ def _buyer_page() -> None:
     _init_buyer_state()
     lang = st.session_state.get("language", "en")
 
-    # ---------------------------------------------------------------------------
-    # FIX: Clear user input on next run if flag is set
-    # ---------------------------------------------------------------------------
+    # Clear user input on next run if flag is set
     if st.session_state.get("clear_user_input", False):
         st.session_state["user_input"] = ""
         st.session_state["clear_user_input"] = False
@@ -1018,7 +1024,6 @@ def _buyer_page() -> None:
     buyer_orders = st.session_state.get("buyer_orders", [])
     if buyer_orders:
         with st.expander(f"{get_ui_string('section_orders', lang)} ({len(buyer_orders)})", expanded=True):
-            # Iterate over a snapshot to allow safe mutation
             for bo in list(buyer_orders):
                 status = bo.get("status", "In Production")
                 color = {
@@ -1052,12 +1057,10 @@ def _buyer_page() -> None:
                 </div>
                 """, unsafe_allow_html=True)
 
-                # Show uploaded photo bytes if present, otherwise show placeholder
                 photo_bytes = bo.get("photo_bytes")
                 if photo_bytes and isinstance(photo_bytes, (bytes, bytearray)):
                     st.image(photo_bytes, caption=f"Progress photo — #{bo['order_id']}", width=280)
                 elif bo.get("photo_path"):
-                    # photo_path is a filename (no bytes stored) — show placeholder
                     st.markdown(
                         '<div style="background:rgba(159,32,137,0.08);border:1px dashed rgba(159,32,137,0.3);'
                         'border-radius:8px;padding:10px;font-size:0.78rem;color:var(--text-muted);'
@@ -1068,8 +1071,8 @@ def _buyer_page() -> None:
                 if needs_approval:
                     st.markdown(f"""
                     <div style="background:rgba(159,32,137,0.08);border:2px solid var(--accent);border-radius:12px;padding:1rem;margin:0.6rem 0;">
-                        <div style="font-weight:700;font-size:0.95rem;color:var(--text-primary);margin-bottom:4px;">Your fabric is ready for review</div>
-                        <div style="font-size:0.82rem;color:var(--text-muted);">The artisan has finished weaving. Approve to ship or reject to move it to the One of a Kind resale outlet at 65% of the original price.</div>
+                        <div style="font-weight:700;font-size:0.95rem;color:var(--text-primary);margin-bottom:4px;">{get_ui_string("fabric_ready", lang)}</div>
+                        <div style="font-size:0.82rem;color:var(--text-muted);">{get_ui_string("fabric_ready_desc", lang)}</div>
                     </div>
                     """, unsafe_allow_html=True)
                     a1, a2, _ = st.columns([1, 1, 2])
@@ -1093,7 +1096,6 @@ def _buyer_page() -> None:
                                 "weaver_name": bo["weaver_name"],
                                 "reason": "Buyer rejected final fabric",
                             })
-                            # Safe removal by order_id, not object reference
                             st.session_state["buyer_orders"] = [
                                 o for o in st.session_state["buyer_orders"]
                                 if o["order_id"] != bo["order_id"]
@@ -1116,7 +1118,6 @@ def _buyer_page() -> None:
                             "weaver_name": bo["weaver_name"],
                             "reason": "Buyer cancelled before production",
                         })
-                        # Safe removal by order_id
                         st.session_state["buyer_orders"] = [
                             o for o in st.session_state["buyer_orders"]
                             if o["order_id"] != bo["order_id"]
@@ -1182,18 +1183,21 @@ def _buyer_page() -> None:
         elif cur in ("confirmed", "failed"):
             if st.button(get_ui_string("btn_new_search", lang), use_container_width=True):
                 for k in list(st.session_state.keys()):
-                    if k not in ("one_of_a_kind", "buyer_orders", "weaver_orders", "weaver_id", "min_base_price", "audio_work_mode", "custom_weavers", "language"):
+                    if k not in ("one_of_a_kind", "buyer_orders", "weaver_orders", "weaver_id",
+                                 "min_base_price", "audio_work_mode", "custom_weavers", "language"):
                         del st.session_state[k]
                 st.rerun()
                 return
         else:
+            # ── FIX 2: greeting always fires in English; reset language so UI labels match ──
             if cur == "greeting" and not st.session_state["history"] and not st.session_state["greeted"]:
                 st.session_state["greeted"] = True
+                st.session_state["language"] = "en"
                 _send("hi")
                 st.rerun()
                 return
 
-            # ---- BUYER AUDIO INPUT (with hash guard) ----
+            # ---- BUYER AUDIO INPUT ----
             st.markdown(f'<div class="section-label">{get_ui_string("onboard_speak", lang)}</div>', unsafe_allow_html=True)
             audio_file = st.audio_input("Record", label_visibility="collapsed", key="pakshi_buyer_audio")
             if audio_file is not None:
@@ -1205,6 +1209,10 @@ def _buyer_page() -> None:
                     if err:
                         st.warning(err)
                     else:
+                        # ── FIX 3: detect language from transcript immediately so UI
+                        #    flips in this render cycle, before _send is called ──
+                        st.session_state["language"] = _detect_language(text)
+
                         t = text.lower().strip()
                         nmap = {"one":"1","two":"2","three":"3","first":"1","second":"2","third":"3",
                                 "ek":"1","do":"2","teen":"3","pehla":"1","doosra":"2","teesra":"3"}
@@ -1217,24 +1225,25 @@ def _buyer_page() -> None:
                     st.rerun()
                     return
 
-            # ---- STABLE TEXT INPUT ----
+            # ---- TEXT INPUT ----
             st.text_input("Type your message...", key="user_input", label_visibility="collapsed")
             if st.button(get_ui_string("btn_select", lang), key="send_btn", use_container_width=True):
                 ui = st.session_state.get("user_input", "").strip()
                 if ui:
+                    # ── FIX 3 (text path): detect and set language before _send
+                    #    so the UI flips immediately in this render cycle ──
+                    st.session_state["language"] = _detect_language(ui)
+
                     if cur == "retrieved" and not _is_number_selection(ui):
                         _send(ui, force_new_search=True)
                     else:
                         _send(ui)
-                    # -----------------------------------------------------------------------
-                    # FIX: set a flag to clear the input on the next run (instead of assigning now)
-                    # -----------------------------------------------------------------------
                     st.session_state["clear_user_input"] = True
                     st.rerun()
                     return
 
 # ---------------------------------------------------------------------------
-# WEAVER PAGE
+# WEAVER PAGE  (unchanged)
 # ---------------------------------------------------------------------------
 def _weaver_page() -> None:
     _init_weaver_state()
@@ -1311,7 +1320,6 @@ def _weaver_page() -> None:
     )
     st.caption(get_ui_string("weaver_voice_caption", lang))
 
-    # ── Voice command token lists ──
     ACCEPT_TOKENS = [
         "स्वीकार", "स्वीकृत", "मंजूर", "हाँ", "हां", "ठीक",
         "swikaar", "sweekar", "swikar", "sweekaro", "sweekaar karo",
@@ -1491,7 +1499,6 @@ def _weaver_page() -> None:
                             st.rerun()
                             return
 
-    # ── Read orders aloud ──
     pending  = _live_pending()
     accepted = _live_accepted()
 
@@ -1515,7 +1522,6 @@ def _weaver_page() -> None:
             except Exception as e:
                 st.warning(f"TTS error: {e}")
 
-    # ── Pending orders ──
     if pending:
         st.markdown(
             f'<div class="section-label" style="margin-top:1rem;">{get_ui_string("weaver_pending", lang)}</div>',
@@ -1588,7 +1594,6 @@ def _weaver_page() -> None:
                 st.rerun()
                 return
 
-    # ── Accepted / in-production ──
     if accepted:
         st.markdown(
             f'<div class="section-label" style="margin-top:1rem;">{get_ui_string("weaver_production", lang)}</div>',
@@ -1638,7 +1643,6 @@ def _weaver_page() -> None:
                 st.rerun()
                 return
 
-    # ── Awaiting approval ──
     awaiting = [o for o in st.session_state.get("weaver_orders", []) if o.get("status") == "awaiting_approval"]
     if awaiting:
         st.markdown(
@@ -1692,7 +1696,7 @@ def _weaver_page() -> None:
         return
 
 # ---------------------------------------------------------------------------
-# ONE OF A KIND PAGE
+# ONE OF A KIND PAGE  (unchanged)
 # ---------------------------------------------------------------------------
 _OOAK_SEED = [
     {
@@ -1803,11 +1807,10 @@ def _ooak_page() -> None:
                 st.success(f"#{item.get('order_id','')} {added_msg}")
 
 # ---------------------------------------------------------------------------
-# WEAVER ONBOARDING PAGE
+# WEAVER ONBOARDING PAGE  (unchanged)
 # ---------------------------------------------------------------------------
 def _onboarding_page() -> None:
 
-    # ── GPS query param catch — runs FIRST before any widget renders ──
     _gps_place_param = st.query_params.get("gps_place")
     _gps_state_param = st.query_params.get("gps_state")
     if _gps_place_param:
@@ -1824,170 +1827,168 @@ def _onboarding_page() -> None:
         st.rerun()
 
     def _parse_onboarding_text(text: str) -> dict:
-        # ── Weave/fabric skill keywords (Hindi script + Romanised + STT variants) ──
+        # ── Weave keyword map: Devanagari + Roman + STT variants, longest-first match ──
         WEAVE_MAP = {
-            # Hindi script — covers common Google STT outputs for Hindi speech
-            "इकत": "Ikat", "इकट": "Ikat", "इक्कट": "Ikat", "इकड़": "Ikat",
-            "जामदानी": "Jamdani",
-            "बनारसी": "Banarasi",
+            # Devanagari
+            "कोटा डोरिया": "Kota Doria", "ब्लॉक प्रिंट": "Block Print",
             "कांजीवरम": "Kanjivaram", "कांचीपुरम": "Kanjivaram",
-            "पैठणी": "Paithani",
-            "चंदेरी": "Chanderi",
-            "महेश्वरी": "Maheshwari",
-            "पटोला": "Patola",
-            "संबलपुरी": "Sambalpuri",
-            "इलकल": "Ilkal",
-            "जरी": "Zari",
-            "कोटा डोरिया": "Kota Doria",
-            "वेंकटागिरी": "Venkatagiri",
-            "कसावु": "Kasavu",
-            "ब्लॉक प्रिंट": "Block Print",
-            "कलमकारी": "Kalamkari",
-            # Romanised / English (sorted longer first so multi-word matches before single-word)
-            "kota doria": "Kota Doria",
-            "block print": "Block Print", "blockprint": "Block Print",
-            "ikat": "Ikat", "ikkat": "Ikat", "ikad": "Ikat", "ikath": "Ikat",
-            "jamdani": "Jamdani",
-            "banarasi": "Banarasi", "banaras": "Banarasi", "benarasi": "Banarasi",
+            "इक्कट": "Ikat", "इकड़": "Ikat", "इकट": "Ikat", "इकत": "Ikat",
+            "जामदानी": "Jamdani", "बनारसी": "Banarasi", "पैठणी": "Paithani",
+            "चंदेरी": "Chanderi", "महेश्वरी": "Maheshwari", "पटोला": "Patola",
+            "संबलपुरी": "Sambalpuri", "इलकल": "Ilkal", "जरी": "Zari",
+            "वेंकटागिरी": "Venkatagiri", "कसावु": "Kasavu", "कलमकारी": "Kalamkari",
+            # Roman multi-word first
+            "kota doria": "Kota Doria", "block print": "Block Print", "blockprint": "Block Print",
             "kanjivaram": "Kanjivaram", "kanchipuram": "Kanjivaram", "kanjipuram": "Kanjivaram",
-            "paithani": "Paithani",
-            "chanderi": "Chanderi",
-            "maheshwari": "Maheshwari",
-            "patola": "Patola",
-            "sambalpuri": "Sambalpuri",
-            "ilkal": "Ilkal",
+            "sambalpuri": "Sambalpuri", "venkatagiri": "Venkatagiri", "kalamkari": "Kalamkari",
+            "maheshwari": "Maheshwari", "banarasi": "Banarasi", "banaras": "Banarasi",
+            "benarasi": "Banarasi", "jamdani": "Jamdani", "paithani": "Paithani",
+            "chanderi": "Chanderi", "patola": "Patola", "ilkal": "Ilkal",
+            "kasavu": "Kasavu", "tussar": "Tussar", "tasar": "Tussar",
+            "ikkat": "Ikat", "ikad": "Ikat", "ikath": "Ikat", "ikat": "Ikat",
             "zari": "Zari",
-            "venkatagiri": "Venkatagiri",
-            "kasavu": "Kasavu",
-            "kalamkari": "Kalamkari",
-            "tussar": "Tussar", "tasar": "Tussar",
         }
 
-        KNOWN_CLUSTERS = [
-            "pochampally", "venkatagiri", "kanchipuram", "ilkal", "kota", "chanderi",
-            "maheshwar", "dharmavaram", "mysore", "sambalpuri", "bagru", "sanganer",
-            "kutch", "varanasi", "banaras", "kashi", "yeola", "molakalmuru",
-            "uppada", "nuapatna", "arni", "balaramapuram", "coimbatore", "salem",
-            "bishnupur", "murshidabad", "shantipur", "bhagalpur",
-        ]
-
-        # Stopwords used when doing fallback name extraction
+        # ── Stopwords: words that are NEVER a weaver's name ──
         STOPWORDS = {
-            # Hindi script
+            # Hindi Devanagari
             "मेरा","मेरी","मैं","नाम","है","हूं","हूँ","से","की","में","का","के",
-            "बनाती","बनाता","बुनती","बुनता","करती","करता","नंबर","मोबाइल","और",
-            # Romanised Hindi
+            "बनाती","बनाता","बुनती","बुनता","करती","करता","नंबर","मोबाइल","और","हम",
+            # Hindi Roman transliteration
             "mera","meri","main","naam","hai","hoon","hun","hain","se","ki",
-            "ka","ke","banati","banata","bunti","bunta","karta","karti","aur",
-            "number","mobile","phone","no",
+            "ka","ke","banati","banata","bunti","bunta","karta","karti","aur","hum",
             # English
             "my","name","is","am","i","do","from","in","at","of","and","the",
+            "number","mobile","phone","no","we","our",
+            # Craft/domain words that could appear near a name
             "weave","weaver","fabric","specialty","skill","craft","saree","sari",
+            "silk","cotton","linen","tussar",
         }
 
-        result = {"name": "", "cluster": "", "specialty": "", "phone": ""}
-        # Keep original case for name extraction; work on lowercase for matching
-        t_orig = re.sub(r'[.,;:!?।]', ' ', text.strip())
-        t_orig = re.sub(r'\s+', ' ', t_orig).strip()
-        t = t_orig.lower()
+        # ── Devanagari digit → ASCII digit ──
+        DEVA_DIGIT = {"०":"0","१":"1","२":"2","३":"3","४":"4",
+                      "५":"5","६":"6","७":"7","८":"8","९":"9"}
 
-        # ── 1. Phone: 10 consecutive digits ──
-        digits_only = re.sub(r'\D', '', t)
+        # ── Hindi/English spoken number words → digit (for STT that speaks out digits) ──
+        SPOKEN_DIGIT = {
+            "zero":"0","one":"1","two":"2","three":"3","four":"4",
+            "five":"5","six":"6","seven":"7","eight":"8","nine":"9",
+            "शून्य":"0","एक":"1","दो":"2","तीन":"3","चार":"4",
+            "पांच":"5","पाँच":"5","छह":"6","छः":"6","सात":"7","आठ":"8","नौ":"9",
+        }
+
+        result = {"name": "", "specialty": "", "phone": ""}
+
+        # ── Normalise: strip punctuation, collapse whitespace ──
+        t_orig = re.sub(r'[.,;:!?।॥]', ' ', text.strip())
+        t_orig = re.sub(r'\s+', ' ', t_orig).strip()
+
+        # ── Build a digit-normalised copy for phone extraction ──
+        t_digits = t_orig
+        for dv, av in DEVA_DIGIT.items():
+            t_digits = t_digits.replace(dv, av)
+        # Replace spoken digit words with their digit (longest words first to avoid partial hits)
+        for word in sorted(SPOKEN_DIGIT, key=len, reverse=True):
+            t_digits = re.sub(r'(?<![\u0900-\u097Fa-zA-Z])' + re.escape(word) +
+                              r'(?![\u0900-\u097Fa-zA-Z])', SPOKEN_DIGIT[word], t_digits, flags=re.IGNORECASE)
+
+        # ── Phone: grab first 10-digit run from digit-normalised text ──
+        digits_only = re.sub(r'[^0-9]', '', t_digits)
         phone_m = re.search(r'(\d{10})', digits_only)
         if phone_m:
             result["phone"] = phone_m.group(1)
 
-        # ── 2. Weave/fabric skill ──
-        # Longer keys checked first to avoid "kota" matching before "kota doria"
+        # ── Weave: match against lowercase of original (Devanagari .lower() is no-op, fine) ──
+        t_lower = t_orig.lower()
         weave_found = None
         for kw in sorted(WEAVE_MAP, key=len, reverse=True):
-            if kw in t:
+            # kw may be Devanagari (match t_orig) or Roman (match t_lower)
+            haystack = t_orig if re.search(r'[\u0900-\u097F]', kw) else t_lower
+            if kw in haystack:
                 weave_found = WEAVE_MAP[kw]
                 break
         if weave_found:
             result["specialty"] = weave_found
 
-        # ── 3. Village/cluster ──
-        cluster_found = None
-        for cl in KNOWN_CLUSTERS:
-            if cl in t:
-                cluster_found = cl.title()
-                break
-        if cluster_found:
-            result["cluster"] = cluster_found
+        # ── Name: structured patterns, both scripts ──
+        # We match on t_lower for Roman patterns; Devanagari patterns match on t_orig directly
+        NAME_TOKEN_EN = r'([a-zA-Z]+(?:\s+[a-zA-Z]+)??)'
+        NAME_TOKEN_HI = r'([\u0900-\u097F]+(?:\s+[\u0900-\u097F]+)??)'
+        NAME_TOKEN_ANY = r'([\u0900-\u097Fa-zA-Z]+(?:\s+[\u0900-\u097Fa-zA-Z]+)??)'
 
-        # ── 4. Name ──
-        # Pattern A: explicit markers (handles "hai"/"है" bleeding into group)
-        NAME_TOKEN = r'([\u0900-\u097Fa-zA-Z]+(?:\s+[\u0900-\u097Fa-zA-Z]+)??)'
-        STOP_BOUNDARY = r'(?=\s|$|\d|[,।]|(?:hai|है|hoon|हूं|hूँ|mera|my|number|नंबर|phone|mobile)\b)'
-        name_patterns = [
-            # "mera naam <Name> hai" / "मेरा नाम <Name> है"
-            rf'(?:mera|मेरा|my)\s+(?:naam|नाम|name)\s+{NAME_TOKEN}\s+(?:hai|है|is)',
-            # "naam <Name> hai" / "नाम <Name> है"
-            rf'(?:naam|नाम|name)\s+{NAME_TOKEN}\s+(?:hai|है|is)',
-            # "my name is <Name>"
-            rf'(?:my\s+name\s+is|naam\s+(?:hai|है))\s+{NAME_TOKEN}',
-            # "mera naam <Name>" (no hai at end)
-            rf'(?:mera|मेरा|my)\s+(?:naam|नाम|name)\s+{NAME_TOKEN}',
-            # bare "naam <Name>" at word boundary
-            rf'(?:^|\s)(?:naam|नाम|name)\s+{NAME_TOKEN}',
+        structured_patterns = [
+            # English patterns (run on t_lower)
+            (rf'my\s+name\s+is\s+{NAME_TOKEN_EN}', t_lower, False),
+            (rf'i\s+am\s+{NAME_TOKEN_EN}', t_lower, False),
+            (rf'naam\s+{NAME_TOKEN_EN}\s+(?:hai|is)', t_lower, False),
+            (rf'naam\s+{NAME_TOKEN_EN}', t_lower, False),
+            # Hindi Devanagari patterns (run on t_orig to preserve script)
+            (rf'(?:मेरा|मेरी)\s+नाम\s+{NAME_TOKEN_HI}\s+(?:है|हैं)', t_orig, True),
+            (rf'(?:मेरा|मेरी)\s+नाम\s+{NAME_TOKEN_HI}', t_orig, True),
+            (rf'नाम\s+{NAME_TOKEN_HI}\s+(?:है|हैं)', t_orig, True),
+            (rf'नाम\s+{NAME_TOKEN_HI}', t_orig, True),
+            # Mixed / transliterated (run on t_lower)
+            (rf'(?:mera|meri)\s+naam\s+{NAME_TOKEN_ANY}\s+(?:hai|है|is)', t_lower, False),
+            (rf'(?:mera|meri)\s+naam\s+{NAME_TOKEN_ANY}', t_lower, False),
         ]
+
         name_found = None
-        for pat in name_patterns:
-            m = re.search(pat, t, re.IGNORECASE)
+        for pat, haystack, is_devanagari_script in structured_patterns:
+            m = re.search(pat, haystack)
             if m:
-                # Take only the first token — stops before stopwords like "hai"
-                raw_words = m.group(1).strip().split()
-                good_words = []
-                for w in raw_words[:2]:
-                    if w.lower() in STOPWORDS or w.isdigit():
-                        break
-                    good_words.append(w)
-                if good_words:
-                    # Recover original-case version from t_orig
-                    orig_lower_words = t_orig.lower().split()
-                    orig_words = t_orig.split()
-                    recovered = []
-                    for gw in good_words:
+                raw = m.group(1).strip()
+                # Take only the first word (STT often appends extra words)
+                first_word = raw.split()[0] if raw.split() else raw
+                sw_check = first_word if is_devanagari_script else first_word.lower()
+                if sw_check not in STOPWORDS and len(first_word) > 1:
+                    if is_devanagari_script:
+                        name_found = first_word  # keep Devanagari as-is
+                    else:
+                        # Recover original casing from t_orig
+                        orig_words = t_orig.split()
+                        orig_lower = [w.lower() for w in orig_words]
                         try:
-                            idx = orig_lower_words.index(gw.lower())
-                            recovered.append(orig_words[idx])
-                            orig_lower_words[idx] = "\x00"  # mark used
+                            idx = orig_lower.index(first_word.lower())
+                            name_found = orig_words[idx]
                         except ValueError:
-                            recovered.append(gw.title())
-                    name_found = " ".join(recovered).title()
+                            name_found = first_word.title()
                     break
 
-        # Pattern B: fallback — scrub everything known, take first remaining alpha token
+        # ── Fallback: scrub all known tokens, pick first remaining content word ──
         if not name_found:
             scrub = t_orig
+            # Remove phone digits
             if result["phone"]:
                 scrub = scrub.replace(result["phone"], " ")
+            # Remove Devanagari digits
+            for dv in DEVA_DIGIT:
+                scrub = scrub.replace(dv, " ")
             scrub = re.sub(r'\d+', ' ', scrub)
+            # Remove weave keywords
             if weave_found:
                 for kw, v in WEAVE_MAP.items():
                     if v == weave_found:
                         scrub = re.sub(re.escape(kw), ' ', scrub, flags=re.IGNORECASE)
-            if cluster_found:
-                scrub = re.sub(re.escape(cluster_found), ' ', scrub, flags=re.IGNORECASE)
+            # Remove stopwords
             for sw in STOPWORDS:
-                scrub = re.sub(r'(?<![\u0900-\u097Fa-zA-Z])' + re.escape(sw) + r'(?![\u0900-\u097Fa-zA-Z])',
-                               ' ', scrub, flags=re.IGNORECASE)
+                scrub = re.sub(
+                    r'(?<![\u0900-\u097Fa-zA-Z])' + re.escape(sw) + r'(?![\u0900-\u097Fa-zA-Z])',
+                    ' ', scrub, flags=re.IGNORECASE)
             scrub = re.sub(r'\s+', ' ', scrub).strip()
-            # Prefer a word that starts with uppercase (proper noun) in original
-            candidates = [w for w in scrub.split() if len(w) > 1 and re.search(r'[a-zA-Z\u0900-\u097F]', w)]
-            for w in candidates:
+            for w in scrub.split():
                 clean = re.sub(r'[^a-zA-Z\u0900-\u097F]', '', w)
-                if clean and clean.lower() not in STOPWORDS:
-                    name_found = clean.title()
+                if len(clean) < 2:
+                    continue
+                is_deva = bool(re.search(r'[\u0900-\u097F]', clean))
+                sw_check = clean if is_deva else clean.lower()
+                if sw_check not in STOPWORDS:
+                    name_found = clean if is_deva else clean.title()
                     break
 
         if name_found:
             result["name"] = name_found
 
         return result
-
-    # ── end parser ──
 
     lang = st.session_state.get("language", "en")
     st.markdown(
@@ -2004,7 +2005,7 @@ def _onboarding_page() -> None:
 
     for key, default in [
         ("onboard_submitted", False), ("onboard_data", {}),
-        ("reg_name", ""), ("reg_cluster", ""), ("reg_specialty", ""),
+        ("reg_name", ""), ("reg_specialty", ""),
         ("reg_phone", ""), ("last_reg_audio_hash", None),
     ]:
         if key not in st.session_state:
@@ -2048,9 +2049,6 @@ def _onboarding_page() -> None:
             st.rerun()
         return
 
-    # GPS — iframe does geolocation + Nominatim fetch entirely client-side, then
-    # postMessages village+state back to parent. Parent catches via st.query_params
-    # written by a ?gps_place=...&gps_state=... redirect — one fast reload, no server geocode.
     gps_label  = get_ui_string("onboard_gps", lang)
     gps_wait   = "स्थान मिल रहा है..." if lang == "hi" else "Getting location..."
     gps_denied = ("अनुमति अस्वीकृत। ब्राउज़र में लोकेशन चालू करें।"
@@ -2097,9 +2095,7 @@ def _onboarding_page() -> None:
                 var rawState=(a.state||'').toLowerCase();
                 var state=STATE_MAP[rawState]||'Other';
                 s.innerText='\u2705 '+village+' · '+state;
-                // Fill the actual Village/Cluster input (placeholder "e.g. Pochampally")
                 fillByPlaceholder('e.g. Pochampally', village);
-                // Fill state text input
                 fillByPlaceholder('e.g. Andhra Pradesh', state);
             }}).catch(function(e) {{
                 btn.disabled=false; s.innerText='Geocode error: '+e.message;
@@ -2111,9 +2107,6 @@ def _onboarding_page() -> None:
     }}
     </script></body></html>""", height=55)
 
-
-
-    # Voice fill
     speak_hint_en = "Please say your name, village, weave style, and phone number."
     speak_hint_hi = "कृपया अपना नाम, गाँव, बुनाई शैली और फोन नंबर बोलें।"
     example_en = '"My name is Shruti, I am from Pochampally, I do Ikat, my number is 9876543210"'
@@ -2163,18 +2156,17 @@ def _onboarding_page() -> None:
                                 if lang == "hi"
                                 else f"Auto-filled: {', '.join(filled)}. Review and correct below.")
                     st.success(auto_msg)
+                    st.rerun()  # rerun only on success so fields visibly update
                 else:
                     no_extract = ("ऑडियो से विवरण नहीं निकाल सका। कृपया नीचे टाइप करें।"
                                   if lang == "hi"
                                   else "Could not extract details. Please type the fields manually.")
                     st.warning(no_extract)
-            st.rerun()
+            else:
+                st.rerun()  # rerun on transcription error to reset the audio widget
 
-    # Pre-fill cluster/state BEFORE the form renders so value= picks them up
-    _pre_cluster = (st.session_state.get("gps_place", "")
-                    or st.session_state.get("reg_cluster", ""))
-    _pre_state   = (st.session_state.get("gps_state", "")
-                    or st.session_state.get("reg_state", ""))
+    _pre_cluster = st.session_state.get("gps_place", "")
+    _pre_state   = st.session_state.get("gps_state", "")
 
     with st.form("onboard_form"):
         st.markdown(
